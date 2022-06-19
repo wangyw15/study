@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/Software/msys64/mingw64/include",
+                "D:/Software/msys64/mingw64/include/c++/12.1.0",
+                "D:/Software/msys64/mingw64/include/c++/12.1.0/x86_64-w64-mingw32",
+                "D:/Software/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/12.1.0/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
