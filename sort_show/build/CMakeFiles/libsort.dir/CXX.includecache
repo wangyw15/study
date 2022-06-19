@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/Projects/study-github/sort_show/src/sort/sort.cpp
+iostream
+-
+../visualizer/visualizer.h
+/mnt/d/Projects/study-github/sort_show/src/visualizer/visualizer.h
+
+/mnt/d/Projects/study-github/sort_show/src/visualizer/visualizer.h
+

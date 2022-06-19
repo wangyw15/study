@@ -1,0 +1,6 @@
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/rebuild_cache.dir
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/edit_cache.dir
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/main.dir
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/libvisualizer.dir
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/libsort.dir
+/mnt/d/Projects/study-github/sort_show/build/CMakeFiles/libutil.dir
