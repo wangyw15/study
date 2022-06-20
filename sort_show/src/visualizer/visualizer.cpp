@@ -84,6 +84,7 @@ void visualizer::visualize_swap(int index1, int index2)
 
 void visualizer::dispose()
 {
+    midiOutClose(h_midi_output);
     delete []data;
     delete this;
 }
