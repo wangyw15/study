@@ -11,7 +11,7 @@ static int merge_sort_assign = 0;
 template <typename T>
 void Merge(T *arr, int size)
 {
-    T temp[size];
+    T *temp = new T[size];
     int b = 0;
     int mid = size / 2;
     int i = 0, j = mid;

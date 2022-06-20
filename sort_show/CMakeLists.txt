@@ -8,7 +8,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 if (WIN32 AND NOT MSVC)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack=268435456 -static")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=GBK -finput-charset=UTF-8")
-endif (WIN32)
+endif (WIN32 AND NOT MSVC)
 
 aux_source_directory (src/util LIB_UTIL_SRC)
 add_library (libutil ${LIB_UTIL_SRC})
