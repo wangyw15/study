@@ -36,3 +36,8 @@ sort/out
 sort/build
 sort/.vs
 sort/.idea
+
+sort_show/out
+sort_show/build
+sort_show/.vs
+sort_show/.idea
