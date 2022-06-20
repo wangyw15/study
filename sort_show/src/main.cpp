@@ -31,6 +31,7 @@ int main()
         {
             vis = new visualizer();
             algorithms[selection[0] - '0' - 1](vis);
+            vis->dispose();
         }
         else
         {

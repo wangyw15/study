@@ -20,5 +20,6 @@ aux_source_directory (src/sort LIB_SORT_SRC)
 add_library (libsort ${LIB_SORT_SRC})
 
 add_executable (main src/main.cpp)
+
 target_link_libraries (libvisualizer libutil)
-target_link_libraries (main libutil libsort libvisualizer)
+target_link_libraries (main libutil libsort libvisualizer winmm)
