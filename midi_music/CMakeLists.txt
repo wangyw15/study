@@ -1,5 +1,12 @@
 cmake_minimum_required (VERSION 3.10)
 project (midi_music)
 
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+aux_source_directory (src/sheet LIB_SHEET_SRC)
+add_library (libsheet ${LIB_SHEET_SRC})
+
 add_executable (midi_music src/main.cpp)
-target_link_libraries (midi_music winmm)
+target_link_libraries (midi_music libsheet winmm)
