@@ -11,7 +11,7 @@ typedef void (*p_sort)(visualizer*);
 int main()
 {
     const p_sort algorithms[] = { optimized_bubble_sort, optimized_insert_sort };
-    const char algo_names[][20] = { "Ã°ÅİÅÅĞò", "²åÈëÅÅĞò" };
+    const char algo_names[][20] = { "å†’æ³¡æ’åº", "æ’å…¥æ’åº" };
     const auto algo_count = sizeof(algorithms) / sizeof(*algorithms);
 
     string selection;
@@ -23,8 +23,8 @@ int main()
             cout << i + 1 << ". " << algo_names[i] << endl;
         }
 
-        cout << "ÊäÈëÆäËûÔòÍË³ö" << endl;
-        cout << "ÇëÊäÈëĞòºÅ: ";
+        cout << "è¾“å…¥å…¶ä»–åˆ™é€€å‡º" << endl;
+        cout << "è¯·è¾“å…¥åºå·: ";
         getline(cin, selection);
 
         if (selection == "1" || selection == "2")

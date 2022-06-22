@@ -41,3 +41,8 @@ sort_show/out
 sort_show/build
 sort_show/.vs
 sort_show/.idea
+
+midi_music/out
+midi_music/build
+midi_music/.vs
+midi_music/.idea

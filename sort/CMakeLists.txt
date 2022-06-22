@@ -23,5 +23,5 @@ add_library (librand ${LIB_RAND_SRC})
 aux_source_directory (src/score LIB_SCORE_SRC)
 add_library (libscore ${LIB_SCORE_SRC})
 
-add_executable (main src/main.cpp)
-target_link_libraries (main libsort librand libscore)
+add_executable (sort src/main.cpp)
+target_link_libraries (sort libsort librand libscore)
