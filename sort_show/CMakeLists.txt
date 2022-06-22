@@ -10,6 +10,10 @@ if (WIN32 AND NOT MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=GBK -finput-charset=UTF-8")
 endif (WIN32 AND NOT MSVC)
 
+if (WIN32 AND MSVC)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:gbk")
+endif (WIN32 AND MSVC)
+
 aux_source_directory (src/util LIB_UTIL_SRC)
 add_library (libutil ${LIB_UTIL_SRC})
 
