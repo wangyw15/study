@@ -1,7 +1,9 @@
 #include <iostream>
 #include <windows.h>
 #include <map>
+
 #pragma comment(lib,"winmm.lib")
+
 using namespace std;
 
 enum Scale
@@ -16,6 +18,7 @@ enum Scale
 	A1 = 33, G1s = 32, G1 = 31, F1s = 30, F1 = 29, E1 = 28, D1s = 27, D1 = 26, C1s = 25, C1 = 24, B0 = 23,
 	A0s = 22, A0 = 21
 };
+
 enum Voice
 {
 	L1 = C3, L2 = D3, L3 = E3, L4 = F3, L5 = G3, L6 = A3, L7 = B3,
@@ -33,7 +36,7 @@ void Music()
 	int volume = 0x7f;
 	int voice = 0x0;
 	int sleep = 150;
-	int helloworld[] = 
+	int sheet[] =
 	{
 	  M1,_,M2,_,M3,_,L5,_,M1,_,M3,_,M3,_,_,_,
 	  M2,_,M1,_,M2,_,M5,_,M5,_,M5,_,M5,_,_,_,
@@ -44,19 +47,19 @@ void Music()
 	  L5,_,M3,_,M3,_,M3,_,M4,_,M5,_,M1,_,M1,_,M2,M3,M2,_,_,_,_,_,_,_,
 	};
 
-	for (int i=0 ; i<=sizeof(helloworld)/sizeof(*helloworld); i++)
+	for (int i = 0; i <= sizeof(sheet) / sizeof(*sheet); i++)
 	{
-		if (helloworld[i] == LOW_SPEED || helloworld[i] == HIGH_SPEED || helloworld[i] == MIDDLE_SPEED)
+		if (sheet[i] == LOW_SPEED || sheet[i] == HIGH_SPEED || sheet[i] == MIDDLE_SPEED)
 		{
-			sleep = helloworld[i];
+			sleep = sheet[i];
 			continue;
 		}
-		if (helloworld[i] == _)
+		if (sheet[i] == _)
 		{
 			Sleep(150);
 			continue;
 		}
-		voice = (volume << 16) | (helloworld[i] << 8) | 0x90;
+		voice = (volume << 16) | (sheet[i] << 8) | 0x90;
 		midiOutShortMsg(handle, voice);
 		Sleep(sleep);
 	}
