@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <windows.h>
+#include <chrono>
+#include <thread>
 
 #include "sheet/sheet.h"
 
@@ -32,13 +34,6 @@ union MidiShortMsg {
 	BYTE bData[4];
 };
 
-/*
-u.bData[0] = bStatus;  // MIDI status byte
-u.bData[1] = bData1;   // first MIDI data byte
-u.bData[2] = bData2;   // second MIDI data byte
-u.bData[3] = 0;
-*/
-
 DWORD MidiOutMessage(HMIDIOUT hMidi, int status, int channel, int note, int velocity)
 {
 	MidiShortMsg msg;
@@ -68,7 +63,9 @@ int main()
 		for (auto i = sheet.begin(); i != sheet.end(); i++)
 		{
 			MidiOutMessage(midiHandle, KEY_DOWN, 0, (*i).Note, (*i).Velocity);
-			Sleep((*i).Duration + 150);
+			// Sleep((*i).Duration + 150);
+			std::chrono::milliseconds sleepTime((*i).Duration + 150);
+			std::this_thread::sleep_for(sleepTime);
 			MidiOutMessage(midiHandle, KEY_UP, 0, (*i).Note, (*i).Velocity);
 		}
 	}
