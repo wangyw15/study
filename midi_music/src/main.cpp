@@ -63,10 +63,14 @@ int main()
 
 		auto expectedTime = 0;
 		auto startTime = std::chrono::high_resolution_clock::now();
+
 		auto calibration = 0;
+		auto innerStart = std::chrono::high_resolution_clock::now();
+		std::chrono::microseconds truePlayTime;
 		for (auto i = sheet.begin(); i != sheet.end(); i++)
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			innerStart = std::chrono::high_resolution_clock::now();
+
 			// std::cout << ((*i).Note == 0 ? "Rest" : NoteName[(*i).Note - 21]) << " ";
 			std::cout << NoteName[(*i).Note - 21] << " ";
 			expectedTime += (*i).Duration + 150;
@@ -78,8 +82,8 @@ int main()
 
 			MidiOutMessage(midiHandle, KEY_UP, 0, (*i).Note, (*i).Velocity);
 
-			auto truePlayTime = std::chrono::duration_cast<std::chrono::microseconds>
-				(std::chrono::high_resolution_clock::now() - start);
+			truePlayTime = std::chrono::duration_cast<std::chrono::microseconds>
+				(std::chrono::high_resolution_clock::now() - innerStart);
 			calibration = ((*i).Duration + 150) * 1000 - truePlayTime.count();
 		}
 		auto endTime = std::chrono::high_resolution_clock::now();
