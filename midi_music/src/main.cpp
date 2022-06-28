@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <chrono>
 #include <thread>
+#include <future>
 
 #include "sheet/sheet.h"
 
@@ -76,15 +77,13 @@ int main()
 			expectedTime += (*i).Duration + 150;
 
 			MidiOutMessage(midiHandle, KEY_DOWN, 0, (*i).Note, (*i).Velocity);
-
 			std::chrono::microseconds sleepTime(((*i).Duration + 150) * 1000 + calibration);
 			std::this_thread::sleep_for(sleepTime);
-
 			MidiOutMessage(midiHandle, KEY_UP, 0, (*i).Note, (*i).Velocity);
 
 			truePlayTime = std::chrono::duration_cast<std::chrono::microseconds>
 				(std::chrono::high_resolution_clock::now() - innerStart);
-			calibration = ((*i).Duration + 150) * 1000 - truePlayTime.count();
+			calibration = ((*i).Duration + 150) * 1000 - (truePlayTime.count() - calibration);
 		}
 		auto endTime = std::chrono::high_resolution_clock::now();
 		std::cout << std::endl;
