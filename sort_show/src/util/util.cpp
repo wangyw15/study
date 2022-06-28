@@ -1,7 +1,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstdlib>
-#include <ctime>
+#include <chrono>
+#include <thread>
 
 /*
 Box-Muller是产生随机数的一种方法。Box-Muller 算法隐含的原理非常深奥，但结果却是相当简单。
@@ -72,12 +73,11 @@ void init_data(int *data, int size, int flag)
     }
 }
 
-// 等待一段时间
-void wait(int milliseconds)
+// 等待一段时间（毫秒）
+void wait(long ms)
 {
-    auto wait_clocks = milliseconds / 1000 * CLOCKS_PER_SEC;
-    auto start = clock();
-    while (clock() - start != wait_clocks);
+    std::chrono::milliseconds sleep_time(ms);
+    std::this_thread::sleep_for(sleep_time);
 }
 
 void clear_console()

@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <chrono>
 #include <thread>
-#include <ctime>
 
 #include "sheet/sheet.h"
 
