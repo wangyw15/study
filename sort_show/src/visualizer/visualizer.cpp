@@ -78,8 +78,6 @@ void visualizer::visualize_swap(int index1, int index2)
     }
     // 放歌
     play_sheet();
-    // play_sheet();
-    //wait(1000); // 玄学
 }
 
 void visualizer::dispose()

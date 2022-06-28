@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ctime>
+#include <chrono>
 #include <string>
 #include <algorithm>
 
@@ -15,6 +16,7 @@
 #include "sort/quick_sort.h"
 
 using namespace std;
+using namespace chrono;
 
 #define SORT_MAX_SIZE 65536
 #define SORT_ALGORITHM bubble_sort, optimized_bubble_sort, insert_sort, optimized_insert_sort, selection_sort, merge_sort_iter, merge_sort_rec_with_counter, quick_sort_with_counter, optimized_quick_sort_with_counter
@@ -73,15 +75,15 @@ template <typename T>
 test_result *test_sort(T *data, int size, sort_result *(*func)(T *, int))
 {
     // 计时
-    auto start_time = clock();
+    auto start_time = high_resolution_clock::now();
     auto sort_ret = func(data, size);
-    auto end_time = clock();
+    auto end_time = high_resolution_clock::now();
 
     // 生成测试结果
     auto ret = new test_result;
     ret->assign = sort_ret->assign;
     ret->compare = sort_ret->compare;
-    ret->time = (end_time - start_time) * 1000.0 / CLOCKS_PER_SEC;
+    ret->time = duration_cast<microseconds>(end_time - start_time).count() / 1000.0;
     ret->correct = verify(data, size);
     delete sort_ret;
     return ret;

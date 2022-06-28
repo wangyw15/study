@@ -11,7 +11,8 @@ if (WIN32 AND NOT MSVC)
 endif (WIN32 AND NOT MSVC)
 
 if (WIN32 AND MSVC)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:gbk /stack:256M")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /stack:268435456")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:gbk")
 endif (WIN32 AND MSVC)
 
 aux_source_directory (src/sort LIB_SORT_SRC)
