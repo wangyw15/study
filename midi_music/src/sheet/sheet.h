@@ -18,9 +18,9 @@ const std::string NoteName[] = {
 	"A7", "A7s", "B7"};
 
 const std::string VoiceName[] = {
-	"L1", "L2", "L3", "L4", "L5", "L6", "L7",
-	"M1", "M2", "M3", "M4", "M5", "M6", "M7",
-	"H1", "H2", "H3", "H4", "H5", "H6", "H7"
+	"H7", "H6", "H5", "H4", "H3", "H2", "H1",
+	"M7", "M6", "M5", "M4", "M3", "M2", "M1",
+	"L7", "L6", "L5", "L4", "L3", "L2", "L1"
 };
 
 std::vector<Note> ReadSheet(std::string path);

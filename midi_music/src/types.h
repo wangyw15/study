@@ -33,7 +33,7 @@ enum NoteNumber
 	A0s = 22, A0 = 21
 };
 
-enum Voice
+enum VoiceNumber
 {
 	L1 = C3, L2 = D3, L3 = E3, L4 = F3, L5 = G3, L6 = A3, L7 = B3,
 	M1 = C4, M2 = D4, M3 = E4, M4 = F4, M5 = G4, M6 = A4, M7 = B4,

@@ -9,23 +9,13 @@
 
 #include "sheet/sheet.h"
 #include "visualizer/visualizer.h"
+#include "sheet_player/sheet_player.h"
+#include "keyboard_player/keyboard_player.h"
+#include "util/util.h"
 
 #pragma comment(lib,"winmm.lib")
 
 namespace fs = std::filesystem;
-
-void PlayForThread(std::vector<Note> sheet, HMIDIOUT midiHandle, int channel, std::chrono::high_resolution_clock::time_point startTime, Visualizer* vis)
-{
-	// thread info
-	/*std::stringstream ss;
-	ss << "sub id: " << std::this_thread::get_id() << " channel: " << channel << std::endl;
-	std::cout << ss.str();*/
-
-	// thread synchronize
-	std::this_thread::sleep_until(startTime);
-
-	PlaySheet(sheet, midiHandle, channel, vis);
-}
 
 int main()
 {
@@ -33,39 +23,46 @@ int main()
 	HMIDIOUT midiHandle;
 	midiOutOpen(&midiHandle, 0, 0, 0, 0);
 
-	// multiple threads
-	std::vector<std::thread> threads{};
-
-	// thread synchronize
-	auto start = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(500);
-
 	// visualizer
 	Visualizer vis;
 	vis.FrameRate = 60;
-	vis.Start();
 
-	// get sheets
-	int channelIndex = 0;
-	fs::path sheetDir("./sheets");
-	for (auto& f : fs::directory_iterator(sheetDir))
-	{
-		auto sheet = ReadSheet(f.path().generic_string());
-		threads.push_back(std::thread(PlayForThread, sheet, midiHandle, channelIndex++, start, &vis));
-	}
+	std::string line;
 
-	// play sheets
-	for (auto& t : threads)
+	while (true)
 	{
-		t.join();
+		std::cout << "1. 播放音乐" << std::endl
+			<< "2. 键盘演奏" << std::endl
+			<< "其他输入则退出" << std::endl
+			<< "请选择功能: ";
+		std::getline(std::cin, line);
+
+		if (line == "1")
+		{
+			vis.Prompt = "播放中...";
+			vis.KeyboardPrompt = false;
+			vis.Start();
+			SheetPlayer(midiHandle, &vis);
+			vis.Stop();
+			std::cout << "按下回车返回主页面";
+			std::getline(std::cin, line);
+		}
+		else if (line == "2")
+		{
+			vis.Prompt = "按下ESC返回主页面";
+			vis.KeyboardPrompt = true;
+			vis.Start();
+			KeyboardPlayer(midiHandle, &vis);
+			vis.Stop();
+		}
+		else
+		{
+			break;
+		}
+		vis.Reset();
 	}
 
 	// close MIDI devices
 	midiOutClose(midiHandle);
-	vis.Stop();
-
-	// wait to exit
-	std::cout << "按回车键退出..." << std::endl;
-	std::string line;
-	std::getline(std::cin, line);
 	return 0;
 }
