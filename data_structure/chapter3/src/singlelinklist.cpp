@@ -40,6 +40,17 @@ struct Student
 	}
 };
 
+ostream& StudentPrinter(ostream& out, SingleLinkList<Student>& list)
+{
+    cout << "学号 姓名 性别 班级 电话" << endl;
+    Node<Student>* pointer = list.Head();
+    while ((pointer = pointer->next) != nullptr)
+    {
+        out << pointer->data << endl;
+    }
+    return out;
+}
+
 int main()
 {
     /*int arr1[6] = {1, 5, 7, 6, 2, 3};
@@ -62,9 +73,10 @@ int main()
         cin >> studentTempArray[i];
     }
     SingleLinkList<Student> studentList(studentTempArray, option);
+    studentList.SetPrintMethod(StudentPrinter);
     cout << studentList << endl << endl;
 
-    // (2)
+    // construct
     cout << "请输入数据个数: ";
     cin >> option;
     cout << "请输入数据: ";
@@ -74,15 +86,20 @@ int main()
         cin >> tempArray[i];
     }
     SingleLinkList<double> list(tempArray, option);
-    cout << list << endl << endl;
+    cout << endl << endl;
 
-    // (3)
+    // (2)
     cout << "请输入要插入的数据: ";
     double item = 0;
     cin >> item;
     list.InsertByOrder(item);
     cout << "当前单链表的数据: " << endl;
     cout << list << endl << endl;
+
+    // (3)
+    cout << "原数据：" << list << endl;
+    list.Reverse();
+    cout << "reversal后：" << list << endl << endl;
 
     // (4)
     cout << "构造需要合并的列表" << endl;

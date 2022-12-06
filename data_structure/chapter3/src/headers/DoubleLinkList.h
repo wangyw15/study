@@ -100,7 +100,7 @@ public:
 
 	T& operator[](int n) const
 	{
-		if (n < _size)
+		if (n < _length)
 		{
 			auto index = 0;
 			Node<T>* pointer = _head;

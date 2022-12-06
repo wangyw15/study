@@ -27,7 +27,7 @@ public:
 			std::sort(arr, arr + n);
 		}
 		_length = n;
-		_capacity = max(n, capacity) + CAPACITY_STEP;
+		_capacity = std::max(n, capacity) + CAPACITY_STEP;
 		_data = new T[_capacity];
 		for (auto i = 0; i < n; i++)
 		{
@@ -239,7 +239,7 @@ public:
 		}
 		else
 		{
-			return null;
+			return NULL;
 		}
 	}
 

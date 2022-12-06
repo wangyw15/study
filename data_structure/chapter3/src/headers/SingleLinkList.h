@@ -1,6 +1,7 @@
 #ifndef SINGLELINKLIST
 #define SINGLELINKLIST
 
+#include <functional>
 #include <algorithm>
 #include <ios>
 
@@ -17,6 +18,19 @@ class SingleLinkList
 protected:
 	Node<T>* _head;
 	int _length;
+	std::function<std::ostream& (std::ostream&, SingleLinkList<T>&)> _printer;
+
+	static std::ostream& _DefaultPrinter(std::ostream& out, SingleLinkList<T>& list)
+	{
+		out << "[ ";
+		Node<T>* pointer = list._head;
+		while ((pointer = pointer->next) != nullptr)
+		{
+			out << pointer->data << (pointer->next != nullptr ? ", " : "");
+		}
+		out << " ]";
+		return out;
+	}
 
 public:
 	SingleLinkList()
@@ -25,6 +39,7 @@ public:
 		// _head->data = NULL;
 		_head->next = nullptr;
 		_length = 0;
+		SetPrintMethod();
 	}
 
 	SingleLinkList(T arr[], int n, bool sortData = false)
@@ -48,6 +63,7 @@ public:
 			pointer->next = current;
 			pointer = current;
 		}
+		SetPrintMethod();
 	}
 
 	~SingleLinkList()
@@ -59,6 +75,11 @@ public:
 	int Length() const
 	{
 		return _length;
+	}
+
+	Node<T>* Head()
+	{
+		return _head;
 	}
 
 	void Clear()
@@ -76,7 +97,7 @@ public:
 
 	T& operator[](int n) const
 	{
-		if (n < _size)
+		if (n < _length)
 		{
 			auto index = 0;
 			Node<T>* pointer = _head;
@@ -228,16 +249,22 @@ public:
 		_length = newLength;
 	}
 
+	void SetPrintMethod(std::function<std::ostream& (std::ostream&, SingleLinkList<T>&)> printer = _DefaultPrinter)
+	{
+		_printer = printer;
+	}
+
 	friend std::ostream& operator<< (std::ostream& out, SingleLinkList<T>& list)
 	{
-		out << "[ ";
+		/*out << "[ ";
 		Node<T>* pointer = list._head;
 		while ((pointer = pointer->next) != nullptr)
 		{
 			out << pointer->data << (pointer->next != nullptr ? ", " : "");
 		}
 		out << " ]";
-		return out;
+		return out;*/
+		return list._printer(out, list);
 	}
 };
 
