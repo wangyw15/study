@@ -43,7 +43,7 @@ struct Student
 
 ostream& StudentPrinter(ostream& out, DoubleLinkList<Student>& list)
 {
-    cout << "Ñ§ºÅ ÐÕÃû ÐÔ±ð °à¼¶ µç»°" << endl;
+    cout << "å­¦å· å§“å æ€§åˆ« ç­çº§ ç”µè¯" << endl;
     Node<Student>* pointer = list.Head();
     while ((pointer = pointer->next) != nullptr)
     {
@@ -63,9 +63,9 @@ int main()
     int option = 1;
 
     // (1) student
-    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
     cin >> option;
-    cout << "ÇëÊäÈëÊý¾Ý(Ñ§ºÅ ÐÕÃû ÐÔ±ð °à¼¶ µç»°): ";
+    cout << "è¯·è¾“å…¥æ•°æ®(å­¦å· å§“å æ€§åˆ« ç­çº§ ç”µè¯): ";
     Student studentTempArray[1000];
     for (auto i = 0; i < option; i++)
     {
@@ -76,9 +76,9 @@ int main()
     cout << studentList << endl << endl;
 
     // construct
-    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
     cin >> option;
-    cout << "ÇëÊäÈëÊý¾Ý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®: ";
     double tempArray[1000];
     for (auto i = 0; i < option; i++)
     {
@@ -88,17 +88,17 @@ int main()
     cout << list << endl;
 
     // (3)
-    cout << "swap()º¯Êý²âÊÔ" << endl;
-    cout << "½»»»Ç°: " << list << endl;
+    cout << "swap()å‡½æ•°æµ‹è¯•" << endl;
+    cout << "äº¤æ¢å‰: " << list << endl;
     list.Swap();
-    cout << "½»»»ºó: " << list << endl << endl;
+    cout << "äº¤æ¢åŽ: " << list << endl << endl;
 
     // (2)
-    cout << "ÇëÊäÈëÒª²åÈëµÄÊý¾Ý: ";
+    cout << "è¯·è¾“å…¥è¦æ’å…¥çš„æ•°æ®: ";
     double item = 0;
     cin >> item;
     list.InsertByOrder(item);
-    cout << "µ±Ç°Ë«Á´±íµÄÊý¾Ý: " << endl;
+    cout << "å½“å‰åŒé“¾è¡¨çš„æ•°æ®: " << endl;
     cout << list << endl << endl;
 
     return 0;

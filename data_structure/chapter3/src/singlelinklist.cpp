@@ -53,9 +53,9 @@ int main()
     int option = 1;
 
     // (1) student
-    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
     cin >> option;
-    cout << "ÇëÊäÈëÊý¾Ý(Ñ§ºÅ ÐÕÃû ÐÔ±ð °à¼¶ µç»°): ";
+    cout << "è¯·è¾“å…¥æ•°æ®(å­¦å· å§“å æ€§åˆ« ç­çº§ ç”µè¯): ";
     Student studentTempArray[1000];
     for (auto i = 0; i < option; i++)
     {
@@ -65,9 +65,9 @@ int main()
     cout << studentList << endl << endl;
 
     // (2)
-    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
     cin >> option;
-    cout << "ÇëÊäÈëÊý¾Ý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®: ";
     double tempArray[1000];
     for (auto i = 0; i < option; i++)
     {
@@ -77,25 +77,25 @@ int main()
     cout << list << endl << endl;
 
     // (3)
-    cout << "ÇëÊäÈëÒª²åÈëµÄÊý¾Ý: ";
+    cout << "è¯·è¾“å…¥è¦æ’å…¥çš„æ•°æ®: ";
     double item = 0;
     cin >> item;
     list.InsertByOrder(item);
-    cout << "µ±Ç°µ¥Á´±íµÄÊý¾Ý: " << endl;
+    cout << "å½“å‰å•é“¾è¡¨çš„æ•°æ®: " << endl;
     cout << list << endl << endl;
 
     // (4)
-    cout << "¹¹ÔìÐèÒªºÏ²¢µÄÁÐ±í" << endl;
-    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
+    cout << "æž„é€ éœ€è¦åˆå¹¶çš„åˆ—è¡¨" << endl;
+    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
     cin >> option;
-    cout << "ÇëÊäÈëÊý¾Ý: ";
+    cout << "è¯·è¾“å…¥æ•°æ®: ";
     for (auto i = 0; i < option; i++)
     {
         cin >> tempArray[i];
     }
     SingleLinkList<double> merge(tempArray, option);
     list.MergeByOrder(merge);
-    cout << "µ±Ç°Ë³Ðò±íµÄÊý¾Ý: " << endl;
+    cout << "å½“å‰é¡ºåºè¡¨çš„æ•°æ®: " << endl;
     cout << list << endl << endl;
 
     return 0;
