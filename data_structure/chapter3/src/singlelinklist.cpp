@@ -50,7 +50,6 @@ int main()
     cout << list1 << endl;
     return 0;*/
 
-    SingleLinkList<Student>* studentList;
     int option = 1;
 
     // (1) student
@@ -62,10 +61,9 @@ int main()
     {
         cin >> studentTempArray[i];
     }
-    studentList = new SingleLinkList<Student>(studentTempArray, option);
-    cout << *studentList << endl << endl;
+    SingleLinkList<Student> studentList(studentTempArray, option);
+    cout << studentList << endl << endl;
 
-    SingleLinkList<double>* list;
     // (2)
     cout << "请输入数据个数: ";
     cin >> option;
@@ -75,16 +73,16 @@ int main()
     {
         cin >> tempArray[i];
     }
-    list = new SingleLinkList<double>(tempArray, option);
-    cout << *list << endl << endl;
+    SingleLinkList<double> list(tempArray, option);
+    cout << list << endl << endl;
 
     // (3)
     cout << "请输入要插入的数据: ";
     double item = 0;
     cin >> item;
-    list->InsertByOrder(item);
+    list.InsertByOrder(item);
     cout << "当前单链表的数据: " << endl;
-    cout << *list << endl << endl;
+    cout << list << endl << endl;
 
     // (4)
     cout << "构造需要合并的列表" << endl;
@@ -95,10 +93,10 @@ int main()
     {
         cin >> tempArray[i];
     }
-    auto merge = new SingleLinkList<double>(tempArray, option);
-    list->MergeByOrder(*merge);
+    SingleLinkList<double> merge(tempArray, option);
+    list.MergeByOrder(merge);
     cout << "当前顺序表的数据: " << endl;
-    cout << *list << endl << endl;
+    cout << list << endl << endl;
 
     return 0;
 }
