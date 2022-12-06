@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <ios>
+#include <functional>
 
 template <typename T>
 struct Node
@@ -18,6 +19,19 @@ class DoubleLinkList
 protected:
 	Node<T>* _head;
 	int _length;
+	std::function<std::ostream& (std::ostream&, DoubleLinkList<T>&)> _printer;
+
+	static std::ostream& _DefaultPrinter(std::ostream& out, DoubleLinkList<T>& list)
+	{
+		out << "[ ";
+		Node<T>* pointer = list._head;
+		while ((pointer = pointer->next) != nullptr)
+		{
+			out << pointer->data << (pointer->next != nullptr ? ", " : "");
+		}
+		out << " ]";
+		return out;
+	}
 
 public:
 	DoubleLinkList()
@@ -27,6 +41,7 @@ public:
 		_head->next = nullptr;
 		_head->prev = nullptr;
 		_length = 0;
+		SetPrintMethod();
 	}
 
 	DoubleLinkList(T arr[], int n, bool sortData = false)
@@ -51,6 +66,7 @@ public:
 			pointer->next = current;
 			pointer = current;
 		}
+		SetPrintMethod();
 	}
 
 	~DoubleLinkList()
@@ -62,6 +78,11 @@ public:
 	int Length() const
 	{
 		return _length;
+	}
+
+	Node<T>* Head()
+	{
+		return _head;
 	}
 
 	void Clear()
@@ -164,16 +185,22 @@ public:
 		minItem->data = temp;
 	}
 
+	void SetPrintMethod(std::function<std::ostream& (std::ostream&, DoubleLinkList<T>&)> printer = _DefaultPrinter)
+	{
+		_printer = printer;
+	}
+
 	friend std::ostream& operator<< (std::ostream& out, DoubleLinkList<T>& list)
 	{
-		out << "[ ";
+		/*out << "[ ";
 		Node<T>* pointer = list._head;
 		while ((pointer = pointer->next) != nullptr)
 		{
 			out << pointer->data << (pointer->next != nullptr ? ", " : "");
 		}
 		out << " ]";
-		return out;
+		return out;*/
+		return list._printer(out, list);
 	}
 };
 
