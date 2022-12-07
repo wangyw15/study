@@ -6,38 +6,38 @@ using namespace std;
 
 struct Student
 {
-	long ID;
-	string Name;
-	string Sex;
-	string Class;
-	long Phone;
+    long ID;
+    string Name;
+    string Sex;
+    string Class;
+    long Phone;
 
-	bool operator<(const Student& other)
-	{
-		return ID < other.ID;
-	}
+    bool operator<(const Student& other)
+    {
+        return ID < other.ID;
+    }
 
-	bool operator>(const Student& other)
-	{
-		return ID > other.ID;
-	}
+    bool operator>(const Student& other)
+    {
+        return ID > other.ID;
+    }
 
-	bool operator==(const Student& other)
-	{
-		return ID == other.ID;
-	}
+    bool operator==(const Student& other)
+    {
+        return ID == other.ID;
+    }
 
-	friend ostream& operator<<(ostream& out, Student& stu)
-	{
-		out << stu.ID << " " << stu.Name << " " << stu.Sex << " " << stu.Class << " " << stu.Phone;
-		return out;
-	}
+    friend ostream& operator<<(ostream& out, Student& stu)
+    {
+        out << stu.ID << " " << stu.Name << " " << stu.Sex << " " << stu.Class << " " << stu.Phone;
+        return out;
+    }
 
-	friend istream& operator>>(istream& in, Student& stu)
-	{
-		in >> stu.ID >> stu.Name >> stu.Sex >> stu.Class >> stu.Phone;
-		return in;
-	}
+    friend istream& operator>>(istream& in, Student& stu)
+    {
+        in >> stu.ID >> stu.Name >> stu.Sex >> stu.Class >> stu.Phone;
+        return in;
+    }
 };
 
 ostream& StudentPrinter(ostream& out, SingleLinkList<Student>& list)
