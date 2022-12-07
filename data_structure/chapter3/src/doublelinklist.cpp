@@ -7,11 +7,11 @@ using namespace std;
 
 struct Student
 {
-    int ID;
+    long ID;
     string Name;
     string Sex;
     string Class;
-    int Phone;
+    long Phone;
 
     bool operator<(const Student& other)
     {
@@ -45,7 +45,7 @@ ostream& StudentPrinter(ostream& out, DoubleLinkList<Student>& list)
 {
     cout << "学号 姓名 性别 班级 电话" << endl;
     Node<Student>* pointer = list.Head();
-    while ((pointer = pointer->next) != nullptr)
+    while ((pointer = pointer->next) != list.Head())
     {
         out << pointer->data << endl;
     }

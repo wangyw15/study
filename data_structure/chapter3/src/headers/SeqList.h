@@ -181,6 +181,10 @@ public:
 	void DeleteRange(const T smallest, const T biggest)
 	{
 		// std::sort(_data, _data + _length);
+		if (smallest > biggest)
+		{
+			throw "Invalid parameters";
+		}
 		auto newSize = 0;
 		for (auto i = 0; i < _length; i++)
 		{

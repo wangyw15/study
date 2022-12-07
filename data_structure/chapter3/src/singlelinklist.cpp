@@ -6,11 +6,11 @@ using namespace std;
 
 struct Student
 {
-	int ID;
+	long ID;
 	string Name;
 	string Sex;
 	string Class;
-	int Phone;
+	long Phone;
 
 	bool operator<(const Student& other)
 	{

@@ -25,9 +25,9 @@ protected:
 	{
 		out << "[ ";
 		Node<T>* pointer = list._head;
-		while ((pointer = pointer->next) != nullptr)
+		while ((pointer = pointer->next) != list._head)
 		{
-			out << pointer->data << (pointer->next != nullptr ? ", " : "");
+			out << pointer->data << (pointer->next != list._head ? ", " : "");
 		}
 		out << " ]";
 		return out;
@@ -38,8 +38,8 @@ public:
 	{
 		_head = new Node<T>;
 		// _head->data = NULL;
-		_head->next = nullptr;
-		_head->prev = nullptr;
+		_head->next = _head;
+		_head->prev = _head;
 		_length = 0;
 		SetPrintMethod();
 	}
@@ -52,7 +52,8 @@ public:
 		}
 
 		_head = new Node<T>;
-		_head->prev = nullptr;
+		_head->next = _head;
+		_head->prev = _head;
 
 		_length = n;
 		auto pointer = _head;
@@ -60,12 +61,13 @@ public:
 		{
 			auto current = new Node<T>;
 			current->data = arr[i];
-			current->next = nullptr;
+			current->next = _head;
 			current->prev = pointer;
 
 			pointer->next = current;
 			pointer = current;
 		}
+		_head->prev = pointer;
 		SetPrintMethod();
 	}
 
@@ -95,6 +97,8 @@ public:
 			delete pointer;
 			pointer = temp;
 		}
+		_head->next = _head;
+		_head->prev = _head;
 		_length = 0;
 	}
 
@@ -148,19 +152,24 @@ public:
 		Node<T>* node = new Node<T>;
 		node->data = item;
 		node->next = nullptr;
-		_head->prev = nullptr;
+		node->prev = nullptr;
 		_length++;
 
-		while (pointer->next != nullptr)
+		while (pointer->next != _head)
 		{
 			if (pointer->next->data <= item)
 			{
 				node->next = pointer->next;
+				node->prev = pointer;
+				pointer->next->prev = node;
 				pointer->next = node;
 				return;
 			}
 			pointer = pointer->next;
 		}
+		node->next = pointer->next;
+		node->prev = pointer;
+		pointer->next->prev = node;
 		pointer->next = node;
 	}
 
@@ -169,7 +178,8 @@ public:
 		Node<T>* pointer = _head;
 		Node<T>* maxItem = _head->next;
 		Node<T>* minItem = _head->next;
-		while ((pointer = pointer->next) != nullptr)
+
+		while ((pointer = pointer->next) != _head)
 		{
 			if (pointer->data > maxItem->data)
 			{
