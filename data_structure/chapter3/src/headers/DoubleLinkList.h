@@ -91,7 +91,7 @@ public:
 	{
 		_length = 0;
 		Node<T>* pointer = _head->next;
-		while (pointer != nullptr)
+		while (pointer != _head)
 		{
 			Node<T>* temp = pointer->next;
 			delete pointer;
