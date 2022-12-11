@@ -43,7 +43,7 @@ struct Student
 
 ostream& StudentPrinter(ostream& out, DoubleLinkList<Student>& list)
 {
-    cout << "学号 姓名 性别 班级 电话" << endl;
+    out << "学号 姓名 性别 班级 电话" << endl;
     Node<Student>* pointer = list.Head();
     while ((pointer = pointer->next) != list.Head())
     {
