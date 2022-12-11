@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
 project (chapter3)
 
-add_executable (seqlist "src/main.cpp")
+add_executable (main "src/main.cpp")
 
 if (MSVC)
 	add_compile_options ("$<$<C_COMPILER_ID:MSVC>:/utf-8 /source-charset:utf-8 /execution-charset:gbk>")

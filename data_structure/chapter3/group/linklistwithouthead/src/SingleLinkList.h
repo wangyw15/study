@@ -1,9 +1,11 @@
-#ifndef SINGLELINKLIST
-#define SINGLELINKLIST
+#ifndef SINGLE_LINK_LIST_WITHOUT_HEAD
+#define SINGLE_LINK_LIST_WITHOUT_HEAD
 
 #include <functional>
 #include <algorithm>
 #include <ios>
+#include <string>
+#include <iostream>
 
 template <typename T>
 struct Node
@@ -13,66 +15,72 @@ struct Node
 };
 
 template <typename T>
-class SingleLinkList
+class SingleLinkListWithoutHead
 {
 protected:
-    Node<T>* _head;
-    int _length;
-    std::function<std::ostream& (std::ostream&, SingleLinkList<T>&)> _printer;
-
-    static std::ostream& _DefaultPrinter(std::ostream& out, SingleLinkList<T>& list)
+    static std::ostream& _DefaultPrinter(std::ostream& out, SingleLinkListWithoutHead<T>& list)
     {
-        out << "[ ";
+        out << std::string("[ ");
         Node<T>* pointer = list._head;
-        while ((pointer = pointer->next) != nullptr)
+        if (list._length == 1)
         {
-            out << pointer->data << (pointer->next != nullptr ? ", " : "");
+            out << pointer->data;
         }
-        out << " ]";
+        else
+        {
+            for (auto i = 0; i < list._length; i++)
+            {
+                out << pointer->data << (i != list._length - 1 ? ", " : "");
+                pointer = pointer->next;
+            }
+        }
+        out << std::string(" ]");
         return out;
     }
 
+    Node<T>* _head = nullptr;
+    long _length = 0;
+    std::function<std::ostream& (std::ostream&, SingleLinkListWithoutHead<T>&)> _printer = _DefaultPrinter;
+
 public:
-    SingleLinkList()
+    SingleLinkListWithoutHead()
     {
-        _head = new Node<T>;
-        // _head->data = NULL;
-        _head->next = nullptr;
+        _head = nullptr;
         _length = 0;
-        SetPrintMethod();
     }
 
-    SingleLinkList(T arr[], int n, bool sortData = false)
+    SingleLinkListWithoutHead(T arr[], int n, bool sortData = false)
     {
         if (sortData)
         {
             std::sort(arr, arr + n);
         }
 
-        _head = new Node<T>;
-        // _head->data = NULL;
-
-        _length = n;
-        auto pointer = _head;
-        for (auto i = 0; i < n; i++)
+        if ((_length = n) != 0)
         {
-            auto current = new Node<T>;
-            current->data = arr[i];
-            current->next = nullptr;
+            _head = new Node<T>;
+            _head->data = arr[0];
+            _head->next = _head;
+
+            auto pointer = _head;
+            for (auto i = 1; i < n; i++)
+            {
+                auto current = new Node<T>;
+                current->data = arr[i];
+                current->next = _head;
             
-            pointer->next = current;
-            pointer = current;
+                pointer->next = current;
+                pointer = current;
+            }
         }
-        SetPrintMethod();
     }
 
-    ~SingleLinkList()
+    ~SingleLinkListWithoutHead()
     {
         Clear();
-        delete _head;
     }
 
-    int Length() const
+    long Length() const
     {
         return _length;
     }
@@ -84,9 +92,8 @@ public:
 
     void Clear()
     {
-        _length = 0;
-        Node<T>* pointer = _head->next;
-        while (pointer != nullptr)
+        Node<T>* pointer = _head;
+        for (auto i = 0; i < _length; i++)
         {
             Node<T>* temp = pointer->next;
             delete pointer;
@@ -95,20 +102,17 @@ public:
         _length = 0;
     }
 
-    T& operator[](int n) const
+    T &operator[](int n) const
     {
         if (n < _length)
         {
             auto index = 0;
-            Node<T>* pointer = _head;
-            while ((pointer = pointer->next) != nullptr)
+            Node<T> *pointer = _head;
+            for (auto i = 0; i < n; i++)
             {
-                if (index++ == n)
-                {
-                    return pointer->data;
-                }
+                pointer = pointer->next;
             }
-            return nullptr;
+            return pointer;
         }
         else
         {
@@ -120,10 +124,10 @@ public:
     {
         if (_length >= 1)
         {
-            Node<T>* pointer = _head->next;
+            Node<T>* pointer = _head;
             Node<T>* previous = nullptr;
             Node<T>* temp = nullptr;
-            while (pointer != nullptr)
+            for (auto i = 0; i < _length; i++)
             {
                 temp = pointer;
                 pointer = pointer->next;
@@ -131,16 +135,16 @@ public:
                 previous = temp;
             }
             _head->next = previous;
+            _head = previous;
         }
     }
 
     void Sort()
     {
-        Node<T>* pointer = _head->next;
-        auto count = _length - 1;
+        Node<T>* pointer = _head;
         for (auto i = 0; i < _length - 1; i++)
         {
-            pointer = _head->next;
+            pointer = _head;
             for (auto j = 0; j < _length - 1 - i; j++)
             {
                 if (pointer->data > pointer->next->data)
@@ -157,15 +161,22 @@ public:
     void InsertByOrder(const T item)
     {
         Sort();
-        auto n = 0;
 
-        Node<T>* pointer = _head;
         Node<T>* node = new Node<T>;
         node->data = item;
-        node->next = nullptr;
         _length++;
 
-        while (pointer->next != nullptr)
+        if (item < _head->data)
+        {
+            node->data = _head->data;
+            _head->data = item;
+            node->next = _head->next;
+            _head->next = node;
+            return;
+        }
+
+        Node<T>* pointer = _head;
+        for (auto i = 0; i < _length - 2; i++)
         {
             if (pointer->next->data >= item)
             {
@@ -175,27 +186,27 @@ public:
             }
             pointer = pointer->next;
         }
+        node->next = pointer->next;
         pointer->next = node;
     }
 
-    void MergeByOrder(SingleLinkList& list)
+    void MergeByOrder(SingleLinkListWithoutHead& list)
     {
         Sort();
         list.Sort();
 
-        auto newLength = _length + list._length;
+        long newLength = _length + list._length, listIndex = 0, selfIndex = 0;
 
         Node<T>* newHead = new Node<T>;
-        // newHead->data = NULL;
         newHead->next = nullptr;
 
         Node<T>* pointer = newHead;
-        Node<T>* listPointer = list._head->next;
-        Node<T>* selfPointer = _head->next;
+        Node<T>* listPointer = list._head;
+        Node<T>* selfPointer = _head;
 
         for (auto i = 0; i < newLength; i++)
         {
-            if (listPointer == nullptr)
+            if (listIndex >= list._length)
             {
                 T data(selfPointer->data);
                 Node<T>* node = new Node<T>;
@@ -205,8 +216,9 @@ public:
                 pointer->next = node;
                 pointer = node;
                 selfPointer = selfPointer->next;
+                selfIndex++;
             }
-            else if (selfPointer == nullptr)
+            else if (selfIndex >= _length)
             {
                 T data(listPointer->data);
                 Node<T>* node = new Node<T>;
@@ -216,8 +228,9 @@ public:
                 pointer->next = node;
                 pointer = node;
                 listPointer = listPointer->next;
+                listIndex++;
             }
-            else if (listPointer != nullptr && selfPointer != nullptr)
+            else if (listIndex < list._length && selfIndex < _length)
             {
                 if (selfPointer->data < listPointer->data)
                 {
@@ -229,6 +242,7 @@ public:
                     pointer->next = node;
                     pointer = node;
                     selfPointer = selfPointer->next;
+                    selfIndex++;
                 }
                 else
                 {
@@ -240,30 +254,24 @@ public:
                     pointer->next = node;
                     pointer = node;
                     listPointer = listPointer->next;
+                    listIndex++;
                 }
             }
         }
-
+        
         Clear();
-        _head = newHead;
+        pointer->next = newHead->next;
+        _head = newHead->next;
         _length = newLength;
     }
 
-    void SetPrintMethod(std::function<std::ostream& (std::ostream&, SingleLinkList<T>&)> printer = _DefaultPrinter)
+    void SetPrintMethod(std::function<std::ostream& (std::ostream&, SingleLinkListWithoutHead<T>&)> printer = _DefaultPrinter)
     {
         _printer = printer;
     }
 
-    friend std::ostream& operator<< (std::ostream& out, SingleLinkList<T>& list)
+    friend std::ostream& operator<< (std::ostream& out, SingleLinkListWithoutHead<T>& list)
     {
-        /*out << "[ ";
-        Node<T>* pointer = list._head;
-        while ((pointer = pointer->next) != nullptr)
-        {
-            out << pointer->data << (pointer->next != nullptr ? ", " : "");
-        }
-        out << " ]";
-        return out;*/
         return list._printer(out, list);
     }
 };
