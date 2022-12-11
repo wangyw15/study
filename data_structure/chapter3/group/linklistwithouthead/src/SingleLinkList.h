@@ -62,10 +62,10 @@ public:
             _head->data = arr[0];
             _head->next = _head;
 
-            auto pointer = _head;
+            Node<T>* pointer = _head;
             for (auto i = 1; i < n; i++)
             {
-                auto current = new Node<T>;
+                Node<T>* current = new Node<T>;
                 current->data = arr[i];
                 current->next = _head;
             
@@ -75,9 +75,39 @@ public:
         }
     }
 
-    ~SingleLinkListWithoutHead()
+    virtual ~SingleLinkListWithoutHead()
     {
         Clear();
+    }
+
+    SingleLinkListWithoutHead(const SingleLinkListWithoutHead &list)
+    {
+        *this = list;
+    }
+
+    SingleLinkListWithoutHead<T> &operator=(const SingleLinkListWithoutHead &list)
+    {
+        if (&list != this && (_length = list._length) != 0)
+        {
+            _head = new Node<T>;
+            _head->data = list._head->data;
+            _head->next = _head;
+
+            Node<T>* pointer = _head;
+            Node<T>* listPointer = list._head->next;
+            for (auto i = 1; i < _length; i++)
+            {
+                Node<T>* current = new Node<T>;
+                current->data = listPointer->data;
+                current->next = _head;
+            
+                pointer->next = current;
+                pointer = current;
+                listPointer = listPointer->next;
+            }
+        }
+
+        return *this;
     }
 
     long Length() const
@@ -88,6 +118,122 @@ public:
     Node<T>* Head()
     {
         return _head;
+    }
+
+    bool IsEmpty() const
+    {
+        return _length == 0;
+    }
+
+    void Traverse(std::function<void(T)> func) const
+    {
+        Node<T> *pointer = _head;
+        for (auto i = 0; i < _length; i++)
+        {
+            func(pointer->data);
+            pointer = pointer->next;
+        }
+    }
+
+    long Locate(T item) const
+    {
+        Node<T> *pointer = _head;
+        for (auto i = 0; i < _length; i++)
+        {
+            if (item == pointer->data)
+            {
+                return i;
+            }
+            pointer = pointer->next;
+        }
+        return -1;
+    }
+
+    void Change(int n, T item)
+    {
+        if (n < _length)
+        {
+            Node<T> *pointer = _head;
+            for (auto i = 0; i < n; i++)
+            {
+                pointer = pointer->next;
+            }
+            pointer->data = item;
+        }
+        else
+        {
+            throw "Index out of range";
+        }
+    }
+
+    void Delete(int n)
+    {
+        if (n < _length)
+        {
+            Node<T> *pointer = _head;
+            if (n == 0)
+            {
+                for (auto i = 0; i < _length - 1; i++)
+                {
+                    pointer = pointer->next;
+                }
+                pointer->next = _head->next;
+                delete _head;
+                _head = pointer->next;
+            }
+            else
+            {
+                for (auto i = 0; i < n - 1; i++)
+                {
+                    pointer = pointer->next;
+                }
+                Node<T> *temp = pointer->next;
+                pointer->next = pointer->next->next;
+                delete temp;
+            }
+            _length--;
+        }
+        else
+        {
+            throw "Index out of range";
+        }
+    }
+
+    void Insert(int n, T item)
+    {
+        if (n <= _length)
+        {
+            Node<T> *pointer = _head;
+            if (n == 0)
+            {
+                for (auto i = 0; i < _length - 1; i++)
+                {
+                    pointer = pointer->next;
+                }
+                Node<T>* node = new Node<T>();
+                node->data = item;
+                node->next = _head;
+
+                pointer->next = node;
+                _head = node;
+            }
+            else
+            {
+                for (auto i = 0; i < n - 1; i++)
+                {
+                    pointer = pointer->next;
+                }
+                Node<T>* node = new Node<T>();
+                node->data = item;
+                node->next = pointer->next;
+                pointer->next = node;
+            }
+            _length++;
+        }
+        else
+        {
+            throw "Index out of range";
+        }
     }
 
     void Clear()
@@ -112,11 +258,11 @@ public:
             {
                 pointer = pointer->next;
             }
-            return pointer;
+            return pointer->data;
         }
         else
         {
-            return nullptr;
+            throw "Index out of range";
         }
     }
 

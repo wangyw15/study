@@ -64,12 +64,13 @@ int main()
     int arr1[6] = { 1, 5, 7, 6, 2, 3 };
     int arr2[3] = { 0, 4, 8 };
     SingleLinkListWithoutHead<int> list1(arr1, 6);
-    SingleLinkListWithoutHead<int> list2(arr2, 3);
+    list1.Insert(3, 10);
+    list1.Insert(6, 11);
     cout << list1 << endl;
-    list1.Reverse();
-    cout << list1 << endl;
-    list1.MergeByOrder(list2);
-    cout << list1 << endl;
+    SingleLinkListWithoutHead<int> list2(list1);
+    list1.Clear();
+    list2.Reverse();
+    cout << list2 << endl;
     return 0;
 
     int option = 1;
