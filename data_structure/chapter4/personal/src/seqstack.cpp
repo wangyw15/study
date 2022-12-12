@@ -6,9 +6,8 @@
 
 using namespace std;
 
-struct Car
+struct DateTime
 {
-    string Plate;
     int Year;
     int Month;
     int Day;
@@ -16,7 +15,7 @@ struct Car
     int Minute;
     int Second;
 
-    bool operator<(const Car &other)
+    bool operator<(const DateTime &other)
     {
         if (Year != other.Year)
         {
@@ -38,9 +37,63 @@ struct Car
         {
             return Minute < other.Minute;
         }
-        else if (Second != other.Second)
+        else
         {
             return Second < other.Second;
+        }
+    }
+
+    bool operator>(const DateTime &other)
+    {
+        return !(*this < other);
+    }
+
+    bool operator==(const DateTime &other)
+    {
+        return Year == other.Year && Month == other.Month && Day == other.Day &&
+            Hour == other.Hour && Minute == other.Minute && Second == other.Second;
+    }
+
+    bool operator!=(const DateTime &other)
+    {
+        return !(*this == other);
+    }
+
+    bool operator<=(const DateTime &other)
+    {
+        return (*this == other) || (*this < other);
+    }
+
+    bool operator>=(const DateTime &other)
+    {
+        return (*this == other) || (*this > other);
+    }
+
+    friend ostream &operator<<(ostream& out, DateTime &dt)
+    {
+        out << dt.Year << "/" << dt.Month << "/" << dt.Day << " "
+            << dt.Hour << ":" << dt.Minute << ":" << dt.Second;
+        return out;
+    }
+
+    friend istream &operator>>(istream& in, DateTime &dt)
+    {
+        in >> dt.Year >> dt.Month >> dt.Day
+            >> dt.Hour >> dt.Minute >> dt.Second;
+        return in;
+    }
+};
+
+struct Car
+{
+    string Plate;
+    DateTime EnterTime;
+
+    bool operator<(const Car &other)
+    {
+        if (EnterTime != other.EnterTime)
+        {
+            return EnterTime < other.EnterTime;
         }
         else
         {
@@ -55,17 +108,13 @@ struct Car
 
     friend ostream &operator<<(ostream& out, Car &car)
     {
-        out << "Plate: " << car.Plate << "; Enter time: "
-            << car.Year << "/" << car.Month << "/" << car.Day << " "
-            << car.Hour << ":" << car.Minute << ":" << car.Second;
+        out << "Plate: " << car.Plate << "; Enter time: " << car.EnterTime;
         return out;
     }
 
     friend istream &operator>>(istream& in, Car &car)
     {
-        in >> car.Plate
-            >> car.Year >> car.Month >> car.Day
-            >> car.Hour >> car.Minute >> car.Second;
+        in >> car.Plate >> car.EnterTime;
         return in;
     }
 };
