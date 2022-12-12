@@ -73,7 +73,7 @@ struct Car
 int main()
 {
     // (1)
-    Car tempCar;
+    /*Car tempCar;
     SeqStack<Car> cars;
     cout << "the amount of data: ";
     int count = 0;
@@ -85,7 +85,7 @@ int main()
         cars.Push(tempCar);
     }
     cars.Traverse([] (Car item) { cout << item << endl; });
-    cout << endl;
+    cout << endl;*/
 
     // (2)
     SeqStack<int> stack;
@@ -93,6 +93,25 @@ int main()
     {
         stack.Push(i);
     }
-    cout << stack << endl;
+    cout << "length: " << stack.Length() << endl << endl << "traverse:" << endl;
+    stack.Traverse([](int item) { cout << item << " "; });
+    cout << endl << endl;
+
+    stack.Clear();
+    cout<< "cleared: " << stack
+        << "; length: " << stack.Length()
+        << "; is " << (stack.IsEmpty() ? "" : "not") << "empty" << endl << endl;
+
+    for (auto i = 100; i < 150; i++)
+    {
+        stack.Push(i);
+    }
+    cout << "length: " << stack.Length() << "; top: " << stack.Top() << endl << endl;
+    cout << "pop: " << endl;
+    for (auto i = 100; i < 150; i++)
+    {
+        cout << stack.Pop() << " ";
+    }
+    cout << endl << endl << "length: " << stack.Length() << endl;
     return 0;
 }

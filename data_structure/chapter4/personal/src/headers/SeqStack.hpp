@@ -4,6 +4,7 @@
 #include <ostream>
 #include <string>
 #include <functional>
+#include <stdexcept>
 
 template <typename T>
 class SeqStack
@@ -32,7 +33,7 @@ protected:
         out << std::string("[ ");
         for (long i = stack._Top; i >= 0; i--)
         {
-            out << (stack._Data[i]) << (i == 0 ? "" : ", ");
+            out << stack._Data[i] << (i == 0 ? "" : ", ");
         }
         out << std::string(" ]");
         return out;
@@ -81,8 +82,6 @@ public:
 
     void Clear()
     {
-        delete[] _Data;
-        _Data = new T[_Capacity];
         _Top = -1;
     }
 
@@ -96,7 +95,7 @@ public:
         return _Top + 1;
     }
 
-    void Traverse(std::function<void(const T)> func) const
+    void Traverse(std::function<void(const T&)> func) const
     {
         for (long i = _Top; i >= 0; i--)
         {
@@ -115,13 +114,13 @@ public:
 
     T Pop()
     {
-        if (_Top - 1 >= 0)
+        if (_Top >= 0)
         {
             return _Data[_Top--];
         }
         else
         {
-            throw "Index out of range";
+            throw std::overflow_error("Overflow");
         }
     }
 
@@ -133,7 +132,7 @@ public:
         }
         else
         {
-            throw "Empty stack";
+            throw std::underflow_error("Empty stack");
         }
     }
 
@@ -145,7 +144,7 @@ public:
         }
         else
         {
-            throw "Index out of range";
+            throw std::range_error("Index out of range");
         }
     }
 
