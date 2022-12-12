@@ -2,7 +2,7 @@
 #include <ostream>
 #include <string>
 #include <ios>
-#include "headers/SeqStack.h"
+#include "headers/SeqStack.hpp"
 
 using namespace std;
 

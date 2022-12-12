@@ -9,9 +9,9 @@ template <typename T>
 class SeqStack
 {
 protected:
-    T* _Data;
-    long _Capacity;
-    long _Top;
+    T* _Data = nullptr;
+    long _Capacity = 0;
+    long _Top = -1;
     std::function<std::ostream&(std::ostream&, SeqStack<T>&)> _Printer = _DefaultPrinter;
 
     // stackfull
@@ -39,10 +39,14 @@ protected:
     }
 
 public:
-    SeqStack()
+    SeqStack(long capacity = 100)
     {
-        _Data = new T[100];
-        _Capacity = 100;
+        if (_Data != nullptr)
+        {
+            delete[] _Data;
+        }
+        _Data = new T[capacity];
+        _Capacity = capacity;
         _Top = -1;
     }
 
