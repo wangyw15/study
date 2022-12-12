@@ -73,7 +73,7 @@ struct Car
 int main()
 {
     // (1)
-    /*Car tempCar;
+    Car tempCar;
     SeqStack<Car> cars;
     cout << "the amount of data: ";
     int count = 0;
@@ -85,7 +85,7 @@ int main()
         cars.Push(tempCar);
     }
     cars.Traverse([] (Car item) { cout << item << endl; });
-    cout << endl;*/
+    cout << endl;
 
     // (2)
     SeqStack<int> stack;
