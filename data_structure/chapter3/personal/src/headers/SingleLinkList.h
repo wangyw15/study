@@ -4,6 +4,7 @@
 #include <functional>
 #include <algorithm>
 #include <ios>
+#include <string>
 
 template <typename T>
 struct Node
@@ -22,13 +23,13 @@ protected:
 
     static std::ostream& _DefaultPrinter(std::ostream& out, SingleLinkList<T>& list)
     {
-        out << "[ ";
+        out << std::string("[ ");
         Node<T>* pointer = list._head;
         while ((pointer = pointer->next) != nullptr)
         {
             out << pointer->data << (pointer->next != nullptr ? ", " : "");
         }
-        out << " ]";
+        out << std::string(" ]");
         return out;
     }
 

@@ -3,6 +3,7 @@ project (chapter5)
 
 add_executable (kmp "src/kmp.cpp")
 add_executable (matrix "src/matrix.cpp")
+add_executable (crosslist "src/crosslist.cpp")
 
 if (MSVC)
     add_compile_options ("$<$<C_COMPILER_ID:MSVC>:/utf-8 /source-charset:utf-8 /execution-charset:gbk>")
