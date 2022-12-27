@@ -21,6 +21,7 @@ int main()
     }
     cout << "matrix1" << endl << matrix1 << endl << endl;
     cout << "matrix2" << endl << matrix2 << endl << endl;
+    cout << "matrix1 + matrix2" << endl << matrix1 + matrix2 << endl << endl;
     matrix1.Transpose();
     matrix2.Transpose();
     cout << "transposed matrix1" << endl << matrix1 << endl << endl;
