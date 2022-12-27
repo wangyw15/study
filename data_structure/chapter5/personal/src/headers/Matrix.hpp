@@ -139,7 +139,7 @@ public:
         TriSparseMatrix<T> *ret = new TriSparseMatrix<T>(_Columns, _Rows);
         ret->_Count = _Count;
 
-        int count[_Columns], pos[_Columns];
+        int *count = new int[_Columns], *pos = new int[_Columns];
         for (int i = 0; i < _Columns; i++)
         {
             count[i] = pos[i] = 0;
