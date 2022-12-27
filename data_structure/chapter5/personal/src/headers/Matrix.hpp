@@ -3,12 +3,11 @@
 
 #include <algorithm>
 #include <ios>
+#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <iostream>
 
-template <typename T>
-struct Triple
+template <typename T> struct Triple
 {
     int Row, Col;
     T Value;
@@ -22,35 +21,22 @@ struct Triple
         Value = value;
     }
 
-    bool operator<(const Triple<T> &other)
-    {
-        return Value < other.Value;
-    }
+    bool operator<(const Triple<T> &other) { return Value < other.Value; }
 
-    bool operator>(const Triple<T> &other)
-    {
-        return Value > other.Value;
-    }
+    bool operator>(const Triple<T> &other) { return Value > other.Value; }
 
-    bool operator<=(const Triple<T> &other)
-    {
-        return Value <= other.Value;
-    }
+    bool operator<=(const Triple<T> &other) { return Value <= other.Value; }
 
-    bool operator>=(const Triple<T> &other)
-    {
-        return Value >= other.Value;
-    }
+    bool operator>=(const Triple<T> &other) { return Value >= other.Value; }
 };
-
 
 template <typename T> class TriSparseMatrix
 {
-protected:
+  protected:
     int _Rows, _Columns, _Count;
-    Triple<T>* _Data;
+    Triple<T> *_Data;
 
-public:
+  public:
     TriSparseMatrix(int row = 10, int column = 10)
     {
         _Rows = row;
@@ -59,16 +45,13 @@ public:
         _Data = new Triple<T>[row * column];
     }
 
-    TriSparseMatrix(const Triple<T> &other)
-    {
-        *this = other;
-    }
+    TriSparseMatrix(const Triple<T> &other) { *this = other; }
 
     TriSparseMatrix &operator=(const Triple<T> &other)
     {
         if (&other != this)
         {
-            delete [] _Data;
+            delete[] _Data;
             _Rows = other._Rows;
             _Columns = other._Columns;
             _Count = other._Count;
@@ -85,21 +68,12 @@ public:
         delete[] _Data;
         _Rows = _Columns = _Count = 0;
     }
-    
-    int Rows() const
-    {
-        return _Rows;
-    }
 
-    int Columns() const
-    {
-        return _Columns;
-    }
+    int Rows() const { return _Rows; }
 
-    int Count()
-    {
-        return _Count;
-    }
+    int Columns() const { return _Columns; }
+
+    int Count() { return _Count; }
 
     void Set(int row, int column, T value)
     {
@@ -115,7 +89,8 @@ public:
                 _Data[i].Value = value;
                 return;
             }
-            if (row * _Columns + column < _Data[i].Row * _Columns + _Data[i].Col)
+            if (row * _Columns + column <
+                _Data[i].Row * _Columns + _Data[i].Col)
             {
                 break;
             }
@@ -161,7 +136,7 @@ public:
         }
         *this = *ret;
     }
-    
+
     TriSparseMatrix<T> &operator+(const TriSparseMatrix<T> &other)
     {
         if (_Rows == other._Rows && _Columns == other._Columns)
@@ -175,11 +150,14 @@ public:
                 {
                     T here = 0;
                     T there = 0;
-                    if (iHere < _Count && _Data[iHere].Row == row && _Data[iHere].Col == col)
+                    if (iHere < _Count && _Data[iHere].Row == row &&
+                        _Data[iHere].Col == col)
                     {
                         here = _Data[iHere++].Value;
                     }
-                    if (iThere < other._Count && other._Data[iThere].Row == row && other._Data[iThere].Col == col)
+                    if (iThere < other._Count &&
+                        other._Data[iThere].Row == row &&
+                        other._Data[iThere].Col == col)
                     {
                         there = other._Data[iThere++].Value;
                     }
@@ -194,7 +172,7 @@ public:
         }
     }
 
-    friend std::ostream& operator<< (std::ostream& out, TriSparseMatrix<T>& mat)
+    friend std::ostream &operator<<(std::ostream &out, TriSparseMatrix<T> &mat)
     {
         out << std::string("----------") << std::endl;
         int i = 0;
@@ -203,7 +181,8 @@ public:
         {
             for (auto col = 0; col < mat._Columns; col++)
             {
-                if (i < mat._Count && mat._Data[i].Row == row && mat._Data[i].Col == col)
+                if (i < mat._Count && mat._Data[i].Row == row &&
+                    mat._Data[i].Col == col)
                 {
                     out << mat._Data[i++].Value << " ";
                 }
