@@ -181,8 +181,8 @@ template <typename T> class CrossList
 
     void Transpose()
     {
-        // (CrossNode<T> *)*nodes = new (CrossNode<T> *)[_Rows * _Columns];
-        CrossNode<T> *row = _Start, *col = nullptr, *rtmp = nullptr, *ctmp = nullptr;
+        CrossNode<T> *row = _Start, *col = nullptr, *rtmp = nullptr,
+                     *ctmp = nullptr;
         int ntmp = 0;
         while (row != nullptr)
         {
@@ -204,31 +204,6 @@ template <typename T> class CrossList
             }
             row = rtmp;
         }
-        /*
-        // horizontal
-        CrossNode<T> *pointer = _Start->Right, *tmp= nullptr;
-        while (pointer != nullptr)
-        {
-            tmp = pointer->Right;
-            pointer->Right = pointer->Down;
-            pointer->Down = tmp;
-            pointer = tmp;
-        }
-
-        // vertical
-        pointer = _Start->Down, tmp = nullptr;
-        while (pointer != nullptr)
-        {
-            tmp = pointer->Down;
-            pointer->Down = pointer->Right;
-            pointer->Right = tmp;
-            pointer = tmp;
-        }
-
-        // exchange _Start
-        tmp = _Start->Right;
-        _Start->Right = _Start->Down;
-        _Start->Down = tmp;*/
 
         // exchange _Rows and _Columns
         ntmp = _Rows;
