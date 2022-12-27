@@ -20,5 +20,10 @@ int main()
         matrix2.Set(row, 0, (row * shape + 0) * (row * shape + 0));
     }
     cout << "matrix1" << endl << matrix1 << endl << endl;
+    cout << "matrix2" << endl << matrix2 << endl << endl;
+    matrix1.Transpose();
+    matrix2.Transpose();
+    cout << "transposed matrix1" << endl << matrix1 << endl << endl;
+    cout << "transposed matrix2" << endl << matrix2 << endl << endl;
     return 0;
 }
