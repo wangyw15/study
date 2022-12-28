@@ -113,6 +113,7 @@ template <typename T> class CrossList
                 Set(otherCol->Row, otherCol->Column, otherCol->Data);
             }
         }
+        return *this;
     }
 
     virtual ~CrossList()
