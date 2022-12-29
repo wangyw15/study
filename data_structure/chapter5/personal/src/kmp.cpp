@@ -61,6 +61,6 @@ int KMPFind(const string &str, const string &pat, int p = 0)
 
 int main()
 {
-    cout << KMPFind("aaabdsxd", "abd") << endl;
+    cout << KMPFind("aaabdasxd", "abda") << endl;
     return 0;
 }
