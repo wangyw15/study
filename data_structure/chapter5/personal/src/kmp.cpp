@@ -36,7 +36,7 @@ int KMPFind(const string &str, const string &pat, int p = 0)
     int *f= new int[pat.length()];
     GetFailure(pat, f);
     int i = p, j = 0;
-    while (i < str.length() && j < pat.length() && pat.length() - j <= str.length() - i)
+    while (i < str.length() && j < (long)pat.length() && pat.length() - j <= str.length() - i)
     {
         if (j == -1 || pat[j] == str[i])
         {
