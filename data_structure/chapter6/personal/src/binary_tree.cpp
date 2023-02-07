@@ -48,5 +48,9 @@ int main()
     tree.NonRecurringInOrderTraverse(printer);
     cout << endl;
 
+    cout << "   comparison: ";
+    tree.InOrderTraverse(printer, tree.Root());
+    cout << endl;
+
     return 0;
 }
