@@ -21,26 +21,32 @@ int main()
 
     cout << tree << endl;
 
-    cout << " pre order: ";
-    tree.PreOrderTraverse([](char i) { cout << i << " "; }, tree.Root());
+    auto printer = [](char i) { cout << i << " "; };
+
+    cout << "    pre order: ";
+    tree.PreOrderTraverse(printer, tree.Root());
     cout << endl;
 
-    cout << "  in order: ";
-    tree.InOrderTraverse([](char i) { cout << i << " "; }, tree.Root());
+    cout << "     in order: ";
+    tree.InOrderTraverse(printer, tree.Root());
     cout << endl;
 
-    cout << "post order: ";
-    tree.PostOrderTraverse([](char i) { cout << i << " "; }, tree.Root());
+    cout << "   post order: ";
+    tree.PostOrderTraverse(printer, tree.Root());
     cout << endl;
 
-    cout << "leaf count: " << tree.Count() << endl;
+    cout << "   leaf count: " << tree.Count() << endl;
 
-    cout << " revoluted: ";
+    cout << "    revoluted: ";
     tree.Revolut();
-    tree.PreOrderTraverse([](char i) { cout << i << " "; }, tree.Root());
+    tree.PreOrderTraverse(printer, tree.Root());
     cout << endl;
 
-    cout << "     width: " << tree.Width() << endl;
+    cout << "        width: " << tree.Width() << endl;
+
+    cout << "non recurring: ";
+    tree.NonRecurringInOrderTraverse(printer);
+    cout << endl;
 
     return 0;
 }

@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
+#include <stack>
 
 template <typename T> struct Node
 {
@@ -136,12 +137,9 @@ template <typename T> class BinaryTree
     {
         if (node != nullptr)
         {
-            if (node->LeftChild != nullptr && node->RightChild != nullptr)
-            {
-                NodePtr tmp = node->LeftChild;
-                node->LeftChild = node->RightChild;
-                node->RightChild = tmp;
-            }
+            NodePtr tmp = node->LeftChild;
+            node->LeftChild = node->RightChild;
+            node->RightChild = tmp;
             RecureForRevolut(node->LeftChild);
             RecureForRevolut(node->RightChild);
         }
@@ -179,6 +177,27 @@ template <typename T> class BinaryTree
             RecureForWidth(node->LeftChild, depth, width);
             RecureForWidth(node->RightChild, depth, width);
             depth--;
+        }
+    }
+
+    void NonRecurringInOrderTraverse(std::function<void(const T &)> func)
+    {
+        std::stack<NodePtr> s;
+        NodePtr ptr = _Root;
+        while (!s.empty() || ptr != nullptr)
+        {
+            if (ptr != nullptr)
+            {
+                s.push(ptr);
+                ptr = ptr->LeftChild;
+            }
+            else
+            {
+                ptr = s.top();
+                s.pop();
+                func(ptr->Data);
+                ptr = ptr->RightChild;
+            }
         }
     }
 
