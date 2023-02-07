@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
+#include <vector>
 
 template <typename T> struct Node
 {
@@ -15,7 +16,7 @@ template <typename T> struct Node
     std::shared_ptr<Node<T>> LeftChild;
     std::shared_ptr<Node<T>> RightChild;
 
-    Node<T>() { LeftChild = RightChild = shared_ptr<Node<T>>(nullptr); }
+    Node<T>() { LeftChild = RightChild = std::shared_ptr<Node<T>>(nullptr); }
 };
 
 template <typename T> class BinaryTree
@@ -144,6 +145,41 @@ template <typename T> class BinaryTree
             }
             RecureForRevolut(node->LeftChild);
             RecureForRevolut(node->RightChild);
+        }
+    }
+
+    int Width() const
+    {
+        std::shared_ptr<int[]> width(new int[_Count]{0});
+        for (size_t i = 0; i < _Count; i++)
+        {
+            width[i] = 0;
+        }
+        
+        int depth = 0;
+        RecureForWidth(_Root, depth, width);
+        
+        int max = 0;
+        for (size_t i = 0; i < _Count; i++)
+        {
+            if (width[i] > max)
+            {
+                max = width[i];
+            }
+        }
+        return max;
+    }
+
+    void RecureForWidth(const NodePtr node, int &depth,
+                        std::shared_ptr<int[]> &width) const
+    {
+        if (node != nullptr)
+        {
+            width[depth] += 1;
+            depth++;
+            RecureForWidth(node->LeftChild, depth, width);
+            RecureForWidth(node->RightChild, depth, width);
+            depth--;
         }
     }
 

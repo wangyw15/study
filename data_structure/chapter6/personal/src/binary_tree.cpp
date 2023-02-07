@@ -40,5 +40,7 @@ int main()
     tree.PreOrderTraverse([](char i) { cout << i << " "; }, tree.Root());
     cout << endl;
 
+    cout << "     width: " << tree.Width() << endl;
+
     return 0;
 }
