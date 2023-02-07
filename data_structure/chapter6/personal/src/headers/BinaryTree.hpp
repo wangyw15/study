@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
-#include <vector>
 
 template <typename T> struct Node
 {
@@ -139,9 +138,9 @@ template <typename T> class BinaryTree
         {
             if (node->LeftChild != nullptr && node->RightChild != nullptr)
             {
-                T tmp = node->LeftChild->Data;
-                node->LeftChild->Data = node->RightChild->Data;
-                node->RightChild->Data = tmp;
+                NodePtr tmp = node->LeftChild;
+                node->LeftChild = node->RightChild;
+                node->RightChild = tmp;
             }
             RecureForRevolut(node->LeftChild);
             RecureForRevolut(node->RightChild);
@@ -186,6 +185,7 @@ template <typename T> class BinaryTree
     friend std::ostream &operator<<(std::ostream &out,
                                     const BinaryTree<T> &tree)
     {
+        // in order
         std::queue<NodePtr> q;
         NodePtr pointer;
         if (tree._Root != nullptr)
