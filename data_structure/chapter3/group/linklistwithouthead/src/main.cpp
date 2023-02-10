@@ -61,7 +61,7 @@ ostream& StudentPrinter(ostream& out, SingleLinkListWithoutHead<Student>& list)
 
 int main()
 {
-    int arr1[6] = { 1, 5, 7, 6, 2, 3 };
+    /* int arr1[6] = {1, 5, 7, 6, 2, 3};
     int arr2[3] = { 0, 4, 8 };
     SingleLinkListWithoutHead<int> list1(arr1, 6);
     list1.Insert(3, 10);
@@ -71,23 +71,10 @@ int main()
     list1.Clear();
     list2.Reverse();
     cout << list2 << endl;
-    return 0;
+    return 0;*/
 
     int option = 1;
-
-    // (1) student
-    cout << "请输入数据个数: ";
-    cin >> option;
-    cout << "请输入数据(学号 姓名 性别 班级 电话): ";
-    Student studentTempArray[1000];
-    for (auto i = 0; i < option; i++)
-    {
-        cin >> studentTempArray[i];
-    }
-    SingleLinkListWithoutHead<Student> studentList(studentTempArray, option);
-    studentList.SetPrintMethod(StudentPrinter);
-    cout << studentList << endl << endl;
-
+    
     // construct
     cout << "请输入数据个数: ";
     cin >> option;
