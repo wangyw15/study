@@ -21,11 +21,12 @@ template <typename T> struct Node
 
 template <typename T> class BinaryTree
 {
-    typedef std::shared_ptr<Node<T>> NodePtr;
+    using NodePtr = std::shared_ptr<Node<T>>;
 
   private:
     NodePtr _Root;
     size_t _Count;
+    const int PRINT_WIDTH = 5;
 
     NodePtr _GetChild(std::string path = "") const
     {
@@ -62,6 +63,31 @@ template <typename T> class BinaryTree
             }
         }
         return pointer;
+    }
+
+    void _Display(std::ostream &out, const NodePtr &ptr, int depth = 0) const
+    {
+        if (ptr != nullptr)
+        {
+            _Display(out, ptr->RightChild, depth + 1);
+            for (int i = 0; i < depth; i++)
+            {
+                out << "  ";
+            }
+            out << ptr->Data << endl;
+            _Display(out, ptr->LeftChild, depth + 1);
+        }
+    }
+
+    int _CalculateDepth(const NodePtr &ptr) const
+    {
+        if (ptr == nullptr)
+        {
+            return 0;
+        }
+        int leftDepth = _CalculateDepth(ptr->LeftChild);
+        int rightDepth = _CalculateDepth(ptr->RightChild);
+        return leftDepth > rightDepth ? leftDepth + 1 : rightDepth + 1;
     }
 
   public:
@@ -201,30 +227,12 @@ template <typename T> class BinaryTree
         }
     }
 
+    int Depth() const { return _CalculateDepth(_Root); }
+
     friend std::ostream &operator<<(std::ostream &out,
                                     const BinaryTree<T> &tree)
     {
-        // in order
-        std::queue<NodePtr> q;
-        NodePtr pointer;
-        if (tree._Root != nullptr)
-        {
-            q.push(tree._Root);
-            while (!q.empty())
-            {
-                pointer = q.front();
-                q.pop();
-                out << pointer->Data << " ";
-                if (pointer->LeftChild != nullptr)
-                {
-                    q.push(pointer->LeftChild);
-                }
-                if (pointer->RightChild != nullptr)
-                {
-                    q.push(pointer->RightChild);
-                }
-            }
-        }
+        tree._Display(out, tree._Root);
         return out;
     }
 
