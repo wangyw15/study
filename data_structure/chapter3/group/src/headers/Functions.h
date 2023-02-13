@@ -1,16 +1,16 @@
 #ifndef FUNCTIONS
 #define FUNCTIONS
 
-#include "SeqList.hpp"
+#include "SeqList.h"
 #include <iostream>
 using namespace std;
 
 class Functions
 {
   private:
-    SeqList<double> ce; // 绯绘暟
-    SeqList<int> id;    // 鎸囨暟
-    int nums;           // 椤规暟
+    SeqList<double> ce; // 系数
+    SeqList<int> id;    // 指数
+    int nums;           // 项数
   public:
     Functions() : nums(0){};
     Functions(SeqList<int> id, SeqList<double> ce);

@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "headers/Functions.h"
+#include "headers/SeqList.h"
+#include <iostream>
 
 using namespace std;
 
@@ -42,6 +42,8 @@ int main()
         case 3:
             Subtraction(f, f2);
             break;
+        case 0:
+            return 0;
         }
     }
 }

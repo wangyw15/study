@@ -1,33 +1,33 @@
-#include "headers/Functions.h"
+#include "Functions.h"
 #include <cmath>
 
 Functions::Functions(SeqList<int> iid, SeqList<double> ice)
 {
-    this->id = iid; // æŒ‡æ•°
-    this->ce = ice; // ç³»æ•°
-    this->nums = iid.Length();
+    this->id = iid; // Ö¸Êý
+    this->ce = ice; // ÏµÊý
+    this->nums = iid.GetLength();
 }
 
 Functions::Functions(SeqList<int> iid, SeqList<double> ice, int num)
 {
-    this->id = iid; // æŒ‡æ•°
-    this->ce = ice; // ç³»æ•°
+    this->id = iid; // Ö¸Êý
+    this->ce = ice; // ÏµÊý
     this->nums = num;
 }
 
 istream &operator>>(istream &in, Functions &f)
 {
-    cout << "è¯·è¾“å…¥å¤šé¡¹å¼çš„é¡¹æ•°" << endl;
+    cout << "ÇëÊäÈë¶àÏîÊ½µÄÏîÊý" << endl;
     int num = 0;
     in >> num;
-    cout << "è¯·è¾“å…¥å¤šé¡¹å¼çš„ç³»æ•°ï¼ˆä»Žå¤§åˆ°å°ï¼‰" << endl;
+    cout << "ÇëÊäÈë¶àÏîÊ½µÄÏµÊý£¨´Ó´óµ½Ð¡£©" << endl;
     int arr[100];
     double b[100];
     for (int i = 0; i <= num - 1; i++)
     {
         in >> b[i];
     }
-    cout << "è¯·è¾“å…¥å¤šé¡¹å¼çš„æ¬¡æ•°ï¼ˆä»Žå¤§åˆ°å°ï¼‰" << endl;
+    cout << "ÇëÊäÈë¶àÏîÊ½µÄ´ÎÊý£¨´Ó´óµ½Ð¡£©" << endl;
     for (int i = 0; i <= num - 1; i++)
     {
         in >> arr[i];
@@ -42,7 +42,7 @@ ostream &operator<<(ostream &out, Functions &f)
 {
     for (int i = 0; i < f.nums; i++)
     {
-        out << f.ce[i] << "x^" << f.id[i];
+        out << f.ce.GetElems()[i] << "x^" << f.id.GetElems()[i];
         if (i != f.nums - 1)
             out << " + ";
     }
@@ -55,7 +55,7 @@ void Functions::Derivation()
     cout << "P'(x) = ";
     for (int i = 0; i < this->nums; i++)
     {
-        if (this->id[i] == 0)
+        if (this->id.GetElems()[i] == 0)
         {
             cout << 0;
 
@@ -63,7 +63,8 @@ void Functions::Derivation()
                 cout << " + ";
             continue;
         }
-        cout << (this->ce[i]) * (this->id[i]) << "x^" << (this->id[i]) - 1;
+        cout << (this->ce.GetElems()[i]) * (this->id.GetElems()[i]) << "x^"
+             << (this->id.GetElems()[i]) - 1;
         if (i != this->nums - 1)
             cout << " + ";
     }
@@ -72,14 +73,14 @@ void Functions::Derivation()
 
 void Functions::Evaluation()
 {
-    cout << "è¾“å…¥xçš„å€¼:";
+    cout << "ÊäÈëxµÄÖµ:";
     double x;
     cin >> x;
     double temp = 0;
     cout << "P(x) = ";
     for (int i = 0; i < this->nums; i++)
     {
-        temp += (this->ce[i]) * pow(x, (this->id[i]));
+        temp += (this->ce.GetElems()[i]) * pow(x, (this->id.GetElems()[i]));
     }
     cout << temp << endl;
     cout << endl;
@@ -91,12 +92,12 @@ void Subtraction(Functions &f1, Functions &f2)
     cout << "P(x)-Q(x) = ";
     while (i < f1.nums && j < f2.nums)
     {
-        if (f1.id[i] == f2.id[j])
+        if (f1.id.GetElems()[i] == f2.id.GetElems()[j])
         {
             cout << "(";
-            cout << f1.ce[i] - f2.ce[j];
+            cout << f1.ce.GetElems()[i] - f2.ce.GetElems()[j];
             cout << "x^";
-            cout << f1.id[i];
+            cout << f1.id.GetElems()[i];
             cout << ")";
 
             i++;
@@ -106,12 +107,12 @@ void Subtraction(Functions &f1, Functions &f2)
                 cout << " + ";
         }
 
-        else if (f1.id[i] > f2.id[j])
+        else if (f1.id.GetElems()[i] > f2.id.GetElems()[j])
         {
             cout << "(";
-            cout << f1.ce[i];
+            cout << f1.ce.GetElems()[i];
             cout << "x^";
-            cout << f1.id[i];
+            cout << f1.id.GetElems()[i];
             cout << ")";
 
             i++;
@@ -119,12 +120,12 @@ void Subtraction(Functions &f1, Functions &f2)
                 cout << " + ";
         }
 
-        else if (f1.id[i] < f2.id[j])
+        else if (f1.id.GetElems()[i] < f2.id.GetElems()[j])
         {
             cout << "(";
-            cout << -f2.ce[j];
+            cout << -f2.ce.GetElems()[j];
             cout << "x^";
-            cout << f2.id[j];
+            cout << f2.id.GetElems()[j];
             cout << ")";
 
             j++;
@@ -136,9 +137,9 @@ void Subtraction(Functions &f1, Functions &f2)
     while (i < f1.nums)
     {
         cout << "(";
-        cout << f1.ce[i];
+        cout << f1.ce.GetElems()[i];
         cout << "x^";
-        cout << f1.id[i];
+        cout << f1.id.GetElems()[i];
         cout << ")";
 
         i++;
@@ -150,9 +151,9 @@ void Subtraction(Functions &f1, Functions &f2)
     while (j < f2.nums)
     {
         cout << "(";
-        cout << -f2.ce[j];
+        cout << -f2.ce.GetElems()[j];
         cout << "x^";
-        cout << f2.id[j];
+        cout << f2.id.GetElems()[j];
         cout << ")";
 
         j++;

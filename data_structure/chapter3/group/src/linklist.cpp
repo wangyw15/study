@@ -1,6 +1,6 @@
+#include "headers/SingleLinkList.h"
 #include <iostream>
 #include <string>
-#include "SingleLinkList.h"
 
 using namespace std;
 
@@ -12,38 +12,30 @@ struct Student
     string Class;
     long Phone;
 
-    bool operator<(const Student& other)
-    {
-        return ID < other.ID;
-    }
+    bool operator<(const Student &other) { return ID < other.ID; }
 
-    bool operator>(const Student& other)
-    {
-        return ID > other.ID;
-    }
+    bool operator>(const Student &other) { return ID > other.ID; }
 
-    bool operator==(const Student& other)
-    {
-        return ID == other.ID;
-    }
+    bool operator==(const Student &other) { return ID == other.ID; }
 
-    friend ostream& operator<<(ostream& out, Student& stu)
+    friend ostream &operator<<(ostream &out, Student &stu)
     {
-        out << stu.ID << " " << stu.Name << " " << stu.Sex << " " << stu.Class << " " << stu.Phone;
+        out << stu.ID << " " << stu.Name << " " << stu.Sex << " " << stu.Class
+            << " " << stu.Phone;
         return out;
     }
 
-    friend istream& operator>>(istream& in, Student& stu)
+    friend istream &operator>>(istream &in, Student &stu)
     {
         in >> stu.ID >> stu.Name >> stu.Sex >> stu.Class >> stu.Phone;
         return in;
     }
 };
 
-ostream& StudentPrinter(ostream& out, SingleLinkListWithoutHead<Student>& list)
+ostream &StudentPrinter(ostream &out, SingleLinkListWithoutHead<Student> &list)
 {
-    out << "å­¦å· å§“å æ€§åˆ« ç­çº§ ç”µè¯" << endl;
-    Node<Student>* pointer = list.Head();
+    out << "Ñ§ºÅ ÐÕÃû ÐÔ±ð °à¼¶ µç»°" << endl;
+    Node<Student> *pointer = list.Head();
     if (list.Length() == 1)
     {
         out << pointer->data;
@@ -74,11 +66,11 @@ int main()
     return 0;*/
 
     int option = 1;
-    
+
     // construct
-    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
+    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
     cin >> option;
-    cout << "è¯·è¾“å…¥æ•°æ®: ";
+    cout << "ÇëÊäÈëÊý¾Ý: ";
     double tempArray[1000];
     for (auto i = 0; i < option; i++)
     {
@@ -88,30 +80,30 @@ int main()
     cout << endl << endl;
 
     // (2)
-    cout << "è¯·è¾“å…¥è¦æ’å…¥çš„æ•°æ®: ";
+    cout << "ÇëÊäÈëÒª²åÈëµÄÊý¾Ý: ";
     double item = 0;
     cin >> item;
     list.InsertByOrder(item);
-    cout << "å½“å‰å•é“¾è¡¨çš„æ•°æ®: " << endl;
+    cout << "µ±Ç°µ¥Á´±íµÄÊý¾Ý: " << endl;
     cout << list << endl << endl;
 
     // (3)
-    cout << "åŽŸæ•°æ®ï¼š" << list << endl;
+    cout << "Ô­Êý¾Ý£º" << list << endl;
     list.Reverse();
-    cout << "reversalåŽï¼š" << list << endl << endl;
+    cout << "reversalºó£º" << list << endl << endl;
 
     // (4)
-    cout << "æž„é€ éœ€è¦åˆå¹¶çš„åˆ—è¡¨" << endl;
-    cout << "è¯·è¾“å…¥æ•°æ®ä¸ªæ•°: ";
+    cout << "¹¹ÔìÐèÒªºÏ²¢µÄÁÐ±í" << endl;
+    cout << "ÇëÊäÈëÊý¾Ý¸öÊý: ";
     cin >> option;
-    cout << "è¯·è¾“å…¥æ•°æ®: ";
+    cout << "ÇëÊäÈëÊý¾Ý: ";
     for (auto i = 0; i < option; i++)
     {
         cin >> tempArray[i];
     }
     SingleLinkListWithoutHead<double> merge(tempArray, option);
     list.MergeByOrder(merge);
-    cout << "å½“å‰é¡ºåºè¡¨çš„æ•°æ®: " << endl;
+    cout << "µ±Ç°Ë³Ðò±íµÄÊý¾Ý: " << endl;
     cout << list << endl << endl;
 
     return 0;
