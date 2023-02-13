@@ -1,18 +1,18 @@
 #ifndef MINHEAP
 #define MINHEAP
 
-#include <vector>
-#include <memory>
 #include <ios>
+#include <memory>
+#include <vector>
 
-template <typename T> class MinHeap
+template <typename T, bool max = false> class MinHeap
 {
   private:
     std::vector<T> _Data;
 
   public:
     MinHeap() {}
-    
+
     MinHeap(std::shared_ptr<T[]> data, size_t n)
     {
         for (size_t i = 0; i < n; i++)
@@ -53,7 +53,7 @@ template <typename T> class MinHeap
         i = (j - 1) / 2;
         while (j > 0)
         {
-            if (_Data[i] < tmp)
+            if (!max && _Data[i] <= tmp || max && _Data[i] >= tmp)
             {
                 break;
             }
@@ -70,16 +70,12 @@ template <typename T> class MinHeap
     void Insert(T &data)
     {
         _Data.push_back(data);
-        // _Data[_Data.size()] = data;
         FilterUp(_Data.size() - 1);
     }
 
-    size_t Size() const
-    {
-        return _Data.size();
-    }
+    size_t Size() const { return _Data.size(); }
 
-    friend std::ostream &operator<<(std::ostream &out, const MinHeap<T> &heap)
+    friend std::ostream &operator<<(std::ostream &out, const MinHeap<T, max> &heap)
     {
         for (auto i = heap._Data.begin(); i != heap._Data.end(); i++)
         {
