@@ -21,7 +21,7 @@ int main()
 
     cout << tree << endl;
 
-    auto printer = [](char i) { cout << i << " "; };
+    std::function<void(char)> printer = [](char i) { cout << i << " "; };
 
     cout << "    pre order: ";
     tree.PreOrderTraverse(printer, tree.Root());
@@ -35,7 +35,7 @@ int main()
     tree.PostOrderTraverse(printer, tree.Root());
     cout << endl;
 
-    cout << "   leaf count: " << tree.Count() << endl;
+    cout << "   leaf count: " << tree.LeafCount() << endl;
 
     cout << "    revoluted: ";
     tree.Revolut();

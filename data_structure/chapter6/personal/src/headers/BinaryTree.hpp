@@ -3,12 +3,12 @@
 
 #include <functional>
 #include <ios>
+#include <iostream>
 #include <memory>
 #include <queue>
+#include <stack>
 #include <stdexcept>
 #include <string>
-#include <iostream>
-#include <stack>
 
 template <typename T> struct Node
 {
@@ -90,6 +90,31 @@ template <typename T> class BinaryTree
         return leftDepth > rightDepth ? leftDepth + 1 : rightDepth + 1;
     }
 
+    void _RecureForRevolut(const NodePtr node)
+    {
+        if (node != nullptr)
+        {
+            NodePtr tmp = node->LeftChild;
+            node->LeftChild = node->RightChild;
+            node->RightChild = tmp;
+            _RecureForRevolut(node->LeftChild);
+            _RecureForRevolut(node->RightChild);
+        }
+    }
+
+    void _CountLeaves(size_t &count, const NodePtr node) const
+    {
+        if (node != nullptr)
+        {
+            if (node->LeftChild == nullptr && node->RightChild == nullptr)
+            {
+                count++;
+            }
+            _CountLeaves(count, node->LeftChild);
+            _CountLeaves(count, node->RightChild);
+        }
+    }
+
   public:
     BinaryTree()
     {
@@ -157,19 +182,7 @@ template <typename T> class BinaryTree
         }
     }
 
-    void Revolut() { RecureForRevolut(_Root); }
-
-    void RecureForRevolut(const NodePtr node)
-    {
-        if (node != nullptr)
-        {
-            NodePtr tmp = node->LeftChild;
-            node->LeftChild = node->RightChild;
-            node->RightChild = tmp;
-            RecureForRevolut(node->LeftChild);
-            RecureForRevolut(node->RightChild);
-        }
-    }
+    void Revolut() { _RecureForRevolut(_Root); }
 
     int Width() const
     {
@@ -178,10 +191,10 @@ template <typename T> class BinaryTree
         {
             width[i] = 0;
         }
-        
+
         int depth = 0;
         RecureForWidth(_Root, depth, width);
-        
+
         int max = 0;
         for (size_t i = 0; i < _Count; i++)
         {
@@ -270,6 +283,13 @@ template <typename T> class BinaryTree
             throw std::invalid_argument("Invalid side.");
         }
         _Count++;
+    }
+
+    size_t LeafCount() const
+    {
+        size_t count = 0;
+        _CountLeaves(count, _Root);
+        return count;
     }
 
     void SetChild(std::string path, T data) { _GetChild(path)->Data = data; }
