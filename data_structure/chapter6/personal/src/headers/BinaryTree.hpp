@@ -74,7 +74,7 @@ template <typename T> class BinaryTree
             {
                 out << "  ";
             }
-            out << ptr->Data << endl;
+            out << ptr->Data << std::endl;
             _Display(out, ptr->LeftChild, depth + 1);
         }
     }
