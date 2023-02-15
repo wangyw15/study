@@ -157,8 +157,7 @@ template <typename T> class BinaryTree
         }
     }
 
-    void NonRecurringInOrderTraverse(std::function<void(const T &)> func,
-                                     const NodePtr node) const
+    void LevelOrderTraverse(std::function<void(const T &)> func) const
     {
         std::queue<NodePtr> q;
         NodePtr pointer;
