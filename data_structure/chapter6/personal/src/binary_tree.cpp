@@ -42,6 +42,8 @@ int main()
     tree.PreOrderTraverse(printer, tree.Root());
     cout << endl;
 
+    cout << tree;
+
     cout << "        width: " << tree.Width() << endl;
 
     cout << "non recurring: ";
