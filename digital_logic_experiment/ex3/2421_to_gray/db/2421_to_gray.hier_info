@@ -1,0 +1,31 @@
+|2421_to_gray
+W <= inst10.DB_MAX_OUTPUT_PORT_TYPE
+A => inst10.IN0
+A => inst14.IN0
+A => inst12.IN0
+A => inst.IN0
+A => inst22.IN0
+A => inst20.IN0
+B => inst10.IN1
+B => inst13.IN0
+B => inst12.IN1
+B => inst4.IN0
+B => inst16.IN1
+B => inst20.IN1
+C => inst10.IN2
+C => inst5.IN0
+C => inst14.IN1
+C => inst17.IN2
+C => inst18.IN1
+C => inst24.IN0
+C => inst22.IN1
+X <= inst11.DB_MAX_OUTPUT_PORT_TYPE
+D => inst6.IN0
+D => inst14.IN2
+D => inst18.IN2
+D => inst24.IN1
+D => inst22.IN2
+Y <= inst15.DB_MAX_OUTPUT_PORT_TYPE
+Z <= inst19.DB_MAX_OUTPUT_PORT_TYPE
+
+

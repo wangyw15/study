@@ -1,0 +1,11 @@
+Fitter Status : Successful - Wed Nov 02 19:35:23 2011
+Quartus II Version : 6.0 Build 202 06/20/2006 SP 1 SJ Full Version
+Revision Name : d_jk
+Top-level Entity Name : d_jk
+Family : ACEX1K
+Device : EP1K30TC144-3
+Timing Models : Final
+Total logic elements : 1 / 1,728 ( < 1 % )
+Total pins : 4 / 102 ( 4 % )
+Total memory bits : 0 / 24,576 ( 0 % )
+Total PLLs : 0
