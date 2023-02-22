@@ -65,47 +65,4 @@ int main()
     s1.Lower();
     cout << s1 << endl;
     return 0;
-
-    int option = 1;
-
-    // construct
-    cout << "请输入数据个数: ";
-    cin >> option;
-    cout << "请输入数据: ";
-    double tempArray[1000];
-    for (auto i = 0; i < option; i++)
-    {
-        cin >> tempArray[i];
-    }
-    SingleLinkList<double> list(tempArray, option);
-    cout << endl << endl;
-
-    // (2)
-    cout << "请输入要插入的数据: ";
-    double item = 0;
-    cin >> item;
-    list.InsertByOrder(item);
-    cout << "当前串的数据: " << endl;
-    cout << list << endl << endl;
-
-    // (3)
-    cout << "原数据：" << list << endl;
-    list.Reverse();
-    cout << "reversal后：" << list << endl << endl;
-
-    // (4)
-    cout << "构造需要合并的列表" << endl;
-    cout << "请输入数据个数: ";
-    cin >> option;
-    cout << "请输入数据: ";
-    for (auto i = 0; i < option; i++)
-    {
-        cin >> tempArray[i];
-    }
-    SingleLinkList<double> merge(tempArray, option);
-    list.MergeByOrder(merge);
-    cout << "当前顺序表的数据: " << endl;
-    cout << list << endl << endl;
-
-    return 0;
 }
