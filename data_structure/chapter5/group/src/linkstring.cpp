@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "headers/SingleLinkList.hpp"
+#include "SingleLinkList.hpp"
 
 using namespace std;
 
@@ -57,7 +57,7 @@ public:
 
 int main()
 {
-    LinkString s1("Hello"), s2("World");
+    LinkString s1("Hello World"), s2(" from c++");
     s1.StrConcat(s2);
     cout << s1 << endl;
     s1.Upper();
