@@ -4,17 +4,17 @@
 
 # 目录结构
 
-- advanced_language_programming
+- [advanced_language_programming](advanced_language_programming)
   - 高级语言程序设计
-- computer_composition
+- [computer_composition](computer_composition)
   - 计算机组成原理
-- computer_programming_training
+- [computer_programming_training](computer_programming_training)
   - 计算机编程实训
-- data_structure
+- [data_structure](data_structure)
   - 数据结构
-- digital_logic_experiment
+- [digital_logic_experiment](digital_logic_experiment)
   - 数字逻辑实验
-- oop_course
+- [oop_course](oop_course)
   - 面向对象程序设计
 
 # 课本
