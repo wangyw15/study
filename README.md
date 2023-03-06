@@ -15,7 +15,7 @@
 - digital_logic_experiment
   - 数字逻辑实验
 - oop_course
-  - 面向对象编程
+  - 面向对象程序设计
 
 # 课本
 
