@@ -1,0 +1,20 @@
+# 2021高级语言程序设计-作业四
+
+- [A](src/A.cpp)
+  - 排名次
+- [B](src/B.cpp)
+  - 折半查找
+- [C](src/C.cpp)
+  - 根据日期计算天数
+- [D](src/D.cpp)
+  - 杨辉三角
+- [E](src/E.cpp)
+  - 计算组合数
+- [F](src/F.cpp)
+  - 打印奇数阶幻方
+- [G](src/G.cpp)
+  - 打印回形方阵
+- [H](src/H.cpp)
+  - 约瑟夫（Josephus）问题
+- [I](src/I.cpp)
+  - 矩阵处理

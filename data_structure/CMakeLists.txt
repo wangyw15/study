@@ -1,10 +1,13 @@
 cmake_minimum_required (VERSION 3.10)
-project (data_structure)
 
-add_subdirectory ("chapter3")
-add_subdirectory ("chapter4")
-add_subdirectory ("chapter5")
-add_subdirectory ("chapter6")
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+project (${PNAME})
+
+file (GLOB DIRS "chapter*")
+foreach (DIR ${DIRS})
+    add_subdirectory (${DIR})
+endforeach()
+
 add_subdirectory ("seminar1")
 
 if (MSVC)
