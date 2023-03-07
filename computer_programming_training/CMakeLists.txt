@@ -1,5 +1,11 @@
 cmake_minimum_required (VERSION 3.10)
-project ("computer_programming_training")
+
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+if (PARENT_PROJECT_NAME)
+    set (PNAME "${PARENT_PROJECT_NAME}_${PNAME}")
+endif ()
+project (${PNAME})
+set (PARENT_PROJECT_NAME ${PROJECT_NAME})
 
 file (GLOB DIRS "*")
 foreach (DIR ${DIRS})

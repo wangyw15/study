@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
 
 project ("2021CS")
+set (PARENT_PROJECT_NAME ${PROJECT_NAME})
 
 file (GLOB DIRS "*")
 foreach (DIR ${DIRS})

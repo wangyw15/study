@@ -1,5 +1,10 @@
 cmake_minimum_required (VERSION 3.10)
-project (sort)
+
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+if (PARENT_PROJECT_NAME)
+    set (PNAME "${PARENT_PROJECT_NAME}_${PNAME}")
+endif ()
+project (${PNAME})
 
 if (WIN32 AND NOT MSVC)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack=268435456 -static")
@@ -11,14 +16,14 @@ if (WIN32 AND MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:gbk")
 endif (WIN32 AND MSVC)
 
-aux_source_directory (src/sort LIB_SORT_SRC)
+aux_source_directory ("src/sort" LIB_SORT_SRC)
 add_library (libsortshow ${LIB_SORT_SRC})
 
-aux_source_directory (src/rand LIB_RAND_SRC)
+aux_source_directory ("src/rand" LIB_RAND_SRC)
 add_library (librand ${LIB_RAND_SRC})
 
-aux_source_directory (src/score LIB_SCORE_SRC)
+aux_source_directory ("src/score" LIB_SCORE_SRC)
 add_library (libscore ${LIB_SCORE_SRC})
 
-add_executable (sort src/main.cpp)
-target_link_libraries (sort libsortshow librand libscore)
+add_executable (${PROJECT_NAME} "src/main.cpp")
+target_link_libraries (${PROJECT_NAME} libsortshow librand libscore)
