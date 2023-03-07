@@ -1,3 +1,7 @@
-# 高级语言程序设计
+# 2021高级语言程序设计
 
-历史遗留问题，难以整理
+`sj`为上机实验
+
+[`EnterpriseManageSystem`](EnterpriseManageSystem)是大作业
+
+[模板](模板)是常用代码
