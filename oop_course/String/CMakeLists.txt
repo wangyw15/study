@@ -1,8 +1,10 @@
 cmake_minimum_required (VERSION 3.10)
-project (week4)
 
-aux_source_directory (src/String LIB_STRING)
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+project (${PNAME})
+
+aux_source_directory ("src/String" LIB_STRING)
 add_library (libstring ${LIB_STRING})
 
-add_executable (main src/main.cpp)
-target_link_libraries (main libstring)
+add_executable (${PROJECT_NAME} src/main.cpp)
+target_link_libraries (${PROJECT_NAME} libstring)

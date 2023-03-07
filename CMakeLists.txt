@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 
-get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-project (${PNAME})
+project ("2021CS")
 
 file (GLOB DIRS "*")
 foreach (DIR ${DIRS})

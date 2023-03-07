@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(vector)
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+project (${PNAME})
 
-aux_source_directory(src/Vector LIB_VECTOR)
+aux_source_directory("src/Vector" LIB_VECTOR)
 add_library(libvector ${LIB_VECTOR})
 
-add_executable(main src/main.cpp)
-target_link_libraries(main libvector)
+add_executable(${PROJECT_NAME} "src/main.cpp")
+target_link_libraries(${PROJECT_NAME} libvector)

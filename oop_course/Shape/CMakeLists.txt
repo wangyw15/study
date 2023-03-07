@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(Shape)
+get_filename_component (PNAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+project (${PNAME})
 
-add_executable(main src/main.cpp "src/Shape/shape.h")
+add_executable(${PROJECT_NAME} "src/main.cpp" "src/Shape/shape.h")
