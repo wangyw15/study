@@ -16,6 +16,8 @@
   - 数字逻辑实验
 - [oop_course](oop_course)
   - 面向对象程序设计
+- [python_computing](python_computing)
+  - Python计算
 
 # 课本
 
