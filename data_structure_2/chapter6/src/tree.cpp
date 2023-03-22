@@ -16,6 +16,10 @@ int main()
     tree.AddChild("lr", 'l', 'G');
     tree.AddChild("lr", 'r', 'D');
 
+    tree.AddChild("lrl", 'r', 'H');
+    tree.AddChild("lrlr", 'r', 'I');
+    tree.AddChild("lrlrr", 'r', 'J');
+    
     cout << tree << endl;
     cout << " Tree depth: " << tree.TreeDepth() << endl;
     cout << "Tree degree: " << tree.TreeDegree() << endl;

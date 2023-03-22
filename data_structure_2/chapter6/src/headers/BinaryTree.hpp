@@ -128,6 +128,28 @@ template <typename T> class BinaryTree
         }
     }
 
+    void _RecureForTreeDegree(const NodePtr node, std::vector<int> &degrees) const
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+        
+        // calculate the degree of the current node
+        int degree = 0;
+        NodePtr p = node->LeftChild;
+        while (p != nullptr)
+        {
+            degree++;
+            p = p->RightChild;
+        }
+        degrees.push_back(degree);
+
+        // calculate the degree of childs
+        _RecureForTreeDegree(node->LeftChild, degrees);
+        _RecureForTreeDegree(node->RightChild, degrees);
+    }
+
   public:
     BinaryTree()
     {
@@ -311,7 +333,17 @@ template <typename T> class BinaryTree
 
     int TreeDegree() const
     {
-        
+        std::vector<int> degrees;
+        _RecureForTreeDegree(_Root, degrees);
+        int ret = 0;
+        for (auto i = degrees.begin(); i != degrees.end(); i++)
+        {
+            if (*i > ret)
+            {
+                ret = *i;
+            }
+        }
+        return ret;
     }
 };
 
