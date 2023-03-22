@@ -27,7 +27,7 @@ template <typename T> class UFSets
         return 0;
     }
 
-    void _RecureForHeight(int n, std::vector<int> &heights, int &height)
+    void _RecureForHeight(int n, std::vector<int> &heights, int &height) const
     {
         heights.push_back(height++);
         for (size_t i = 0; i < _Size; i++)
@@ -37,6 +37,7 @@ template <typename T> class UFSets
                 _RecureForHeight(i, heights, height);
             }
         }
+        height--;
     }
   
   public:
@@ -85,6 +86,7 @@ template <typename T> class UFSets
         return i;
     }
 
+    // improved weighted union
     void Union(T a, T b)
     {
         int root1 = FindRoot(a), root2 = FindRoot(b);
@@ -118,51 +120,31 @@ template <typename T> class UFSets
                     _Sets[root1].Parent = root2;
                 }
             }
-            /*if (p1 < -1 && p2 < -1) // both are in a set
+        }
+    }
+
+    void HeightedUnion(T a, T b)
+    {
+        int root1 = FindRoot(a), root2 = FindRoot(b);
+        if (root1 != root2 && root1 != -1 && root2 != -1)
+        {
+            int h1 = GetSetHeight(root1), h2 = GetSetHeight(root2);
+            if (GetSetHeight(root1) < GetSetHeight(root2))
             {
-                if (p1 > p2)
-                {
-                    _Sets[root2].Parent += _Sets[root1].Parent;
-                    _Sets[root1].Parent = root2;
-                }
-                else
-                {
-                    _Sets[root1].Parent += _Sets[root2].Parent;
-                    _Sets[root2].Parent = root1;
-                }
-            }
-            else if (p1 == -1 && p2 == -1) // both are individual
-            {
-                if (root1 < root2)
-                {
-                    _Sets[root1].Parent += _Sets[root2].Parent;
-                    _Sets[root2].Parent = root1;
-                }
-                else
-                {
-                    _Sets[root2].Parent += _Sets[root1].Parent;
-                    _Sets[root1].Parent = root2;
-                }
+                _Sets[root2].Parent += _Sets[root1].Parent;
+                _Sets[root1].Parent = root2;
             }
             else
             {
-                if (p1 < p2)
-                {
-                    _Sets[root1].Parent += _Sets[root2].Parent;
-                    _Sets[root2].Parent = root1;
-                }
-                else
-                {
-                    _Sets[root2].Parent += _Sets[root1].Parent;
-                    _Sets[root1].Parent = root2;
-                }
-            }*/
+                _Sets[root1].Parent += _Sets[root2].Parent;
+                _Sets[root2].Parent = root1;
+            }
         }
     }
 
     int GetSetHeight(int n) const
     {
-        n = FindRoot(n);
+        n = FindRoot(_Sets[n].Data);
         if (n == -1)
         {
             return 0;
