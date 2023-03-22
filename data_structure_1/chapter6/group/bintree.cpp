@@ -1,22 +1,23 @@
 // 1 2 3 5 7 2 -100 -100 8 -100 -100 9 7 -100 -100
-// -100±íÊ¾null
-// 4ÊÇÊ÷¸ß
+// -100è¡¨ç¤ºnull
+// 4æ˜¯æ ‘é«˜
 
 #include "headers/BinTree.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
 void Showtest()
 {
-	cout << "Ö÷²Ëµ¥ÏÔÊ¾£º" << endl;
-	cout << "1.±éÀúÏÔÊ¾" << endl;
-	cout << "2.·ÇµÝ¹éÏÈÐò±éÀú" << endl;
-	cout << "3.·ÇµÝ¹éºóÐò±éÀú" << endl;
-	cout << "0.ÍË³ö" << endl;
-	cout << "ÇëÊäÈëÑ¡Ôñ£º";
+	cout << "ä¸»èœå•æ˜¾ç¤ºï¼š" << endl;
+	cout << "1.éåŽ†æ˜¾ç¤º" << endl;
+	cout << "2.éžé€’å½’å…ˆåºéåŽ†" << endl;
+	cout << "3.éžé€’å½’åŽåºéåŽ†" << endl;
+	cout << "0.é€€å‡º" << endl;
+	cout << "è¯·è¾“å…¥é€‰æ‹©ï¼š";
 }
 
 int main()
@@ -24,9 +25,9 @@ int main()
 	vector<TreeNode<int>*> LT;
 	int num;
 	int height;
-	cout << "ÊäÈë¶þ²æÊ÷¸ß¶È£º";
+	cout << "è¾“å…¥äºŒå‰æ ‘é«˜åº¦ï¼š";
 	cin >> height;
-	cout << "ÊäÈë²ã´Î±éÀú£º(-100ÊÓ×÷nullptr)" << endl;
+	cout << "è¾“å…¥å±‚æ¬¡éåŽ†ï¼š(-100è§†ä½œnullptr)" << endl;
 	int nd = pow(2, height) - 1;
 	while (nd)
 	{
@@ -50,32 +51,32 @@ int main()
 		switch (choice)
 		{
 		case 1:
-			cout << "   1.ÏÈÐò±éÀú£º";
+			cout << "   1.å…ˆåºéåŽ†ï¼š";
 			bt.PreOrderTraverse();
 			cout << endl;
-			cout << "   2.ÖÐÐò±éÀú£º";
+			cout << "   2.ä¸­åºéåŽ†ï¼š";
 			bt.InOrderTraverse();
 			cout << endl;
-			cout << "   3.ºóÐò±éÀú£º";
+			cout << "   3.åŽåºéåŽ†ï¼š";
 			bt.PostOrderTraverse();
 			cout << endl;
-			cout << "   4.²ã´Î±éÀú£º";
+			cout << "   4.å±‚æ¬¡éåŽ†ï¼š";
 			bt.LevelTraverse();
 			cout << endl;
 			break;
 		case 2:
-			cout << "µÝ¹é·½·¨µÄÏÈÐò±éÀú£º" << endl;
+			cout << "é€’å½’æ–¹æ³•çš„å…ˆåºéåŽ†ï¼š" << endl;
 			bt.PreOrderTraverse();
 			cout << endl;
-			cout << "·ÇµÝ¹é·½·¨µÄÏÈÐò±éÀú£º" << endl;
+			cout << "éžé€’å½’æ–¹æ³•çš„å…ˆåºéåŽ†ï¼š" << endl;
 			bt.NonRecurringPreOrder();
 			cout << endl;
 			break;
 		case 3:
-			cout << "µÝ¹é·½·¨µÄºóÐò±éÀú£º" << endl;
+			cout << "é€’å½’æ–¹æ³•çš„åŽåºéåŽ†ï¼š" << endl;
 			bt.PostOrderTraverse();
 			cout << endl;
-			cout << "·ÇµÝ¹é·½·¨µÄºóÐò±éÀú£º" << endl;
+			cout << "éžé€’å½’æ–¹æ³•çš„åŽåºéåŽ†ï¼š" << endl;
 			bt.NonRecurringPostOrder();
 			cout << endl;
 			break;

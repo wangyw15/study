@@ -1,4 +1,4 @@
-#include "headers/Functions.h"
+#include "headers/Functions.hpp"
 #include "headers/SeqList.h"
 #include <iostream>
 
@@ -7,26 +7,26 @@ using namespace std;
 int main()
 {
     int key = 0;
-    cout << "´´½¨Ò»Ôª¶àÏîÊ½P(x)" << endl;
+    cout << "åˆ›å»ºä¸€å…ƒå¤šé¡¹å¼P(x)" << endl;
     Functions f;
     cin >> f;
-    cout << "¶àÏîÊ½Îª£º" << endl;
+    cout << "å¤šé¡¹å¼ä¸ºï¼š" << endl;
     cout << "P(x) = " << f;
 
-    cout << "´´½¨Ò»Ôª¶àÏîÊ½Q(x)" << endl;
+    cout << "åˆ›å»ºä¸€å…ƒå¤šé¡¹å¼Q(x)" << endl;
     Functions f2;
     cin >> f2;
-    cout << "¶àÏîÊ½Îª£º" << endl;
+    cout << "å¤šé¡¹å¼ä¸ºï¼š" << endl;
     cout << "Q(x) = " << f2;
 
     while (1)
     {
         cout << endl;
         cout << "Menu" << endl;
-        cout << "1.¶ÔP(x)Çóµ¼" << endl;
-        cout << "2.¸ø¶¨xÖµºóÇóP(x)Öµ" << endl;
-        cout << "3.Á½¸ö¶àÏîÊ½Ïà¼õ" << endl;
-        cout << "0.ÍË³ö" << endl;
+        cout << "1.å¯¹P(x)æ±‚å¯¼" << endl;
+        cout << "2.ç»™å®šxå€¼åŽæ±‚P(x)å€¼" << endl;
+        cout << "3.ä¸¤ä¸ªå¤šé¡¹å¼ç›¸å‡" << endl;
+        cout << "0.é€€å‡º" << endl;
         cin >> key;
         switch (key)
         {

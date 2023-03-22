@@ -13,4 +13,4 @@ aux_source_directory ("src/solve" LIB_SOLVE)
 add_library (libsolve ${LIB_SOLVE})
 
 add_executable (${PROJECT_NAME} "src/main.cpp")
-target_link_libraries (${PROJECT_NAME} libstr libsolve libswap)
+target_link_libraries (${PROJECT_NAME} libstr libsolve)
