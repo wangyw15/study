@@ -115,6 +115,19 @@ template <typename T> class BinaryTree
         }
     }
 
+    void _RecureForWidth(const NodePtr node, int &depth,
+                        std::shared_ptr<int[]> &width) const
+    {
+        if (node != nullptr)
+        {
+            width[depth] += 1;
+            depth++;
+            _RecureForWidth(node->LeftChild, depth, width);
+            _RecureForWidth(node->RightChild, depth, width);
+            depth--;
+        }
+    }
+
   public:
     BinaryTree()
     {
@@ -192,7 +205,7 @@ template <typename T> class BinaryTree
         }
 
         int depth = 0;
-        RecureForWidth(_Root, depth, width);
+        _RecureForWidth(_Root, depth, width);
 
         int max = 0;
         for (size_t i = 0; i < _Count; i++)
@@ -203,19 +216,6 @@ template <typename T> class BinaryTree
             }
         }
         return max;
-    }
-
-    void RecureForWidth(const NodePtr node, int &depth,
-                        std::shared_ptr<int[]> &width) const
-    {
-        if (node != nullptr)
-        {
-            width[depth] += 1;
-            depth++;
-            RecureForWidth(node->LeftChild, depth, width);
-            RecureForWidth(node->RightChild, depth, width);
-            depth--;
-        }
     }
 
     void NonRecurringInOrderTraverse(std::function<void(const T &)> func)
@@ -296,6 +296,23 @@ template <typename T> class BinaryTree
     size_t Count() const { return _Count; }
 
     NodePtr Root() const { return _Root; }
+
+    int TreeDepth() const
+    {
+        NodePtr node = _Root;
+        int depth = 0;
+        while (node != nullptr)
+        {
+            depth++;
+            node = node->LeftChild;
+        }
+        return depth;
+    }
+
+    int TreeDegree() const
+    {
+        
+    }
 };
 
 #endif
