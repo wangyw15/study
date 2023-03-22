@@ -23,7 +23,7 @@ template <typename T> class BinaryTree
 {
     using NodePtr = std::shared_ptr<Node<T>>;
 
-  private:
+  protected:
     NodePtr _Root;
     size_t _Count;
     const int PRINT_WIDTH = 5;
