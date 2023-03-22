@@ -10,8 +10,10 @@
   - 计算机组成原理
 - [computer_programming_training](computer_programming_training)
   - 计算机编程实训
-- [data_structure](data_structure)
-  - 数据结构
+- [data_structure_1](data_structure_1)
+  - 数据结构(1)
+- [data_structure_2](data_structure_2)
+  - 数据结构(2)
 - [digital_logic_experiment](digital_logic_experiment)
   - 数字逻辑实验
 - [oop_course](oop_course)
