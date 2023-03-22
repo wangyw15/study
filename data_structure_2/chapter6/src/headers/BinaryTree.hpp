@@ -116,7 +116,7 @@ template <typename T> class BinaryTree
     }
 
     void _RecureForWidth(const NodePtr node, int &depth,
-                        std::shared_ptr<int[]> &width) const
+                         std::shared_ptr<int[]> &width) const
     {
         if (node != nullptr)
         {
@@ -128,13 +128,14 @@ template <typename T> class BinaryTree
         }
     }
 
-    void _RecureForTreeDegree(const NodePtr node, std::vector<int> &degrees) const
+    void _RecureForTreeDegree(const NodePtr node,
+                              std::vector<int> &degrees) const
     {
         if (node == nullptr)
         {
             return;
         }
-        
+
         // calculate the degree of the current node
         int degree = 0;
         NodePtr p = node->LeftChild;
