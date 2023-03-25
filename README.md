@@ -16,6 +16,8 @@
   - 数据结构(2)
 - [digital_logic_experiment](digital_logic_experiment)
   - 数字逻辑实验
+- [dotnet_application_development](dotnet_application_development)
+  - .NET应用开发技术
 - [oop_course](oop_course)
   - 面向对象程序设计
 - [python_computing](python_computing)
