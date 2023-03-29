@@ -151,6 +151,23 @@ template <typename T> class BinaryTree
         _RecureForTreeDegree(node->RightChild, degrees);
     }
 
+    int _RecureForTreeDepth(NodePtr node) const
+    {
+        if (node == nullptr)
+        {
+            return 0;
+        }
+        if (node->LeftChild == nullptr && node->RightChild == nullptr)
+        {
+            return 1;
+        }
+        else if (node->LeftChild == nullptr && node->RightChild != nullptr)
+        {
+            return _RecureForTreeDepth(node->RightChild);
+        }
+        return std::max(_RecureForTreeDepth(node->LeftChild) + 1, _RecureForTreeDepth(node->RightChild));
+    }
+
   public:
     BinaryTree()
     {
@@ -322,14 +339,7 @@ template <typename T> class BinaryTree
 
     int TreeDepth() const
     {
-        NodePtr node = _Root;
-        int depth = 0;
-        while (node != nullptr)
-        {
-            depth++;
-            node = node->LeftChild;
-        }
-        return depth;
+        return _RecureForTreeDepth(_Root);
     }
 
     int TreeDegree() const
