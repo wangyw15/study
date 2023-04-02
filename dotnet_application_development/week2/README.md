@@ -70,4 +70,40 @@ textBox3.Text = (int.Parse(textBox1.Text) + int.Parse(textBox2.Text)).ToString()
 
 # 实验5 关于相等性问题
 
+## 预期
+
+```
+a == b: True
+Object.Equals(a, b): True
+
+a == f: True
+Object.Equals(a, f): False
+
+t1 == t2: False
+Object.Equals(t1, t2): False
+```
+
+## 实际
+
+```
+a == b: True
+Object.Equals(a, b): True
+
+a == f: True
+Object.Equals(a, f): False
+
+t1 == t2: False
+Object.Equals(t1, t2): False
+```
+
+## 原因
+
+对于`a`和`b`来说，数值都是`1`且类型相同，这些常数都是被存储在一个固定的区域，赋值时指向这一块区域，不必新开辟一块内存来存储，因此`a`与`b`指向同一块内存空间，都是相等的。
+
+对于`a`和`f`来说，数值都是`1`，在`int`和`float`比较是会进行自动类型转换，`a`与`f`在数值上相等，因此相等；而这两个变量的类型不同，尽管都会作为常值存储在固定区域，但是类型不同存储在不同区域，因此对象不相同。
+
+对于`t1`和`t2`来说，是分别新建的两个实例，因此完全不相等。
+
 # 实验6 将交错数组转换成一维数组
+
+
