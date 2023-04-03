@@ -11,14 +11,14 @@
 #define VISISTED 1
 #define UNVISISTED 0
 
-template <typename T> class AdjMatrixUndirGraph
+template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
 {
   protected:
-    std::vector<std::pair<int, int>> _arcs;
-    std::vector<std::pair<T, int>> _vertexes;
+    std::vector<std::pair<int, TWeight>> _arcs;
+    std::vector<std::pair<TVertex, int>> _vertexes;
     size_t _arcCount;
 
-    void _DFS(int n, std::function<void(const T &)> func)
+    void _DFS(int n, std::function<void(const TVertex &)> func)
     {
         SetTag(n, VISISTED);
         func(GetVertex(n));
@@ -31,13 +31,13 @@ template <typename T> class AdjMatrixUndirGraph
         }
     }
 
-    void _DFS(T item, std::function<void(const T &)> func)
+    void _DFS(TVertex item, std::function<void(const TVertex &)> func)
     {
         _DFS(GetVertexOrder(item), func);
     }
 
   public:
-    AdjMatrixUndirGraph(const T vertexes[], size_t n)
+    AdjMatrixUndirGraph(const TVertex vertexes[], size_t n)
         : _arcs(n * n), _vertexes(n), _arcCount(0)
     {
         for (size_t i = 0; i < n; i++)
@@ -46,7 +46,7 @@ template <typename T> class AdjMatrixUndirGraph
         }
     }
 
-    AdjMatrixUndirGraph(const std::vector<T> &vertexes)
+    AdjMatrixUndirGraph(const std::vector<TVertex> &vertexes)
         : _arcs(vertexes.size() * vertexes.size()), _arcCount(0)
     {
         for (size_t i = 0; i < n; i++)
@@ -62,10 +62,10 @@ template <typename T> class AdjMatrixUndirGraph
     }
 
     friend std::ostream &operator<<(std::ostream &out,
-                                    const AdjMatrixUndirGraph<T> &graph)
+                                    const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     {
         size_t col = 0;
-        for (std::pair<int, int> v : graph._arcs)
+        for (std::pair<int, TWeight> v : graph._arcs)
         {
             out << v.first << " ";
             if (++col % 4 == 0)
@@ -78,17 +78,17 @@ template <typename T> class AdjMatrixUndirGraph
 
     void ClearArcs()
     {
-        for (std::pair<int, int> a : _arcs)
+        for (std::pair<int, TWeight> a : _arcs)
         {
             a.first = 0;
-            a.second = 0;
+            a.second = NULL;
         }
         _arcCount = 0;
     }
 
     void ClearTags()
     {
-        for (std::pair<T, int> v : _vertexes)
+        for (std::pair<TVertex, int> v : _vertexes)
         {
             v.second = 0;
         }
@@ -96,10 +96,10 @@ template <typename T> class AdjMatrixUndirGraph
 
     bool IsEmpty() const { return _arcCount == 0; }
 
-    int GetVertexOrder(const T &item) const
+    int GetVertexOrder(const TVertex &item) const
     {
         int ret = 0;
-        for (std::pair<T, int> v : _vertexes)
+        for (std::pair<TVertex, int> v : _vertexes)
         {
             if (v.first == item)
             {
@@ -110,7 +110,7 @@ template <typename T> class AdjMatrixUndirGraph
         return -1;
     }
 
-    T GetVertex(int n) const
+    TVertex GetVertex(int n) const
     {
         if (n < 0 || n >= _vertexes.size())
         {
@@ -119,7 +119,7 @@ template <typename T> class AdjMatrixUndirGraph
         return _vertexes[n].first;
     }
 
-    void SetVertex(int n, const T &item)
+    void SetVertex(int n, const TVertex &item)
     {
         if (n < 0 || n >= _vertexes.size())
         {
@@ -150,7 +150,7 @@ template <typename T> class AdjMatrixUndirGraph
         return -1;
     }
 
-    int FirstAdjVex(const T &item) const
+    int FirstAdjVex(const TVertex &item) const
     {
         return FirstAdjVex(GetVertexOrder(item));
     }
@@ -178,12 +178,12 @@ template <typename T> class AdjMatrixUndirGraph
         return -1;
     }
 
-    int NextAdjVex(T item1, T item2) const
+    int NextAdjVex(TVertex item1, TVertex item2) const
     {
         return NextAdjVex(GetVertexOrder(item1), GetVertexOrder(item2));
     }
 
-    void InsertArc(int n1, int n2, int weight = 0)
+    void InsertArc(int n1, int n2, TWeight weight = NULL)
     {
         if (n1 < 0 || n2 < 0 || n1 >= _vertexes.size() ||
             n2 >= _vertexes.size())
@@ -197,40 +197,43 @@ template <typename T> class AdjMatrixUndirGraph
         _arcCount++;
     }
 
-    void InsertArc(T item1, T item2)
+    void InsertArc(TVertex item1, TVertex item2)
     {
         InsertArc(GetVertexOrder(item1), GetVertexOrder(item2));
     }
 
     int GetTag(int n) const { return _vertexes[n].second; }
 
-    int GetTag(T item) const { return _vertexes[GetVertexOrder(item)].second; }
+    int GetTag(TVertex item) const
+    {
+        return _vertexes[GetVertexOrder(item)].second;
+    }
 
     void SetTag(int n, int tag) { _vertexes[n].second = tag; }
 
-    void SetTag(T item, int tag)
+    void SetTag(TVertex item, int tag)
     {
         _vertexes[GetVertexOrder(item)].second = tag;
     }
 
-    void DFSTraverse(int n, std::function<void(const T&)> func)
+    void DFSTraverse(int n, std::function<void(const TVertex &)> func)
     {
         ClearTags();
         _DFS(n, func);
     }
 
-    void DFSTraverse(T item, std::function<void(const T &)> func)
+    void DFSTraverse(TVertex item, std::function<void(const TVertex &)> func)
     {
         ClearTags();
         _DFS(GetVertexOrder(item), func);
     }
 
-    bool ExistRoute(T item1, T item2)
+    bool ExistRoute(TVertex item1, TVertex item2)
     {
         ClearTags();
         bool ret = false;
         DFS(item1,
-            [&](T item) -> void
+            [&](TVertex item) -> void
             {
                 if (item == item2)
                 {
