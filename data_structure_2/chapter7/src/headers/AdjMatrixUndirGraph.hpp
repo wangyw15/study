@@ -410,9 +410,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     void BreakCircle()
     {
         ClearTags();
-        std::vector<int> lastSuccess;
         std::vector<int> loop;
-        std::vector<bool> removed(VertexCount() * VertexCount(), false);
         
         for (size_t vex = 0; vex < VertexCount(); vex++)
         {
@@ -431,7 +429,6 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
                     }
                 }
                 RemoveArc(v1, v2);
-                lastSuccess = std::vector<int>(loop);
             }
         }
     }
