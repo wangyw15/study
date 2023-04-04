@@ -8,64 +8,7 @@
 
 #include "../../../chapter6/src/headers/UFSets.hpp"
 #include "AdjMatrixUndirGraph.hpp"
-
-template <typename TVertex, typename TWeight> class KruskalEdge
-{
-  public:
-    TVertex Vertex1, Vertex2;
-    TWeight Weight;
-
-    KruskalEdge() {}
-
-    KruskalEdge(TVertex vertex1, TVertex vertex2, TWeight weight)
-    {
-        Vertex1 = vertex1;
-        Vertex2 = vertex2;
-        Weight = weight;
-    }
-
-    bool operator<(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight < edge.Weight;
-    }
-
-    bool operator>(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight > edge.Weight;
-    }
-
-    bool operator==(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight == edge.Weight;
-    }
-
-    bool operator!=(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight != edge.Weight;
-    }
-
-    bool operator<=(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight <= edge.Weight;
-    }
-
-    bool operator>=(const KruskalEdge<TVertex, TWeight> &edge) const
-    {
-        return Weight >= edge.Weight;
-    }
-
-    KruskalEdge<TVertex, TWeight> &
-    operator=(const KruskalEdge<TVertex, TWeight> &edge)
-    {
-        if (&edge != this)
-        {
-            Vertex1 = edge.Vertex1;
-            Vertex2 = edge.Vertex2;
-            Weight = edge.Weight;
-        }
-        return *this;
-    }
-};
+#include "WeightedEdge.hpp"
 
 template <typename TVertex, typename TWeight>
 void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
@@ -82,10 +25,10 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     UFSets<TVertex> f(kVex, vexCount);
 
     // store edges in minheap
-    std::priority_queue<KruskalEdge<TVertex, TWeight>,
-                        std::vector<KruskalEdge<TVertex, TWeight>>,
-                        std::greater<KruskalEdge<TVertex, TWeight>>> ha;
-    KruskalEdge<TVertex, TWeight> edge;
+    std::priority_queue<WeightedEdge<TVertex, TWeight>,
+                        std::vector<WeightedEdge<TVertex, TWeight>>,
+                        std::greater<WeightedEdge<TVertex, TWeight>>> ha;
+    WeightedEdge<TVertex, TWeight> edge;
     for (int v = 0; v < vexCount; v++)
     {
         for (int u = graph.FirstAdjVex(v); u >= 0; u = graph.NextAdjVex(v, u))
