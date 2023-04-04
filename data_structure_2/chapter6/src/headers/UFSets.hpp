@@ -52,6 +52,17 @@ template <typename T> class UFSets
         }
     }
 
+    UFSets(std::shared_ptr<T[]> data, size_t n)
+    {
+        _Size = n;
+        _Sets = std::shared_ptr<Node<T>[]>(new Node<T>[n]);
+        for (size_t i = 0; i < n; i++)
+        {
+            _Sets[i].Data = data[i];
+            _Sets[i].Parent = -1;
+        }
+    }
+
     virtual ~UFSets()
     {
         _Sets.reset();
