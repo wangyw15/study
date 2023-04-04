@@ -296,6 +296,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         
         std::string ret = "";
         
+        std::vector<bool> edgeVisited(VertexCount() * VertexCount(), false);
         std::stack<int> s;
         s.push(n1);
         _vertexes[n1].second = VISITED;
@@ -309,7 +310,8 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
             for (int i = FirstAdjVex(current); i != -1;
                  i = NextAdjVex(current, i))
             {
-                if (GetWeight(current, i) != VISITED && GetTag(i) != VISITED)
+                if (!edgeVisited[current * VertexCount() + i] &&
+                    GetTag(i) != VISITED)
                 {
                     v = i;
                     break;
@@ -318,7 +320,8 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
             if (v != -1)
             {
                 s.push(v);
-                InsertArc(current, v, VISITED);
+                edgeVisited[current * VertexCount() + v] = true;
+                edgeVisited[v * VertexCount() + current] = true;
                 SetTag(v, VISITED);
                 currentRoute += _vertexes[v].first;
                 current = v;
