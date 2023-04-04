@@ -93,14 +93,13 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight>& graph)
             {
                 edge.Vertex1 = graph.GetVertex(v);
                 edge.Vertex2 = graph.GetVertex(u);
-                // edge.Weight = graph.GetWeight(v, u);
                 edge.Weight = graph.GetWeight(v, u);
                 ha.push(edge);
             }
         }
     }
     
-    // find minimum spanning tree
+    // find minimum spanning tree throught Kruskal algorithm
     int count = 0;
     TVertex v1, v2;
     while (count < vexCount - 1)
@@ -112,7 +111,7 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight>& graph)
         if (f.FindRoot(v1) != f.FindRoot(v2))
         {
             f.Union(v1, v2);
-            std::cout << "(" << v1 << ", " << v2 << ")" << std::endl;
+            std::cout << "(" << v1 << ", " << v2 << ") " << edge.Weight << std::endl;
             count++;
         }
     }
