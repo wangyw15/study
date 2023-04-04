@@ -8,9 +8,11 @@
 #include <stdexcept>
 #include <vector>
 #include <limits>
+#include <string>
+#include <stack>
 
-#define VISISTED 1
-#define UNVISISTED 0
+#define VISITED 2
+#define UNVISITED 0
 
 template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
 {
@@ -21,11 +23,11 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
 
     void _DFS(int n, std::function<void(const TVertex &)> func)
     {
-        SetTag(n, VISISTED);
+        SetTag(n, VISITED);
         func(GetVertex(n));
         for (int i = FirstAdjVex(n); i != -1; i = NextAdjVex(n, i))
         {
-            if (GetTag(i) == UNVISISTED)
+            if (GetTag(i) == UNVISITED)
             {
                 _DFS(i, func);
             }
@@ -94,9 +96,9 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
 
     void ClearTags()
     {
-        for (std::pair<TVertex, int> v : _vertexes)
+        for (size_t i = 0; i < _vertexes.size(); i++)
         {
-            v.second = 0;
+            _vertexes[i].second = 0;
         }
     }
 
@@ -218,7 +220,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         _arcCount++;
     }
 
-    void InsertArc(TVertex item1, TVertex item2, TWeight weight = NULL)
+    void InsertArc(TVertex item1, TVertex item2, TWeight weight = 1)
     {
         InsertArc(GetVertexOrder(item1), GetVertexOrder(item2), weight);
     }
@@ -272,7 +274,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     {
         ClearTags();
         bool ret = false;
-        DFS(item1,
+        _DFS(item1,
             [&](TVertex item) -> void
             {
                 if (item == item2)
@@ -286,6 +288,65 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     bool ExistRoute(int n1, int n2)
     {
         return ExistRoute(GetVertex(n1), GetVertex(n2));
+    }
+
+    std::string GetAllRoutes(int n1, int n2)
+    {
+        ClearTags();
+        
+        std::string ret = "";
+        
+        std::stack<int> s;
+        s.push(n1);
+        _vertexes[n1].second = VISITED;
+        
+        int current = n1;
+        std::string currentRoute = "";
+        ret += GetVertex(n1);
+        while (!s.empty())
+        {
+            int v = -1;
+            for (int i = FirstAdjVex(current); i != -1;
+                 i = NextAdjVex(current, i))
+            {
+                if (GetWeight(current, i) != VISITED && GetTag(i) != VISITED)
+                {
+                    v = i;
+                    break;
+                }
+            }
+            if (v != -1)
+            {
+                s.push(v);
+                InsertArc(current, v, VISITED);
+                SetTag(v, VISITED);
+                currentRoute += _vertexes[v].first;
+                current = v;
+            }
+            else
+            {
+                SetTag(s.top(), UNVISITED);
+                s.pop();
+                current = s.empty() ? -1 : s.top();
+                currentRoute = "";
+                currentRoute += GetVertex(n1);
+            }
+            if (v == n2)
+            {
+                SetTag(s.top(), UNVISITED);
+                s.pop();
+                current = s.empty() ? -1 : s.top();
+                ret += currentRoute + ";";
+                currentRoute = "";
+                currentRoute += GetVertex(n1);
+            }
+        }
+        return ret;
+    }
+
+    std::string GetAllRoutes(TVertex item1, TVertex item2)
+    {
+        return GetAllRoutes(GetVertexOrder(item1), GetVertexOrder(item2));
     }
 };
 
