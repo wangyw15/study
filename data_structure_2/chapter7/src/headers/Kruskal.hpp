@@ -100,7 +100,7 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
         }
     }
 
-    // find minimum spanning tree throught Kruskal algorithm
+    // find minimum spanning tree through Kruskal algorithm
     int count = 0;
     TVertex v1, v2;
     while (count < vexCount - 1)

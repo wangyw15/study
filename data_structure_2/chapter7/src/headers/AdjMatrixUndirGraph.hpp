@@ -7,6 +7,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <vector>
+#include <limits>
 
 #define VISISTED 1
 #define UNVISISTED 0
@@ -36,6 +37,8 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         _DFS(GetVertexOrder(item), func);
     }
 
+    constexpr TWeight Infinity() { return std::numeric_limits<TWeight>::max(); }
+
   public:
     AdjMatrixUndirGraph(const TVertex vertexes[], size_t n)
         : _arcs(n * n), _vertexes(n), _arcCount(0)
@@ -44,6 +47,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         {
             _vertexes[i].first = vertexes[i];
         }
+        ClearArcs();
     }
 
     AdjMatrixUndirGraph(const std::vector<TVertex> &vertexes)
@@ -53,6 +57,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         {
             _vertexes[i].first = vertexes[i];
         }
+        ClearArcs();
     }
 
     ~AdjMatrixUndirGraph()
@@ -61,14 +66,15 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         ClearTags();
     }
 
-    friend std::ostream &operator<<(std::ostream &out,
-                                    const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
+    friend std::ostream &
+    operator<<(std::ostream &out,
+               const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     {
         size_t col = 0;
         for (std::pair<int, TWeight> v : graph._arcs)
         {
-            out << v.first << " ";
-            if (++col % 4 == 0)
+            out << (v.second == NULL ? v.first : v.second) << " ";
+            if (++col % graph.VertexCount() == 0)
             {
                 out << std::endl;
             }
@@ -78,10 +84,10 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
 
     void ClearArcs()
     {
-        for (std::pair<int, TWeight> a : _arcs)
+        for (size_t i = 0; i < _arcs.size(); i++)
         {
-            a.first = 0;
-            a.second = NULL;
+            _arcs[i].first = 0;
+            _arcs[i].second = Infinity();
         }
         _arcCount = 0;
     }
@@ -205,9 +211,9 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         {
             throw std::overflow_error("Index out of range");
         }
-        _arcs[n1 * _vertexes.size() + n2].first++;
+        _arcs[n1 * _vertexes.size() + n2].first = 1;
         _arcs[n1 * _vertexes.size() + n2].second = weight;
-        _arcs[n2 * _vertexes.size() + n1].first++;
+        _arcs[n2 * _vertexes.size() + n1].first = 1;
         _arcs[n2 * _vertexes.size() + n1].second = weight;
         _arcCount++;
     }
@@ -215,6 +221,25 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     void InsertArc(TVertex item1, TVertex item2, TWeight weight = NULL)
     {
         InsertArc(GetVertexOrder(item1), GetVertexOrder(item2), weight);
+    }
+
+    void RemoveArc(int n1, int n2)
+    {
+        if (n1 < 0 || n2 < 0 || n1 >= _vertexes.size() ||
+            n2 >= _vertexes.size())
+        {
+            throw std::overflow_error("Index out of range");
+        }
+        _arcs[n1 * _vertexes.size() + n2].first = 0;
+        _arcs[n1 * _vertexes.size() + n2].second = Infinity;
+        _arcs[n2 * _vertexes.size() + n1].first = 0;
+        _arcs[n2 * _vertexes.size() + n1].second = Infinity;
+        _arcCount--;
+    }
+
+    void RemoveArc(TVertex item1, TVertex item2)
+    {
+        RemoveArc(GetVertexOrder(item1), GetVertexOrder(item2));
     }
 
     int GetTag(int n) const { return _vertexes[n].second; }
