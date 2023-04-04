@@ -27,7 +27,7 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     // store edges in minheap
     std::priority_queue<WeightedEdge<TVertex, TWeight>,
                         std::vector<WeightedEdge<TVertex, TWeight>>,
-                        std::greater<WeightedEdge<TVertex, TWeight>>> ha;
+                        std::greater<WeightedEdge<TVertex, TWeight>>> edgeMinHeap;
     WeightedEdge<TVertex, TWeight> edge;
     for (int v = 0; v < vexCount; v++)
     {
@@ -38,7 +38,7 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
                 edge.Vertex1 = graph.GetVertex(v);
                 edge.Vertex2 = graph.GetVertex(u);
                 edge.Weight = graph.GetWeight(v, u);
-                ha.push(edge);
+                edgeMinHeap.push(edge);
             }
         }
     }
@@ -48,8 +48,8 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     TVertex v1, v2;
     while (count < vexCount - 1)
     {
-        edge = ha.top();
-        ha.pop();
+        edge = edgeMinHeap.top();
+        edgeMinHeap.pop();
         v1 = edge.Vertex1;
         v2 = edge.Vertex2;
         if (f.FindRoot(v1) != f.FindRoot(v2))
