@@ -4,7 +4,6 @@
 #include "headers/AdjMatrixUndirGraph.hpp"
 #include "headers/Kruskal.hpp"
 #include "headers/Prim.hpp"
-#include "headers/BreakCircle.hpp"
 
 using namespace std;
 
@@ -34,9 +33,9 @@ int main()
     
     // break_circle
     cout << "Break circle" << endl;
-    std::cout << matrix << std::endl;
-    matrix.BreakCircle();
-    std::cout << matrix << std::endl;
+    matrix.MiniSpanningTreeBreakCircle();
+    cout << matrix << endl;
+    // matrix.ShowMatrix();
     cout << endl;
     
     return 0;

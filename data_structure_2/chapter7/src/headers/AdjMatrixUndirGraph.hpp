@@ -90,25 +90,42 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         ClearTags();
     }
 
+    void ShowMatrix()
+    {
+        size_t col = 0;
+        for (std::pair<int, TWeight> v : _arcs)
+        {
+            if (v.second == Infinity())
+            {
+                std::cout << "x";
+            }
+            else
+            {
+                std::cout << v.second;
+            }
+            std::cout << " ";
+            if (++col % VertexCount() == 0)
+            {
+                std::cout << std::endl;
+            }
+        }
+    }
+
     friend std::ostream &
     operator<<(std::ostream &out,
                const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
     {
-        size_t col = 0;
-        for (std::pair<int, TWeight> v : graph._arcs)
+        for (size_t r = 0; r < graph._vertexes.size(); r++)
         {
-            if (v.second == graph.Infinity())
+            for (size_t c = r; c < graph._vertexes.size(); c++)
             {
-                out << "x";
-            }
-            else
-            {
-                out << v.second;
-            }
-            out << " ";
-            if (++col % graph.VertexCount() == 0)
-            {
-                out << std::endl;
+                TWeight currentWeight = graph.GetWeight(r, c);
+                if (currentWeight != graph.Infinity())
+                {
+                    out << "(" << graph.GetVertex(r) << ", "
+                        << graph.GetVertex(c) << ") " << currentWeight
+                        << std::endl;
+                }
             }
         }
         return out;
@@ -407,7 +424,7 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         }
     }
 
-    void BreakCircle()
+    void MiniSpanningTreeBreakCircle()
     {
         ClearTags();
         std::vector<int> loop;
