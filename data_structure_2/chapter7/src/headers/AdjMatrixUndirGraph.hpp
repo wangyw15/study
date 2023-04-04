@@ -155,6 +155,21 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         return FirstAdjVex(GetVertexOrder(item));
     }
 
+    TWeight GetWeight(int n1, int n2) const
+    {
+        if (n1 < 0 || n2 < 0 || n1 >= _vertexes.size() ||
+            n2 >= _vertexes.size())
+        {
+            throw std::overflow_error("Index out of range");
+        }
+        return _arcs[n1 * _vertexes.size() + n2].second;
+    }
+
+    TWeight GetWeight(TVertex item1, TVertex item2)
+    {
+        return GetWeight(GetVertexOrder(item1), GetVertexOrder(item2));
+    }
+
     int NextAdjVex(int n1, int n2) const
     {
         if (n1 < 0 || n2 < 0 || n1 >= _vertexes.size() ||
@@ -197,9 +212,9 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         _arcCount++;
     }
 
-    void InsertArc(TVertex item1, TVertex item2)
+    void InsertArc(TVertex item1, TVertex item2, TWeight weight = NULL)
     {
-        InsertArc(GetVertexOrder(item1), GetVertexOrder(item2));
+        InsertArc(GetVertexOrder(item1), GetVertexOrder(item2), weight);
     }
 
     int GetTag(int n) const { return _vertexes[n].second; }
