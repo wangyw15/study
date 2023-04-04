@@ -5,8 +5,8 @@
 #include <queue>
 #include <vector>
 
-#include "AdjMatrixUndirGraph.hpp"
 #include "../../../chapter6/src/headers/UFSets.hpp"
+#include "AdjMatrixUndirGraph.hpp"
 
 template <typename TVertex, typename TWeight> class KruskalEdge
 {
@@ -67,10 +67,10 @@ template <typename TVertex, typename TWeight> class KruskalEdge
 };
 
 template <typename TVertex, typename TWeight>
-void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight>& graph)
+void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight> &graph)
 {
     int vexCount = graph.VertexCount();
-    
+
     // copy vertexes to UFSets
     std::shared_ptr<TVertex[]> kVex =
         std::shared_ptr<TVertex[]>(new TVertex[vexCount]);
@@ -98,7 +98,7 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight>& graph)
             }
         }
     }
-    
+
     // find minimum spanning tree throught Kruskal algorithm
     int count = 0;
     TVertex v1, v2;
@@ -111,7 +111,8 @@ void MiniSpanningTreeKruskal(const AdjMatrixUndirGraph<TVertex, TWeight>& graph)
         if (f.FindRoot(v1) != f.FindRoot(v2))
         {
             f.Union(v1, v2);
-            std::cout << "(" << v1 << ", " << v2 << ") " << edge.Weight << std::endl;
+            std::cout << "(" << v1 << ", " << v2 << ") " << edge.Weight
+                      << std::endl;
             count++;
         }
     }
