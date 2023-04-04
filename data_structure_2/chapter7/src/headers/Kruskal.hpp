@@ -4,6 +4,7 @@
 #include <memory>
 #include <queue>
 #include <vector>
+#include <iostream>
 
 #include "../../../chapter6/src/headers/UFSets.hpp"
 #include "AdjMatrixUndirGraph.hpp"
