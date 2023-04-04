@@ -39,7 +39,29 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         _DFS(GetVertexOrder(item), func);
     }
 
-    constexpr TWeight Infinity() { return std::numeric_limits<TWeight>::max(); }
+    constexpr TWeight Infinity() const { return std::numeric_limits<TWeight>::max(); }
+
+    bool _DFS4FindLoop(int n, int parent, std::vector<int> &loopPath)
+    {
+        SetTag(n, VISITED);
+        for (int i = FirstAdjVex(n); i != -1; i = NextAdjVex(n, i))
+        {
+            if (GetTag(i) == UNVISITED)
+            {
+                if (_DFS4FindLoop(i, n, loopPath))
+                {
+                    loopPath.push_back(parent);
+                    return true;
+                }
+            }
+            else if (i != parent)
+            {
+                loopPath.push_back(n);
+                return true;
+            }
+        }
+        return false;
+    }
 
   public:
     AdjMatrixUndirGraph(const TVertex vertexes[], size_t n)
@@ -75,7 +97,15 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         size_t col = 0;
         for (std::pair<int, TWeight> v : graph._arcs)
         {
-            out << (v.second == NULL ? v.first : v.second) << " ";
+            if (v.second == graph.Infinity())
+            {
+                out << "x";
+            }
+            else
+            {
+                out << v.second;
+            }
+            out << " ";
             if (++col % graph.VertexCount() == 0)
             {
                 out << std::endl;
@@ -233,9 +263,9 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
             throw std::overflow_error("Index out of range");
         }
         _arcs[n1 * _vertexes.size() + n2].first = 0;
-        _arcs[n1 * _vertexes.size() + n2].second = Infinity;
+        _arcs[n1 * _vertexes.size() + n2].second = Infinity();
         _arcs[n2 * _vertexes.size() + n1].first = 0;
-        _arcs[n2 * _vertexes.size() + n1].second = Infinity;
+        _arcs[n2 * _vertexes.size() + n1].second = Infinity();
         _arcCount--;
     }
 
@@ -350,6 +380,60 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     std::string GetAllRoutes(TVertex item1, TVertex item2)
     {
         return GetAllRoutes(GetVertexOrder(item1), GetVertexOrder(item2));
+    }
+
+    bool Connectivity()
+    {
+        int count = 0;
+        DFSTraverse(0, [&](TVertex item) -> void { count++; });
+        return count == VertexCount();
+    }
+
+    bool FindLoop(int n, std::vector<int> &loopPath)
+    {
+        ClearTags();
+        loopPath.clear();
+        loopPath.push_back(n);
+        
+        bool isLoop = _DFS4FindLoop(n, n, loopPath);
+        
+        if (isLoop)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void BreakCircle()
+    {
+        ClearTags();
+        std::vector<int> lastSuccess;
+        std::vector<int> loop;
+        std::vector<bool> removed(VertexCount() * VertexCount(), false);
+        
+        for (size_t vex = 0; vex < VertexCount(); vex++)
+        {
+            while (FindLoop(vex, loop))
+            {
+                int v1, v2;
+                TWeight maxWeight = Infinity() + 1;
+                for (size_t i = 0; i < loop.size() - 1; i++)
+                {
+                    TWeight currentWeight = GetWeight(loop[i], loop[i + 1]);
+                    if (currentWeight != Infinity() && currentWeight > maxWeight)
+                    {
+                        v1 = loop[i];
+                        v2 = loop[i + 1];
+                        maxWeight = GetWeight(v1, v2);
+                    }
+                }
+                RemoveArc(v1, v2);
+                lastSuccess = std::vector<int>(loop);
+            }
+        }
     }
 };
 
