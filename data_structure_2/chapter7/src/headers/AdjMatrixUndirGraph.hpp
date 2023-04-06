@@ -10,6 +10,7 @@
 #include <limits>
 #include <string>
 #include <stack>
+#include <iostream>
 
 #define VISITED 2
 #define UNVISITED 0
