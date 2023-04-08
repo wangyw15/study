@@ -40,7 +40,7 @@ print(cnt)
 1．Python 流程控制：编写循环控制代码用下面公式逼近圆周率(精确到小数点后 15 位)，并且和 `math.pi` 的值做比较。
 
 $$
-\frac{1}{\pi}=\frac{2\sqrt{2}}{9801}\sum^{\infin}_{k=0}\frac{(4k)!(1103+26390k)}{k!^4(396^{4k})}
+\frac{1}{\pi}=\frac{2\sqrt{2}}{9801}\sum^{\infty}_{k=0}\frac{(4k)!(1103+26390k)}{k!^4(396^{4k})}
 $$
 
 2．Python 流程控制：阅读 [Koch_snowflake](https://en.wikipedia.org/wiki/Koch_snowflake)，通过修改 `koch.py` 绘制其中一种泛化的 Koch 曲线。
