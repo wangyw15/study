@@ -20,11 +20,13 @@ int main()
     graph.InsertArc("D", "G", 70);
     graph.InsertArc("D", "F", 80);
     
-    vector<string> path = Dijkstra<string, int>(graph, "A", "G");
-    for (auto &v : path)
+    vector<string> path = DijkstraForMinimumWeight<string, int>(graph, "A", "G");
+    int minimumNoise = graph.GetWeight(path[0], path[1]);
+    cout << path[0];
+    for (auto i = 1; i < path.size(); i++)
     {
-        cout << v << "";
+        cout << " -" << graph.GetWeight(path[i - 1], path[i]) << "-> " << path[i];
     }
-    cout << endl;
+    cout << endl << "Minimum noise: " << minimumNoise << endl;
     return 0;
 }
