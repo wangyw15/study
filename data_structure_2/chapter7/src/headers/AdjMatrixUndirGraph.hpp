@@ -40,8 +40,6 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
         _DFS(GetVertexOrder(item), func);
     }
 
-    constexpr TWeight Infinity() const { return std::numeric_limits<TWeight>::max(); }
-
     bool _DFS4FindLoop(int n, int parent, std::vector<int> &loopPath)
     {
         SetTag(n, VISITED);
@@ -65,6 +63,11 @@ template <typename TVertex, typename TWeight> class AdjMatrixUndirGraph
     }
 
   public:
+    constexpr TWeight Infinity() const
+    {
+        return std::numeric_limits<TWeight>::max();
+    }
+    
     AdjMatrixUndirGraph(const TVertex vertexes[], size_t n)
         : _arcs(n * n), _vertexes(n), _arcCount(0)
     {
