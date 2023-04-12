@@ -40,7 +40,7 @@ F((F)) --> |4| G((G))
 
 ## 实验内容：
 
-设计一个包含 `names` 数组的类，数组可以存放 `n` 个人的姓名，每个姓名包括 `first name`，`middle name` 和 `last name`，编写完整的程序，其中包含每个数据成员的属性设置以及一个索器，用户可以输入包括 `first name`、`middle name` 和 `last name` 的姓名，也可以根据已知的 `last name`，输出姓名的全称，但是 `middle name` 只取大写的首字母。
+设计一个包含 `names` 数组的类，数组可以存放 `n` 个人的姓名，每个姓名包括 `first name`，`middle name` 和 `last name`，编写完整的程序，其中包含每个数据成员的属性设置以及一个索引器，用户可以输入包括 `first name`、`middle name` 和 `last name` 的姓名，也可以根据已知的 `last name`，输出姓名的全称，但是 `middle name` 只取大写的首字母。
 
 # 实验要求
 
