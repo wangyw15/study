@@ -1,0 +1,6 @@
+#let num = "八"
+#let name = ""
+#let id = ""
+#let time = ""
+#let seat = " "
+#let teacher = ""
