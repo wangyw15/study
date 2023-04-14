@@ -43,18 +43,18 @@
         ]
     ),
     (
-        name: [可以做不止一个任务],
+        name: [这个模板还挺像那么回事],
         steps: [
-            做一些繁复的工作
+            #lorem(200)
         ],
         phenomena: [
-            仍然是一个PDF
+            #lorem(200)
         ],
         data: [
-            发现这里有了第二个任务
+            #lorem(200)
         ],
         conclusion: [
-            原来可以写不止一个任务
+            #lorem(200)
         ]
     ),
 )
