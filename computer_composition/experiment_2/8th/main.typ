@@ -33,11 +33,11 @@
 #show: rest => text(size: 12pt)[#rest]
 #show heading.where(level: 1): h => block()[
   #set text(size: 14pt, weight: "bold")
-  #counter(heading.where(level: 1)).display()#h.body
+  #counter(heading).display()#h.body
 ]
 #show heading.where(level: 3): h => block()[
   #set text(size: 12pt, weight: "bold")
-  #h.body
+  #counter(heading).display()#h.body
 ]
 #set par(first-line-indent: 2em, justify: true)
 
@@ -58,7 +58,7 @@
 
 = 实验内容
 
-#set heading(numbering: none)
+#set heading(numbering: (..nums) => if nums.pos().len() == 3 [\(#nums.pos().last()\)] else [#nums.pos().last().])
 #include "content/experiment_content.typ"
 #set heading(numbering: "一、")
 
