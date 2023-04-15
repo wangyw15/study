@@ -1,7 +1,7 @@
 #import "content.typ": *
 
 #set page(paper: "a4", margin: (x: 3.18cm, y: 2.54cm))
-#set par(first-line-indent: 2em)
+#set par(first-line-indent: 0em)
 #set text(font: ("Times New Roman", "SimSun"), lang: "zh", fallback: true)
 
 #align(center)[
