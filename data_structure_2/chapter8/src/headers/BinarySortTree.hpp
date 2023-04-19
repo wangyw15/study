@@ -330,17 +330,18 @@ template <typename T, bool REVERSED=false> class BinarySortTree
 
     void InsertAsBST(T data)
     {
-        NodePtr pointer = _Root;
-        std::string path = "";
+        NodePtr pointer = _Root, last;
+        char side = ' ';
         while (pointer)
         {
             if (data == pointer->Data)
             {
                 return;
             }
+            last = pointer;
             if (data < pointer->Data)
             {
-                path += 'l';
+                side = 'l';
                 if (pointer->LeftChild == nullptr)
                 {
                     break;
@@ -349,7 +350,7 @@ template <typename T, bool REVERSED=false> class BinarySortTree
             }
             if (data > pointer->Data)
             {
-                path += 'r';
+                side = 'r';
                 if (pointer->RightChild == nullptr)
                 {
                     break;
@@ -357,7 +358,121 @@ template <typename T, bool REVERSED=false> class BinarySortTree
                 pointer = pointer->RightChild;
             }
         }
-        AddChild(path.substr(0, path.size() - 1), path[path.size() - 1], data);
+        if (side == 'l')
+        {
+            last->LeftChild = NodePtr(new Node<T>);
+            last->LeftChild->Parent = NodePtr(last);
+            last->LeftChild->Data = data;
+        }
+        if (side == 'r')
+        {
+            last->RightChild = NodePtr(new Node<T>);
+            last->RightChild->Parent = NodePtr(last);
+            last->RightChild->Data = data;
+        }
+    }
+
+    void DeleteLeaf(const NodePtr parent, const char side)
+    {
+        if (side == 'l' || side == 'L')
+        {
+            parent->LeftChild.reset();
+            parent->LeftChild = nullptr;
+        }
+        else if (side == 'r' || side == 'R')
+        {
+            parent->RightChild.reset();
+            parent->RightChild = nullptr;
+        }
+        else
+        {
+            throw std::range_error("Invalid side");
+        }
+    }
+
+    void DeleteAsBST(T data)
+    {
+        NodePtr pointer = _Root, tmpPtr, last, tmp;
+        char side = ' ';
+        while (pointer)
+        {
+            if (data == pointer->Data)
+            {
+                break;
+            }
+            if (data < pointer->Data)
+            {
+                side = 'l';
+                if (pointer->LeftChild == nullptr)
+                {
+                    break;
+                }
+                pointer = pointer->LeftChild;
+            }
+            if (data > pointer->Data)
+            {
+                side = 'r';
+                if (pointer->RightChild == nullptr)
+                {
+                    break;
+                }
+                pointer = pointer->RightChild;
+            }
+        }
+        if (pointer == nullptr)
+        {
+            return;
+        }
+        if (pointer->LeftChild == nullptr && pointer->RightChild == nullptr)
+        {
+            DeleteLeaf(pointer->Parent, side);
+        }
+        else if (pointer->RightChild == nullptr)
+        {
+            if (side == 'l')
+            {
+                pointer->Parent->LeftChild = pointer->LeftChild;
+            }
+            else if (side == 'r')
+            {
+                pointer->Parent->RightChild = pointer->LeftChild;
+            }
+            pointer.reset();
+            pointer = nullptr;
+        }
+        else if (pointer->LeftChild == nullptr)
+        {
+            if (side == 'l')
+            {
+                pointer->Parent->LeftChild = pointer->RightChild;
+            }
+            else if (side == 'r')
+            {
+                pointer->Parent->RightChild = pointer->RightChild;
+            }
+            pointer.reset();
+            pointer = nullptr;
+        }
+        else
+        {
+            tmpPtr = pointer;
+            while (tmpPtr != nullptr)
+            {
+                last = tmpPtr;
+                tmpPtr = tmpPtr->RightChild;
+            }
+            pointer->Data = last->Data;
+            std::cout << last->Data << std::endl << std::endl;
+            if (last->LeftChild != nullptr)
+            {
+                DeleteAsBST(last->LeftChild->Data);
+            }
+            if (last->RightChild != nullptr)
+            {
+                DeleteAsBST(last->RightChild->Data);
+            }
+            DeleteLeaf(last->Parent, side);
+        }
     }
 };
 

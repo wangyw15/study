@@ -19,7 +19,9 @@ int main()
     tree.AddChild("rr", 'r', 86);
 
     cout << (tree.IsBST() ? "true" : "false") << endl;
-    tree.InsertAsBST(17);
+    // tree.InsertAsBST(17);
+    // cout << tree << endl;
+    tree.DeleteAsBST(68);
     cout << tree << endl;
     return 0;
 }
