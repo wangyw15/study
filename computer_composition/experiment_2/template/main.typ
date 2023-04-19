@@ -1,7 +1,6 @@
 #import "content.typ": *
 
 #set page(paper: "a4", margin: (x: 3.18cm, y: 2.54cm))
-#set par(first-line-indent: 2em, justify: true)
 #set text(lang: "zh", fallback: true)
 #set heading(numbering: none)
 
@@ -35,6 +34,13 @@
 #set text(size: 12pt)
 
 #text(size: 16pt, weight: "bold")[实验名称：#box(width: 50%, inset: 2pt, stroke: (bottom: 1pt + black), align(center, name))]
+
+#show par: it => [
+  block[
+    #h(2em)
+    #it.body
+  ]
+]
 
 = 一、实验目的
 #enum(
