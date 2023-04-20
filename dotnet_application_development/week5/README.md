@@ -51,16 +51,16 @@
 
 ## 设计接口
 
-1. `IRecordable`，其中包含两个方法：
-2. `void receive(string s)`表示接受了文件 s；
-3. `bool checked(string f)`表示检查了文件 f 的格式，返回布尔量，表示是不是可接受的格式；
-4. `void save(string t)`表示存储了文件 s。
-5. `IPlayable`，其中包含两个方法：
-6. `void find(string u)`表示找到了文件 u；
-7. `bool checked(string f)`表示检查了文件 f 的格式，返回布尔量，表示是不是可接受的格式；
-8. `void play(string v)`表示播放文件 v。
-9. 设计类 `MP3`，它继承接口 `IRecordable` 和 `IPlayable`，其中方法 `checked` 要显式接口成员来实现，`IRecordable.checked` 方法是用来检查输入文件的格式，因为除了可播放的文件以外，其他可存储的文件都是合法的；`IPlayable.checked` 方法检查文件是否可播放的多媒体文件。
-10.  编制完整的可演示结果的程序。
+1. `IRecordable`，其中包含三个方法：
+   - `void receive(string s)`表示接受了文件 s；
+   - `bool checked(string f)`表示检查了文件 f 的格式，返回布尔量，表示是不是可接受的格式；
+   -  `void save(string t)`表示存储了文件 t。
+2. `IPlayable`，其中包含三个方法：
+   - `void find(string u)`表示找到了文件 u；
+   - `bool checked(string f)`表示检查了文件 f 的格式，返回布尔量，表示是不是可接受的格式；
+   - `void play(string v)`表示播放文件 v。
+3. 设计类 `MP3`，它继承接口 `IRecordable` 和 `IPlayable`，其中方法 `checked` 要显式接口成员来实现，`IRecordable.checked` 方法是用来检查输入文件的格式，因为除了可播放的文件以外，其他可存储的文件都是合法的；`IPlayable.checked` 方法检查文件是否可播放的多媒体文件。
+4. 编制完整的可演示结果的程序。
 
 ## 实验报告
 
