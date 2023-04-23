@@ -35,7 +35,8 @@
 
 #text(size: 16pt, weight: "bold")[实验名称：#box(width: 50%, inset: 2pt, stroke: (bottom: 1pt + black), align(center, name))]
 
-#set par(first-line-indent: 2em, justify: true)
+// #set par(first-line-indent: 2em, justify: true)
+#set figure(numbering: none)
 
 = 一、实验目的
 #enum(
