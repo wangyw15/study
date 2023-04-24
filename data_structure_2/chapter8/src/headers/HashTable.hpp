@@ -11,24 +11,23 @@
 #define EMPTY 0
 #define USE 1
 
-template <typename T>
+template <typename TKey, typename TValue>
 class HashTable
 {
 protected:
-    std::shared_ptr<T[]> _data = nullptr;
+    std::shared_ptr<TValue[]> _data = nullptr;
     std::shared_ptr<int[]> _tag = nullptr;
     std::size_t _capacity = -1;
     std::size_t _count = 0;
-    std::size_t p = 0;
 
-    int _Hash(T item)
+    int _Hash(TKey key)
     {
-        return item % p;
+        return key % p;
     }
 
-    int _Collision(T item, int i)
+    int _Collision(TKey key, int i)
     {
-        return (_Hash(item) + i) % _capacity;
+        return (_Hash(key) + i) % _capacity;
     }
 
     int _IsPrime(size_t num)
@@ -50,15 +49,6 @@ public:
         _count = 0;
         _data = std::shared_ptr<T[]>(new T[capacity]);
         _tag = std::shared_ptr<int[]>(new int[capacity]{0});
-
-        // find p
-        for (p = _capacity; p > 0; p--)
-        {
-            if (_IsPrime(p))
-            {
-                break;
-            }
-        }
     }
 
     ~HashTable()
@@ -69,7 +59,7 @@ public:
         _tag = nullptr;
     }
 
-    void Traverse(std::function<void(const T&)> func) const
+    void Traverse(std::function<void(const TValue&)> func) const
     {
         for (std::size_t i = 0; i < _capacity; i++)
         {
@@ -80,14 +70,14 @@ public:
         }
     }
 
-    int Search(const T& item) const
+    TValue &Search(const TKey& key) const
     {
         int collision = 0; // collision count
-        int hash = _Hash(item); // hashed
+        int hash = _Hash(key); // hashed
         while (collision < _capacity &&
-            ((_tag[hash] == USE && _data[hash] != item) || _tag[hash] == DELETE))
+            ((_tag[hash] == USE && _data[hash] != key) || _tag[hash] == DELETE))
         {
-            hash = _Collision(item, ++collision);
+            hash = _Collision(key, ++collision);
         }
         if (collision >= _capacity || _tag[hash] == EMPTY)
         {
@@ -96,25 +86,25 @@ public:
         return hash;
     }
 
-    void Insert(const T& item)
+    void Insert(const TKey& key, const TValue& data)
     {
         int collision = 0; // collision count
-        int hash = _Hash(item); // hashed
+        int hash = _Hash(key); // hashed
         int pos = -1; // insert position
         while (collision < _capacity &&
-            ((_tag[hash] == USE && _data[hash] != item) || _tag[hash] == DELETE))
+            ((_tag[hash] == USE && _data[hash] != key) || _tag[hash] == DELETE))
         {
             if (pos == -1 && _tag[hash] == DELETE)
             {
                 pos = hash;
             }
-            hash = _Collision(item, ++collision);
+            hash = _Collision(key, ++collision);
         }
         if (collision >= _capacity && pos == -1)
         {
             throw std::overflow_error("Hash table is full!");
         }
-        else if (_tag[hash] == USE && _data[hash] == item)
+        else if (_tag[hash] == USE && _data[hash] == key)
         {
             throw std::logic_error("Given item is already stored in the table.");
         }
@@ -124,19 +114,21 @@ public:
             {
                 pos = hash;
             }
-            _data[pos] = item;
+            _data[pos] = data;
             _tag[pos] = USE;
         }
     }
 
-    void Delete(const T& item)
+    void Delete(const TKey& key)
     {
-        int i = Search(item);
+        int i = Search(key);
         if (i != -1)
         {
             _tag[i] = DELETE;
         }
     }
+
+    TValue& GetDataFromIndex(int n) const { return _data[n]; }
 };
 
 #endif
