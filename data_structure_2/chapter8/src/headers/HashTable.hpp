@@ -19,15 +19,28 @@ protected:
     std::shared_ptr<int[]> _tag = nullptr;
     std::size_t _capacity = -1;
     std::size_t _count = 0;
+    std::size_t p = 0;
 
-    int Hash(T item)
+    int _Hash(T item)
     {
-        
+        return item % p;
     }
 
-    int Collision(T item, int i)
+    int _Collision(T item, int i)
     {
+        return (_Hash(item) + i) % _capacity;
+    }
 
+    int _IsPrime(size_t num)
+    {
+        for(size_t i = 2; i < num; i++)
+        {
+            if (num % i == 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
 public:
@@ -37,6 +50,15 @@ public:
         _count = 0;
         _data = std::shared_ptr<T[]>(new T[capacity]);
         _tag = std::shared_ptr<int[]>(new int[capacity]{0});
+
+        // find p
+        for (p = _capacity; p > 0; p--)
+        {
+            if (_IsPrime(p))
+            {
+                break;
+            }
+        }
     }
 
     ~HashTable()
@@ -61,11 +83,11 @@ public:
     int Search(const T& item) const
     {
         int collision = 0; // collision count
-        int hash = Hash(item); // hashed
+        int hash = _Hash(item); // hashed
         while (collision < _capacity &&
             ((_tag[hash] == USE && _data[hash] != item) || _tag[hash] == DELETE))
         {
-            hash = Collision(item, ++collision);
+            hash = _Collision(item, ++collision);
         }
         if (collision >= _capacity || _tag[hash] == EMPTY)
         {
@@ -77,7 +99,7 @@ public:
     void Insert(const T& item)
     {
         int collision = 0; // collision count
-        int hash = Hash(item); // hashed
+        int hash = _Hash(item); // hashed
         int pos = -1; // insert position
         while (collision < _capacity &&
             ((_tag[hash] == USE && _data[hash] != item) || _tag[hash] == DELETE))
@@ -86,7 +108,7 @@ public:
             {
                 pos = hash;
             }
-            hash = Collision(item, ++collision);
+            hash = _Collision(item, ++collision);
         }
         if (collision >= _capacity && pos == -1)
         {
