@@ -47,7 +47,7 @@ public:
     {
         _capacity = capacity;
         _count = 0;
-        _data = std::shared_ptr<T[]>(new T[capacity]);
+        _data = std::shared_ptr<TValue[]>(new TValue[capacity]);
         _tag = std::shared_ptr<int[]>(new int[capacity]{0});
     }
 
