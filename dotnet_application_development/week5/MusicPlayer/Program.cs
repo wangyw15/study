@@ -1,2 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿var player = new MP3();
+player.Receive("test.mp3");
+player.Save("test.mp3");
+
+player.Find("test.mp3");
+player.Play("test.mp3");

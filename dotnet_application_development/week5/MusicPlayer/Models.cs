@@ -16,31 +16,55 @@ class MP3 : IRecordable, IPlayable
 {
     public void Receive(string s)
     {
-
+        if ((this as IRecordable).Checked(s))
+        {
+            Console.WriteLine($"Received file {s}");
+            // do something...
+        }
     }
 
-    public bool IRecordable.Checked(string f)
+    bool IRecordable.Checked(string f)
     {
-
+        if (!File.Exists(f))
+        {
+            return f.EndsWith(".mp3") || f.EndsWith(".wav") || f.EndsWith(".flac") || f.EndsWith(".ogg");
+        }
+        return false;
     }
 
-    public void Save()
+    public void Save(string s)
     {
-
+        if ((this as IRecordable).Checked(s))
+        {
+            Console.WriteLine($"Saved file {s}");
+            // do something...
+        }
     }
 
     public void Find(string u)
     {
-
+        if ((this as IPlayable).Checked(u))
+        {
+            Console.WriteLine($"Found file {u}");
+            // do something...
+        }
     }
 
-    public bool IPlayable.Checked(string f)
+    bool IPlayable.Checked(string f)
     {
-
+        if (File.Exists(f))
+        {
+            return f.EndsWith(".mp3") || f.EndsWith(".wav") || f.EndsWith(".flac") || f.EndsWith(".ogg");
+        }
+        return false;
     }
 
     public void Play(string v)
     {
-
+        if ((this as IPlayable).Checked(v))
+        {
+            Console.WriteLine($"Playing file {v}");
+            // do something...
+        }
     }
 }

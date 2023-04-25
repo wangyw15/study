@@ -3,6 +3,7 @@
 #set page(paper: "a4", margin: (x: 3.18cm, y: 2.54cm))
 #set par(first-line-indent: 0em)
 #set text(font: ("Times New Roman", "SimSun"), lang: "zh", fallback: true)
+#set figure(numbering: none)
 
 #align(center)[
   #set par(leading: 2.41em)
