@@ -19,18 +19,18 @@ def do_four(f):
     do_twice(f)
 
 def print_beam():
-    print '+ - - - -',
+    print('+ - - - -', end='')
 
 def print_post():
-    print '|        ',
+    print('|        ', end='')
 
 def print_beams():
     do_twice(print_beam)
-    print '+'
+    print('+')
 
 def print_posts():
     do_twice(print_post)
-    print '|'
+    print('|')
 
 def print_row():
     print_beams()
@@ -52,19 +52,19 @@ def one_four_one(f, g, h):
     h()
 
 def print_plus():
-    print '+',
+    print('+', end='')
 
 def print_dash():
-    print '-',
+    print('-', end='')
 
 def print_bar():
-    print '|',
+    print('|', end='')
 
 def print_space():
-    print ' ',
+    print(' ', end='')
 
 def print_end():
-    print
+    print('')
 
 def nothing():
     "do nothing"
@@ -108,4 +108,4 @@ rewrite the code to reflect the structure of the solution.
 --- Allen
 """
 
-print comment
+print(comment)
