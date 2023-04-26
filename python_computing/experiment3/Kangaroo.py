@@ -13,9 +13,11 @@ you DO NOT want to emulate this example!
 class Kangaroo(object):
     """a Kangaroo is a marsupial"""
     
-    def __init__(self, contents=[]):
+    def __init__(self, contents=None):
         """initialize the pouch contents; the default value is
         an empty list"""
+        if contents == None:
+            contents = []
         self.pouch_contents = contents
 
     def __str__(self):
@@ -37,7 +39,8 @@ kanga.put_in_pouch('wallet')
 kanga.put_in_pouch('car keys')
 kanga.put_in_pouch(roo)
 
-print kanga
+print(kanga)
+print(roo)
 
 # If you run this program as is, it seems to work.
 # To see the problem, trying printing roo.
