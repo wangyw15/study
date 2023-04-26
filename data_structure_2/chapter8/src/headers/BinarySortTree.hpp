@@ -9,6 +9,7 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 template <typename T> struct Node
 {
@@ -325,7 +326,23 @@ template <typename T, bool REVERSED=false> class BinarySortTree
 
     bool IsBST() const
     {
-        return _RecureForDetermineBST(_Root);
+        T last = 0;
+        bool start = true, result = true;
+        InOrderTraverse([&](T item) -> void {
+            if (!start)
+            {
+                start = false;
+            }
+            else
+            {
+                if (item < last)
+                {
+                    result = false;
+                }
+            }
+            last = item;
+        }, _Root);
+        return result;
     }
 
     void InsertAsBST(T data)

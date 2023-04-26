@@ -26,9 +26,10 @@ int main()
         nums[i] = dis(engine);
         hashMatrix.Insert(i / 100, i % 100, nums[i]);
     }
-    hashMatrix.Traverse([](MatrixNode node) -> void
+    /*hashMatrix.Traverse([](MatrixNode node) -> void
         { 
             cout << node.X << ", " << node.Y << ": " << node.Data << endl;
-        });
+        });*/
+        cout << hashMatrix.Search(3, 50);
     return 0;
 }

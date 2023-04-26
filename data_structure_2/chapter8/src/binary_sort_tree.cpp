@@ -8,7 +8,7 @@ int main()
 {
     BinarySortTree<int> tree;
     tree.SetChild("", 39);
-    tree.AddChild("", 'l', 11);
+    tree.AddChild("", 'l', 100);
     tree.AddChild("", 'r', 68);
     tree.AddChild("l", 'l', 8);
     tree.AddChild("l", 'r', 23);
