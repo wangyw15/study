@@ -28,7 +28,7 @@ while (b == true)
     }
     catch (HundredException e)
     {
-        Exception i = e;
+        Exception? i = e;
         while (i != null)
         {
             Console.WriteLine(i);
