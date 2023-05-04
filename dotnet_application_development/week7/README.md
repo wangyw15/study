@@ -30,9 +30,9 @@ class Class1
                 string ch = Console.ReadLine();
                 if (ch == "N" || ch == "n")
                     break;
-                    //return;
-                    //continue;
-                    //goto leave;
+                    // return;
+                    // continue;
+                    // goto leave;
                 else
                     goto here;
                 leave:b = false;
@@ -45,7 +45,8 @@ class Class1
 
 代码2：
 ```csharp
-class Class1{
+class Class2
+{
     static void Main(string[] args)
     {
         Console.WriteLine("请输入五个整数：");
@@ -58,13 +59,13 @@ class Class1{
             {
                 b[count] = Console.ReadLine();
                 a[i] = int.Parse(b[count]);
-            } //1
+            } // 1
             catch (FormatException)
             {
                 Console.WriteLine("输入不正确，请重新输入");
                 i--;
                 continue;
-            } //2
+            } // 2
             finally
             {
                 count++;
@@ -77,6 +78,7 @@ class Class1{
     }
 }
 ```
+
 (2)根据代码1内容，结合代码2的设计思路，控制用户的输入次数。
 
 要求：当用户5次输入不正确时，即输入错误的次数超过了限制，就抛出一个`Exception`异常，并利用传递给`Exception`对象的构造函数的字符串参数对异常进行如下描述：“错误的输入次数超过限制，您被怀疑为故意捣乱，我们有权把您踢出本系统！”。
