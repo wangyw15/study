@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandleError", "HandleError\HandleError.csproj", "{6090DA4C-EEED-42A7-9DB2-C7C88812A2F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomException", "CustomException\CustomException.csproj", "{1F8D98CC-C6F3-4B89-A56D-4E44CD656CFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6090DA4C-EEED-42A7-9DB2-C7C88812A2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6090DA4C-EEED-42A7-9DB2-C7C88812A2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6090DA4C-EEED-42A7-9DB2-C7C88812A2F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F8D98CC-C6F3-4B89-A56D-4E44CD656CFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F8D98CC-C6F3-4B89-A56D-4E44CD656CFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F8D98CC-C6F3-4B89-A56D-4E44CD656CFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F8D98CC-C6F3-4B89-A56D-4E44CD656CFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
