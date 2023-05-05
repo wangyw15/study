@@ -19,11 +19,7 @@ math: mathjax
 
 # `list`
 
-长度会自动扩展的顺序表
-
----
-
-# `list`
+> 长度会自动扩展的顺序表
 
 `list`继承于`MutableSequence`，而`MutableSequence`继承于`Sequence`，再往上的父类就与序列没有特别的关系了
 
@@ -39,7 +35,7 @@ math: mathjax
 - `Collection`
   - 是个集合
 - ...
-  - `Collection`还有三个基类，篇幅所限就不赘述了
+  - 其实`Collection`还有三个基类，篇幅所限就不赘述了
 
 ---
 
@@ -209,3 +205,7 @@ $$
 if (newsize - Py_SIZE(self) > (Py_ssize_t)(new_allocated - newsize))
     new_allocated = ((size_t)newsize + 3) & ~(size_t)3;
 ```
+
+---
+
+# 谢谢
