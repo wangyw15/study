@@ -6,11 +6,142 @@ math: mathjax
 # Python序列实现的底层原理
 
 > 以`list`为例
-> 源代码来自于 [CPython 3.12.0 alpha 7](https://github.com/python/cpython) 的 [Objects/listobject.c](https://github.com/python/cpython/blob/main/Objects/listobject.c) 文件
+> 版本：[CPython 3.12.0 alpha 7](https://github.com/python/cpython)
+> `Include/internal/pycore_list.h`
+
+---
+
+# Python部分
+
+> 不那么底层的逻辑
+
+---
+
+# `list`
+
+长度会自动扩展的顺序表
+
+---
+
+# `list`
+
+`list`继承于`MutableSequence`，而`MutableSequence`继承于`Sequence`，再往上的父类就与序列没有特别的关系了
+
+---
+
+# `Sequence`
+
+> `Sequence`就是数组，只不过内容不可变
+
+`Sequence`是只读的序列，继承于
+- `Reversible`
+  - 可反向的
+- `Collection`
+  - 是个集合
+- ...
+  - `Collection`还有三个基类，篇幅所限就不赘述了
+
+---
+
+# `MutableSequence.remove()`
+
+```python
+def remove(self, value):
+    del self[self.index(value)]
+```
+
+先通过`list.index`通过`del`删除元素
+
+---
+
+# `MutableSequence.pop()`
+
+```python
+def pop(self, index=-1):
+    v = self[index]
+    del self[index]
+    return v
+```
+
+很简单，就是通过`del`删除数组的元素
+
+---
+
+# `MutableSequence.clear()`
+
+> `Lib/_collections_abc.py`
+
+```python
+def clear(self):
+    try:
+        while True:
+            self.pop()
+    except IndexError:
+        pass
+```
+
+清空数组就是`pop()`到报错为止
+
+---
+
+# C语言部分
+
+> 底层逻辑
+
+---
+
+# `list` 主要函数
+
+> `Objects/listobject.h`
+
+```c
+PyAPI_FUNC(PyObject *) PyList_New(Py_ssize_t size);
+PyAPI_FUNC(Py_ssize_t) PyList_Size(PyObject *);
+
+PyAPI_FUNC(PyObject *) PyList_GetItem(PyObject *, Py_ssize_t);
+PyAPI_FUNC(int) PyList_SetItem(PyObject *, Py_ssize_t, PyObject *);
+PyAPI_FUNC(int) PyList_Insert(PyObject *, Py_ssize_t, PyObject *);
+PyAPI_FUNC(int) PyList_Append(PyObject *, PyObject *);
+
+PyAPI_FUNC(PyObject *) PyList_GetSlice(PyObject *, Py_ssize_t, Py_ssize_t);
+PyAPI_FUNC(int) PyList_SetSlice(PyObject *, Py_ssize_t, Py_ssize_t, PyObject *);
+
+PyAPI_FUNC(int) PyList_Sort(PyObject *);
+PyAPI_FUNC(int) PyList_Reverse(PyObject *);
+PyAPI_FUNC(PyObject *) PyList_AsTuple(PyObject *);
+```
+
+---
+
+# 新建列表
+
+> `PyList_New`
+
+先获取直接可用的空余列表个数，如果有就直接新建列表；否则就通过GC新建列表。
+
+新建列表之后，如果需要的`size`不为0，就通过`PyMem_Calloc`申请空间，然后通过GC跟踪，以便垃圾回收。
+
+---
+
+# 列表长度
+
+> `PyList_Size`
+
+转换为`PyVarObject`再获取长度。
+
+---
+
+# 获取指定下标的内容
+
+> `PyList_GetItem`
+
+与顺序表相同，通过数组下标访问
 
 ---
 
 # `list_resize`
+
+> `Objects/listobject.c`
 
 ```c
 if (allocated >= newsize && newsize >= (allocated >> 1)) {
@@ -78,5 +209,3 @@ $$
 if (newsize - Py_SIZE(self) > (Py_ssize_t)(new_allocated - newsize))
     new_allocated = ((size_t)newsize + 3) & ~(size_t)3;
 ```
-
----
