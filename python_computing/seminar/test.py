@@ -22,3 +22,22 @@ for i in range(100):
     print(i, time.perf_counter_ns() - t1)
 
 # %%
+
+a = [1, 2, 3]
+b = a[:2]
+print(a)
+print(b)
+a[0] = 10
+print(a)
+print(b)
+
+# %%
+
+a = [1, 2, 3]
+print(a)
+a[:2] = [5, 10, 11]
+print(a)
+a[:2] = []
+print(a)
+
+# %%

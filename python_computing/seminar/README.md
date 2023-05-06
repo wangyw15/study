@@ -384,8 +384,6 @@ static inline int _PyList_AppendTakeRef(PyListObject *self, PyObject *newitem)
 
 ---
 
-# 在尾部追加-续
-
 ```c
 int _PyList_AppendTakeRefListResize(PyListObject *self, PyObject *newitem)
 {
@@ -400,6 +398,197 @@ int _PyList_AppendTakeRefListResize(PyListObject *self, PyObject *newitem)
 ```
 
 这里与之前的 `PyList_Insert` 一样，要重新分配内存空间大小，然后在尾部添加新数据
+
+---
+
+# 获取切片
+
+```c
+PyObject *PyList_GetSlice(PyObject *a, Py_ssize_t ilow, Py_ssize_t ihigh)
+{
+    // ...
+    return list_slice((PyListObject *)a, ilow, ihigh);
+}
+static PyObject *list_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh)
+{
+    PyListObject *np;
+    // ...
+    np = (PyListObject *) list_new_prealloc(len);
+    // ...
+    for (i = 0; i < len; i++) {
+        PyObject *v = src[i];
+        Py_INCREF(v);
+        dest[i] = v;
+    }
+    // ...
+    return (PyObject *)np;
+}
+```
+
+---
+
+切片作为右值的时候返回的是浅拷贝，如
+
+```python
+a = [1, 2, 3]
+b = a[:2]
+print(a)
+print(b)
+a[0] = 10
+print(a)
+print(b)
+```
+
+运行结果是
+
+```
+[1, 2, 3]
+[1, 2]
+[10, 2, 3]
+[1, 2]
+```
+
+与此相对的就是左值了，后文的设置切片
+
+---
+
+# 设置切片
+
+> 复杂一点了
+
+```python
+a = [1, 2, 3]
+print(a)
+a[:2] = [5, 10, 11]
+print(a)
+a[:2] = []
+print(a)
+```
+
+运行结果是
+
+```
+[1, 2, 3]
+[5, 10, 11, 3]
+[11, 3]
+```
+
+当切片作为左值的时候，在底层与右值处理方式不一样
+
+---
+
+```c
+int PyList_SetSlice(PyObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
+{
+    Py_ssize_t n; /* # of elements in replacement list */
+    Py_ssize_t norig; /* # of elements in list getting replaced */
+    Py_ssize_t d; /* Change in size */
+    // ...
+    if (d < 0) { /* Delete -d items */
+        Py_ssize_t tail;
+        tail = (Py_SIZE(a) - ihigh) * sizeof(PyObject *);
+        memmove(&item[ihigh+d], &item[ihigh], tail);
+        if (list_resize(a, Py_SIZE(a) + d) < 0) {
+            memmove(&item[ihigh], &item[ihigh+d], tail);
+            memcpy(&item[ilow], recycle, s);
+            goto Error;
+        }
+        item = a->ob_item;
+    }
+```
+
+---
+
+```c
+    else if (d > 0) { /* Insert d items */
+        k = Py_SIZE(a);
+        if (list_resize(a, k+d) < 0)
+            goto Error;
+        item = a->ob_item;
+        memmove(&item[ihigh+d], &item[ihigh],
+            (k - ihigh)*sizeof(PyObject *));
+    }
+    for (k = 0; k < n; k++, ilow++) {
+        PyObject *w = vitem[k];
+        Py_XINCREF(w);
+        item[ilow] = w;
+    }
+    result = 0;
+    // ...
+    return result;
+}
+```
+
+新赋值比切片长度长，就先把列表变短再赋值；更短则反之
+
+---
+
+# 排序
+
+> 代码太长放不下
+
+```c
+int PyList_Sort(PyObject *v)
+{
+    // ...
+    v = list_sort_impl((PyListObject *)v, NULL, 0);
+    // ...
+    return 0;
+}
+static PyObject *list_sort_impl(PyListObject *self, PyObject *keyfunc, int reverse)
+{
+    // ...
+}
+```
+
+使用了归并排序，对于短序列则使用二叉排序（最大堆或最小堆）
+
+具体参考 `Objects/listsort.txt` 文件
+
+---
+
+短序列的长度是通过 `list` 的长度计算得出的
+
+```c
+static Py_ssize_t merge_compute_minrun(Py_ssize_t n)
+{
+    Py_ssize_t r = 0;           /* becomes 1 if any 1 bits are shifted off */
+    assert(n >= 0);
+    while (n >= 64) {
+        r |= n & 1;
+        n >>= 1;
+    }
+    return n + r;
+}
+```
+
+以 `n=67` 为例，转换为二进制为 `100 0011`，`r` 此时变为 1，`n` 右移一位变为 `10 0001=33`，循环停止，最终返回 34。因此，当剩余序列长度小于 34 时变为二叉排序。
+
+---
+
+# 反序
+
+```c
+int PyList_Reverse(PyObject *v)
+{
+    // ...
+    reverse_slice(self->ob_item, self->ob_item + Py_SIZE(self));
+    return 0;
+}
+static void reverse_slice(PyObject **lo, PyObject **hi)
+{
+    --hi;
+    while (lo < hi) {
+        PyObject *t = *lo;
+        *lo = *hi;
+        *hi = t;
+        ++lo;
+        --hi;
+    }
+}
+```
+
+反序很简单，就是一直交换首尾直到中间为止
 
 ---
 
