@@ -541,7 +541,7 @@ static PyObject *list_sort_impl(PyListObject *self, PyObject *keyfunc, int rever
 }
 ```
 
-使用了归并排序，对于短序列则使用二叉排序（最大堆或最小堆）
+使用了 timsort 算法，也就是归并排序加上二叉排序，先进行归并排序，对于短序列则使用二叉排序（最大堆或最小堆）
 
 具体参考 `Objects/listsort.txt` 文件
 
