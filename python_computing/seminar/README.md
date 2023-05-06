@@ -108,8 +108,6 @@ PyAPI_FUNC(PyObject *) PySequence_List(PyObject *o);
 
 ---
 
-# `Sequence` 主要函数-续
-
 ```c
 typedef struct {
     lenfunc sq_length;
@@ -143,11 +141,11 @@ typedef struct {
 
 ---
 
-# Python内置类型
+# Python内置模块
 
 > 文件 `Python/bltinmodule.c`
 
-|    内置类型    |             |          |              |           |              |
+|    内置模块    |             |          |              |           |              |
 | :------------: | :---------: | :------: | :----------: | :-------: | :----------: |
 |      None      | classmethod | **list** | **Ellipsis** |  complex  |     map      |
 | NotImplemented |    dict     |  object  |    False     | enumerate |    range     |
@@ -160,13 +158,13 @@ typedef struct {
 
 # `Sequence` 和 `list`
 
-虽然 `list` 是内置类型，但是在 CPython 实现中，`list` 的部分方法也是作为 `Sequence` 来处理的
+在 CPython 实现中，`list` 是作为 `Sequence` 来处理的
 
 ---
 
 # `list.extend()` 实现
 
-> 挺重要的
+> 后面要用到就提前说了
 
 ```c
 static PyObject *list_extend(PyListObject *self, PyObject *iterable)
@@ -241,21 +239,43 @@ PyAPI_FUNC(PyObject *) PyList_AsTuple(PyObject *);
 > `PyList_New`
 
 ```c
-struct _Py_list_state *state = get_list_state();
-state->numfree--;
-op = state->free_list[state->numfree];
-OBJECT_STAT_INC(from_freelist);
-_Py_NewReference((PyObject *)op);
-// else
-op = PyObject_GC_New(PyListObject, &PyList_Type);
-if (op == NULL) {
-    return NULL;
+#define PyList_MAXFREELIST 80
+if (PyList_MAXFREELIST && state->numfree) {
+    state->numfree--;
+    op = state->free_list[state->numfree];
+    OBJECT_STAT_INC(from_freelist);
+    _Py_NewReference((PyObject *)op);
+}
+else {
+    op = PyObject_GC_New(PyListObject, &PyList_Type);
+    if (op == NULL) {
+        return NULL;
+    }
 }
 ```
 
-先获取直接可用的空余列表个数，如果有就直接新建列表；否则就通过GC新建列表。
+Python 是有缓存的，所以会先检查 `list` 的缓存，如果还有空就直接拿来用，否则就新建一个。但是实际存储数据的内存空间没有缓存，还是需要分配的
 
-新建列表之后，如果需要的`size`不为0，就通过`PyMem_Calloc`申请空间，然后通过GC跟踪，以便垃圾回收。
+---
+
+```c
+if (size <= 0) {
+    op->ob_item = NULL;
+}
+else {
+    op->ob_item = (PyObject **) PyMem_Calloc(size, sizeof(PyObject *));
+    if (op->ob_item == NULL) {
+        Py_DECREF(op);
+        return PyErr_NoMemory();
+    }
+}
+```
+
+然后开始根据 `size` 分配空间，如果为0就跳过分配空间
+
+`PyListObject` 这个结构体本身是存储在栈上的，有缓存；而实际存储数据的 `ob_item` 是通过 `calloc` 分配的堆空间，没有缓存
+
+`calloc` 可以参考[微软官方文档](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/calloc)
 
 ---
 
@@ -270,8 +290,7 @@ Py_ssize_t PyList_Size(PyObject *op)
 #define Py_SIZE(ob) Py_SIZE(_PyObject_CAST(ob))
 
 static inline Py_ssize_t Py_SIZE(PyObject *ob) {
-    assert(ob->ob_type != &PyLong_Type);
-    assert(ob->ob_type != &PyBool_Type);
+    // ..
     PyVarObject *var_ob = _PyVarObject_CAST(ob);
     return var_ob->ob_size;
 }
@@ -537,7 +556,7 @@ dis.dis(use_list_comprehension)
 
 ---
 
-# 这个 PPT 还能在这里看到
+# Markdown 版本
 
 > https://github.com/wangyw15/study/tree/main/python_computing/seminar
 

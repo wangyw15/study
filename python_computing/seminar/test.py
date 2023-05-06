@@ -1,3 +1,4 @@
+# %%
 import dis
 
 def use_append():
@@ -11,3 +12,13 @@ def use_list_comprehension():
 dis.dis(use_append)
 print('-------------------')
 dis.dis(use_list_comprehension)
+
+# %%
+import time
+
+for i in range(100):
+    t1 = time.perf_counter_ns()
+    lst = list([1, 2, 3])
+    print(i, time.perf_counter_ns() - t1)
+
+# %%
