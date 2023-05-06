@@ -1,33 +1,25 @@
 ---
 marp: true
+paginate: true
+theme: default
 math: mathjax
+backgroundImage: url('background.svg')
 ---
 
 # Python序列实现的底层原理
 
-> 以`list`为例
-> 版本：[CPython 3.12.0 alpha 7](https://github.com/python/cpython)
+> 版本：[CPython 3.11.3](https://github.com/python/cpython/tree/v3.11.3)
 
 ---
 
-# Python部分
+# 序列
 
-> 不那么底层的逻辑
+> Python
 > 文件 `Lib/_collections_abc.py`
 
 ---
 
-# `list`
-
-> 长度会自动扩展的顺序表
-
-`list`继承于`MutableSequence`，而`MutableSequence`继承于`Sequence`，再往上的父类就与序列没有特别的关系了
-
----
-
 # `Sequence`
-
-> `Sequence`就是数组，只不过内容不可变
 
 `Sequence`是只读的序列，继承于
 - `Reversible`
@@ -41,7 +33,7 @@ math: mathjax
 
 # `MutableSequence`
 
-`list`的直接基类，着重介绍
+可变序列，着重介绍
 
 ---
 
@@ -84,13 +76,96 @@ def clear(self):
 
 ---
 
-# C语言部分
+# `Sequence` 底层实现
 
-> 底层逻辑
+> 文件 `Include/abstract.h`
+> 文件 `Objects/abstract.c`
+
+---
+
+# `Sequence` 主要函数
+
+```c
+PyAPI_FUNC(Py_ssize_t) PySequence_Size(PyObject *o);
+
+#undef PySequence_Length
+PyAPI_FUNC(Py_ssize_t) PySequence_Length(PyObject *o);
+#define PySequence_Length PySequence_Size
+PyAPI_FUNC(PyObject *) PySequence_Concat(PyObject *o1, PyObject *o2);
+PyAPI_FUNC(PyObject *) PySequence_Repeat(PyObject *o, Py_ssize_t count);
+PyAPI_FUNC(PyObject *) PySequence_GetItem(PyObject *o, Py_ssize_t i);
+PyAPI_FUNC(PyObject *) PySequence_GetSlice(PyObject *o, Py_ssize_t i1, Py_ssize_t i2);
+PyAPI_FUNC(int) PySequence_SetItem(PyObject *o, Py_ssize_t i, PyObject *v);
+PyAPI_FUNC(int) PySequence_DelItem(PyObject *o, Py_ssize_t i);
+PyAPI_FUNC(int) PySequence_SetSlice(PyObject *o, Py_ssize_t i1, Py_ssize_t i2, PyObject *v);
+PyAPI_FUNC(int) PySequence_DelSlice(PyObject *o, Py_ssize_t i1, Py_ssize_t i2);
+PyAPI_FUNC(PyObject *) PySequence_Tuple(PyObject *o);
+PyAPI_FUNC(PyObject *) PySequence_List(PyObject *o);
+```
+
+---
+
+# `Sequence` 主要函数-续
+
+```c
+typedef struct {
+    lenfunc sq_length;
+    binaryfunc sq_concat;
+    ssizeargfunc sq_repeat;
+    ssizeargfunc sq_item;
+    void *was_sq_slice;
+    ssizeobjargproc sq_ass_item;
+    void *was_sq_ass_slice;
+    objobjproc sq_contains;
+
+    binaryfunc sq_inplace_concat;
+    ssizeargfunc sq_inplace_repeat;
+} PySequenceMethods;
+```
+
+虽然我想讲 `Sequence`，但是根据我的观察，`Sequence` 更接近于接口，具体实现要看子类
+
+---
+
+# `list`
+
 > 文件 `Include/listobject.h`
 > 文件 `Objects/listobject.c`
 > 文件 `Include/internal/pycore_list.h`
 > 后面展示的代码都是简化过的
+
+讲 `str` 更好，但是 `Objects/unicodeobject.c` 中的 16000 行代码让人望而却步，所以就来讲 `list` 了
+
+`list` 同样是Python的内置类型，在 `Python/bltinmodule.c` 中定义
+
+---
+
+# Python内置类型
+
+> 文件 `Python/bltinmodule.c`
+
+|    内置类型    |             |          |              |           |              |
+| :------------: | :---------: | :------: | :----------: | :-------: | :----------: |
+|      None      | classmethod | **list** | **Ellipsis** |  complex  |     map      |
+| NotImplemented |    dict     |  object  |    False     | enumerate |    range     |
+|      True      |   filter    | reversed |     bool     |   float   |     set      |
+|   memoryview   |  frozenset  |  slice   |  bytearray   | property  | staticmethod |
+|     bytes      |     int     |   str    |    super     |   tuple   |     type     |
+|      zip       |             |          |              |           |              |
+
+---
+
+# `Sequence` 和 `list`
+
+虽然 `list` 是内置类型，但是在 CPython 实现中，`list` 的部分方法也是作为 `Sequence` 来处理的
+
+---
+
+# `list.extend()` 实现
+
+> 挺重要的
+
+[TODO)
 
 ---
 
@@ -342,4 +417,41 @@ if (newsize - Py_SIZE(self) > (Py_ssize_t)(new_allocated - newsize))
 
 ---
 
-# 谢谢
+# 这个文档还能在这里看到
+
+> https://github.com/wangyw15/study/tree/main/python_computing/seminar
+
+![w:500](qrcode.svg)
+
+---
+
+# 接下来是意外收获
+
+---
+
+# `Ellipsis` ( `...` )
+
+> 对没错，就是三个点
+
+打开 Python 输入 `...`，解释器就会告诉你这个是 `Ellipsis`
+
+```
+>>> type(...)
+<class 'ellipsis'>
+```
+
+---
+
+# `Ellipsis` 的源码
+
+> 文件 `Include/sliceobject.h`
+
+```c
+/* The unique ellipsis object "..." */
+
+PyAPI_DATA(PyObject) _Py_EllipsisObject; /* Don't use this directly */
+
+#define Py_Ellipsis (&_Py_EllipsisObject)
+```
+
+对，只有这些，什么都没有用的类，但是在 numpy 中作为语法糖出现了
