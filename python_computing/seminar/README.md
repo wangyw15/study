@@ -350,11 +350,8 @@ int PyList_Append(PyObject *op, PyObject *newitem)
 ```c
 static inline int _PyList_AppendTakeRef(PyListObject *self, PyObject *newitem)
 {
-    assert(self != NULL && newitem != NULL);
-    assert(PyList_Check(self));
     Py_ssize_t len = PyList_GET_SIZE(self);
     Py_ssize_t allocated = self->allocated;
-    assert((size_t)len + 1 < PY_SSIZE_T_MAX);
     if (allocated > len) {
         PyList_SET_ITEM(self, len, newitem);
         Py_SET_SIZE(self, len + 1);
@@ -374,7 +371,6 @@ static inline int _PyList_AppendTakeRef(PyListObject *self, PyObject *newitem)
 int _PyList_AppendTakeRefListResize(PyListObject *self, PyObject *newitem)
 {
     Py_ssize_t len = PyList_GET_SIZE(self);
-    assert(self->allocated == -1 || self->allocated == len);
     if (list_resize(self, len + 1) < 0) {
         Py_DECREF(newitem);
         return -1;
@@ -394,7 +390,6 @@ int _PyList_AppendTakeRefListResize(PyListObject *self, PyObject *newitem)
 
 ```c
 if (allocated >= newsize && newsize >= (allocated >> 1)) {
-    assert(self->ob_item != NULL || newsize == 0);
     Py_SET_SIZE(self, newsize);
     return 0;
 }
@@ -461,7 +456,88 @@ if (newsize - Py_SIZE(self) > (Py_ssize_t)(new_allocated - newsize))
 
 ---
 
-# 这个文档还能在这里看到
+# `list.append()` 和列表推导式
+
+> 在速度上一较高下
+
+`list.append()` 一般来说会慢一点
+
+列表推导式就会快一点，那么快在哪里？使用 `dis` 库来看看两者区别
+
+---
+
+# `dis` 库
+
+> Disassembler of Python byte code into mnemonics.
+> 反汇编！
+> 操作码列表请看[官方文档](https://docs.python.org/zh-cn/3/library/dis.html#opcode-collections)
+
+可以把编译之后的 Python 字节码转换为助记符
+
+---
+
+# 怎么比
+
+```python
+import dis
+
+def use_append():
+    lst = []
+    for i in range(10):
+        lst.append(i)
+
+def use_list_comprehension():
+    lst = [i for i in range(10)]
+
+dis.dis(use_append)
+print('-------------------')
+dis.dis(use_list_comprehension)
+```
+
+两个函数都是生成 0-9 的列表，区别是上面一个用 `list.append()`，下面一个用列表推导式，用 `dis` 来分析一下
+
+---
+
+# `use_append`
+
+```
+  6          40 LOAD_FAST                0 (lst)
+             42 LOAD_METHOD              1 (append)
+             64 LOAD_FAST                1 (i)
+             66 PRECALL                  1
+             70 CALL                     1
+             80 POP_TOP
+             82 JUMP_BACKWARD           24 (to 36)
+
+```
+
+---
+
+# `use_list_comprehension`
+
+```
+  9           0 RESUME                   0
+              2 BUILD_LIST               0
+              4 LOAD_FAST                0 (.0)
+        >>    6 FOR_ITER                 4 (to 16)
+              8 STORE_FAST               1 (i)
+             10 LOAD_FAST                1 (i)
+             12 LIST_APPEND              2
+             14 JUMP_BACKWARD            5 (to 6)
+        >>   16 RETURN_VALUE
+```
+
+---
+
+# 差别
+
+使用 `list.append` 会多一步调用这个函数的步骤，堆栈操作有一定开销，而列表推导式直接调用更为底层的 `LIST_APPEND` 相比之下会快一点
+
+`LIST_APPEND` 是专门用于实现列表推导式的操作码
+
+---
+
+# 这个 PPT 还能在这里看到
 
 > https://github.com/wangyw15/study/tree/main/python_computing/seminar
 
