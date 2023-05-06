@@ -1,4 +1,5 @@
 ---
+title: Python 序列实现的底层原理
 marp: true
 paginate: true
 theme: default
@@ -6,7 +7,7 @@ math: mathjax
 backgroundImage: url('background.svg')
 ---
 
-# Python序列实现的底层原理
+# Python 序列实现的底层原理
 
 > 版本：[CPython 3.11.3](https://github.com/python/cpython/tree/v3.11.3)
 
@@ -33,6 +34,8 @@ backgroundImage: url('background.svg')
 
 # `MutableSequence`
 
+> 就是顺序表
+
 可变序列，着重介绍
 
 ---
@@ -57,7 +60,7 @@ def pop(self, index=-1):
     return v
 ```
 
-很简单，就是通过`del`删除数组的元素
+很简单，就是先把值保留下来，然后通过`del`删除数组的元素，最后返回这个元素值
 
 ---
 
@@ -123,7 +126,7 @@ typedef struct {
 } PySequenceMethods;
 ```
 
-虽然我想讲 `Sequence`，但是根据我的观察，`Sequence` 更接近于接口，具体实现要看子类
+根据我的观察，`Sequence` 更接近于接口，具体实现要看子类
 
 ---
 
@@ -134,7 +137,7 @@ typedef struct {
 > 文件 `Include/internal/pycore_list.h`
 > 后面展示的代码都是简化过的
 
-讲 `str` 更好，但是 `Objects/unicodeobject.c` 中的 16000 行代码让人望而却步，所以就来讲 `list` 了
+讲 `str` 更好，但是 `Objects/unicodeobject.c` 中的 **16197 行**代码让人望而却步，所以就来讲 `list` 了
 
 `list` 同样是Python的内置类型，在 `Python/bltinmodule.c` 中定义
 
@@ -165,7 +168,50 @@ typedef struct {
 
 > 挺重要的
 
-[TODO)
+```c
+static PyObject *list_extend(PyListObject *self, PyObject *iterable)
+{
+    PyObject *it;      /* iter(v) */
+    Py_ssize_t m;      /* size of self */
+    Py_ssize_t n;      /* guess for size of iterable */
+    // ...
+    /* Guess a result list size. */
+    n = PyObject_LengthHint(iterable, 8);
+    m = Py_SIZE(self);
+    if (m > PY_SSIZE_T_MAX - n) {
+        /* m + n overflowed; on the chance that n lied, and there really
+         * is enough room, ignore it.  If n was telling the truth, we'll
+         * eventually run out of memory during the loop.
+         */
+    }
+```
+
+会先“猜测”额外需要多少空间，在后面申请这些空间
+
+---
+
+```c
+    else if (self->ob_item == NULL) {
+        if (n && list_preallocate_exact(self, n) < 0)
+            goto error;
+    }
+    else {
+        if (list_resize(self, m + n) < 0)
+            goto error;
+        // ...
+    }
+    // ...
+    if (Py_SIZE(self) < self->allocated) {
+        if (list_resize(self, Py_SIZE(self)) < 0)
+            goto error;
+    }
+    // ...
+}
+```
+
+如果本身没有东西，那就照着要添加的序列长度来申请空间，否则就根据 `list_resize()` 中的算法来申请空间，这个方法在之后会提到
+
+完成之后把多申请的空间削减一点
 
 ---
 
@@ -300,8 +346,6 @@ int PyList_Append(PyObject *op, PyObject *newitem)
 `_PyList_AppendTakeRef` 在下一页
 
 ---
-
-# 在尾部追加-续
 
 ```c
 static inline int _PyList_AppendTakeRef(PyListObject *self, PyObject *newitem)
