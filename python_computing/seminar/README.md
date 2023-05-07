@@ -135,9 +135,7 @@ typedef struct {
 > 文件 `Include/internal/pycore_list.h`
 > 后面展示的代码都是简化过的
 
-讲 `str` 更好，但是 `Objects/unicodeobject.c` 中的 **16197 行**代码让人望而却步，所以就来讲 `list` 了
-
-`list` 同样是Python的内置类型，在 `Python/bltinmodule.c` 中定义
+`list` 同样是Python的内置类型，在 `Python/bltinmodule.c` 中定义，并且在[官方文档](https://docs.python.org/3/library/stdtypes.html)描述中，`list` 就是可变序列。
 
 ---
 
@@ -153,12 +151,6 @@ typedef struct {
 |   memoryview   |  frozenset  |  slice   |  bytearray   | property  | staticmethod |
 |     bytes      |     int     |   str    |    super     |   tuple   |     type     |
 |      zip       |             |          |              |           |              |
-
----
-
-# `Sequence` 和 `list`
-
-在 CPython 实现中，`list` 是作为 `Sequence` 来处理的
 
 ---
 
@@ -478,8 +470,11 @@ print(a)
 ---
 
 ```c
-int PyList_SetSlice(PyObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
-{
+int PyList_SetSlice(PyObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v) {
+    // ...
+    return list_ass_slice((PyListObject *)a, ilow, ihigh, v);
+}
+static int list_ass_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v) {
     Py_ssize_t n; /* # of elements in replacement list */
     Py_ssize_t norig; /* # of elements in list getting replaced */
     Py_ssize_t d; /* Change in size */
@@ -496,6 +491,8 @@ int PyList_SetSlice(PyObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
         item = a->ob_item;
     }
 ```
+
+`list.remove()` 和 `list.pop()` 就是通过这个函数来实现的
 
 ---
 
