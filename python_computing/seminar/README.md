@@ -4,7 +4,6 @@ title: Python 序列实现的底层原理
 marp: true
 paginate: true
 theme: default
-backgroundImage: url('background.svg')
 description: '从官方文档看到 Cpython 底层代码'
 footer: '[跳到结尾](#结尾)'
 # marp end
