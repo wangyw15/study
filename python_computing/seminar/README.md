@@ -1,15 +1,44 @@
 ---
+# marp
 title: Python 序列实现的底层原理
 marp: true
 paginate: true
 theme: default
-math: mathjax
 backgroundImage: url('background.svg')
+description: '从官方文档看到 Cpython 底层代码'
+footer: '[跳到结尾](#结尾)'
+# marp end
+
+subtitle: ''
+date: 2023-05-07T15:11:13+08:00
+lastmod: 2023-05-07T15:11:13+08:00
+draft: false
+authors: ['wangyw15']
+
+tags: ['编程', '学习']
+categories: []
+series: []
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+
+featuredImage: ''
+featuredImagePreview: ''
+
+toc:
+  enable: true
+math:
+  enable: true
+lightgallery: true
+license: ''
+slug: '403c7a43'
 ---
 
 # Python 序列实现的底层原理
 
 > 版本：[CPython 3.11.3](https://github.com/python/cpython/tree/v3.11.3)
+
+<!--more-->
 
 ---
 
@@ -742,11 +771,13 @@ dis.dis(use_list_comprehension)
 
 ---
 
-# Markdown 版本
+# 结尾
 
 > https://github.com/wangyw15/study/tree/main/python_computing/seminar
+> 上面是包括这个文档的 GitHub 链接
+> 二维码是这个文档的 Markdown 版本
 
-![w:500](qrcode.svg)
+![bg w:500 left:45%](qrcode.svg)
 
 ---
 
