@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 int errorCount = 0;
 bool b = true;
@@ -28,13 +29,20 @@ while (b == true)
     }
     catch (HundredException e)
     {
-        Exception? i = e;
-        while (i != null)
+        Exception? e1 = e;
+        while (e1 != null)
         {
-            Console.WriteLine(i);
-            i = i.InnerException;
-        }
-    }
+            Console.WriteLine(e1);
+			e1 = e1.InnerException;
+		}
+		StackTrace st = new StackTrace(true);
+		for (int i = 0; i < st.FrameCount; i++)
+		{
+			StackFrame sf = st.GetFrame(i);
+			Console.WriteLine($"Method: {sf.GetMethod()}, Line Number: {sf.GetFileLineNumber()}");
+		}
+		b = false;
+	}
     catch (Exception e)
     {
         Console.WriteLine(e.Message);
