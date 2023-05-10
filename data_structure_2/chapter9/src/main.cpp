@@ -58,12 +58,25 @@ string generate_partially_ordered_array(shared_ptr<int[]> array, int n)
     return "partially ordered";
 }
 
+bool validate_ordered(shared_ptr<int[]> array, int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    {
+        if (array[i] > array[i + 1])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 int main()
 {
     // init algorithms
     vector<sort_algorithm> algorithms;
     algorithms.push_back(straight_insert_sort);
     algorithms.push_back(shell_sort);
+    algorithms.push_back(bubble_sort);
 
     // data orders
     vector<array_generator> generators;
@@ -80,7 +93,7 @@ int main()
     // scales.push_back(100000000);
 
     // csv header
-    cout << "algorithm, data scale, data type, duration, comparisons, swaps" << endl;
+    cout << "algorithm, data scale, data type, duration, comparisons, swaps, valid" << endl;
 
     for (sort_algorithm& func : algorithms)
     {
@@ -101,7 +114,8 @@ int main()
                 // print data
                 cout << result.name << ", " << scale << ", " << data_type
                      << ", " << duration.count() << ", " << result.comparisons
-                     << ", " << result.swaps << endl;
+                     << ", " << result.swaps << ", "
+                     << (validate_ordered(data, scale) ? "true" : "false") << endl;
             }
         }
     }
