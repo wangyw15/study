@@ -8,14 +8,17 @@ sort_result radix_sort(std::shared_ptr<int[]> array, int size)
     result.comparisons = 0;
 
     std::shared_ptr<int[]> output(new int[size]);
+    // find max element
     int max_element = array[0];
     for (int i = 1; i < size; i++)
     {
+        result.comparisons++;
         if (array[i] > max_element)
         {
             max_element = array[i];
         }
     }
+    
     for (int exp = 1; max_element / exp > 0; exp *= 10)
     {
         int count[10] = {0};
@@ -29,8 +32,7 @@ sort_result radix_sort(std::shared_ptr<int[]> array, int size)
         }
         for (int i = size - 1; i >= 0; i--)
         {
-            output[count[(array[i] / exp) % 10] - 1] = array[i];
-            count[(array[i] / exp) % 10]--;
+            output[--count[(array[i] / exp) % 10]] = array[i];
         }
         for (int i = 0; i < size; i++)
         {
