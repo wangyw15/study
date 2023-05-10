@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 #include <chrono>
+#include <fstream>
 
 #include "defines.h"
 #include "sorts/sorts.h"
@@ -98,8 +99,14 @@ int main()
     // scales.push_back(1000000);
     // scales.push_back(100000000);
 
+    // file writer
+    ofstream writer("result.csv");
+
     // csv header
-    cout << "algorithm, data scale, data type, duration, comparisons, swaps, valid" << endl;
+    writer << "algorithm, data scale, data type, duration, comparisons, swaps, "
+           << "valid" << endl;
+    cout << "algorithm, data scale, data type, duration, comparisons, swaps, "
+           << "valid" << endl;
 
     for (sort_algorithm& func : algorithms)
     {
@@ -118,10 +125,16 @@ int main()
                     chrono::high_resolution_clock::now() - start);
 
                 // print data
+                writer << result.name << ", " << scale << ", " << data_type
+                       << ", " << duration.count() << ", " << result.comparisons
+                       << ", " << result.swaps << ", "
+                       << (validate_ordered(data, scale) ? "true" : "false")
+                       << endl;
                 cout << result.name << ", " << scale << ", " << data_type
-                     << ", " << duration.count() << ", " << result.comparisons
-                     << ", " << result.swaps << ", "
-                     << (validate_ordered(data, scale) ? "true" : "false") << endl;
+                       << ", " << duration.count() << ", " << result.comparisons
+                       << ", " << result.swaps << ", "
+                       << (validate_ordered(data, scale) ? "true" : "false")
+                       << endl;
             }
         }
     }
