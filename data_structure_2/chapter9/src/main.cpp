@@ -77,6 +77,7 @@ int main()
     algorithms.push_back(straight_insert_sort);
     algorithms.push_back(shell_sort);
     algorithms.push_back(bubble_sort);
+    algorithms.push_back(quick_sort);
 
     // data orders
     vector<array_generator> generators;
@@ -87,8 +88,9 @@ int main()
 
     // data scale
     vector<int> scales;
+    scales.push_back(10);
     scales.push_back(100);
-    scales.push_back(10000);
+    scales.push_back(1000);
     // scales.push_back(1000000);
     // scales.push_back(100000000);
 
