@@ -82,7 +82,7 @@ int main()
     algorithms.push_back(simple_selection_sort);
     algorithms.push_back(heap_sort);
     algorithms.push_back(merge_sort);
-    // algorithms.push_back(radix_sort);
+    algorithms.push_back(radix_sort);
 
     // data orders
     vector<array_generator> generators;
