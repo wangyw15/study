@@ -22,14 +22,17 @@ sort_result radix_sort(std::shared_ptr<int[]> array, int size)
     for (int exp = 1; max_element / exp > 0; exp *= 10)
     {
         int count[10] = {0};
+        // count
         for (int i = 0; i < size; i++)
         {
             count[(array[i] / exp) % 10]++;
         }
+        // calculate position
         for (int i = 1; i < 10; i++)
         {
             count[i] += count[i - 1];
         }
+        // put elements
         for (int i = size - 1; i >= 0; i--)
         {
             output[--count[(array[i] / exp) % 10]] = array[i];
