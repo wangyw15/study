@@ -41,11 +41,19 @@ string generate_random_array(shared_ptr<int[]> array, int n)
 string generate_partially_ordered_array(shared_ptr<int[]> array, int n)
 {
     generate_ordered_array(array, n);
+
     static default_random_engine engine;
     uniform_int_distribution<int> dis(0, n - 1);
+
+    static vector<int> swap_location;
+    while (swap_location.size() < n / 5)
+    {
+        swap_location.push_back(dis(engine));
+    }
+
     for (int i = 0; i < n / 10; i++)
     {
-        swap(array[dis(engine)], array[dis(engine)]);
+        swap(array[swap_location[i]], array[swap_location[i + 1]]);
     }
     return "partially ordered";
 }
