@@ -78,6 +78,10 @@ int main()
     algorithms.push_back(shell_sort);
     algorithms.push_back(bubble_sort);
     algorithms.push_back(quick_sort);
+    algorithms.push_back(simple_selection_sort);
+    // algorithms.push_back(heap_sort);
+    // algorithms.push_back(merge_sort);
+    // algorithms.push_back(radix_sort);
 
     // data orders
     vector<array_generator> generators;
