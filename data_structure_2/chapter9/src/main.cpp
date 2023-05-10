@@ -79,7 +79,7 @@ int main()
     algorithms.push_back(bubble_sort);
     algorithms.push_back(quick_sort);
     algorithms.push_back(simple_selection_sort);
-    // algorithms.push_back(heap_sort);
+    algorithms.push_back(heap_sort);
     // algorithms.push_back(merge_sort);
     // algorithms.push_back(radix_sort);
 
