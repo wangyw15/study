@@ -10,6 +10,6 @@ struct sort_result
     int swaps;
 };
 
-using sort = std::function<sort_result(std::shared_ptr<int[]>, int)>;
+using sort = std::function<sort_result(std::shared_ptr<int[]>, size_t)>;
 
 #endif
