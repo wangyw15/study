@@ -81,7 +81,7 @@ int main()
     algorithms.push_back(quick_sort);
     algorithms.push_back(simple_selection_sort);
     algorithms.push_back(heap_sort);
-    // algorithms.push_back(merge_sort);
+    algorithms.push_back(merge_sort);
     // algorithms.push_back(radix_sort);
 
     // data orders
@@ -138,5 +138,6 @@ int main()
             }
         }
     }
+    writer.close();
     return 0;
 }
