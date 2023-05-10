@@ -1,19 +1,101 @@
 #include <iostream>
+#include <random>
+#include <vector>
+#include <chrono>
 
 #include "defines.h"
 #include "sorts/sorts.h"
 
 using namespace std;
+using array_generator = function<string(shared_ptr<int[]>, int)>;
+
+string generate_ordered_array(shared_ptr<int[]> array, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        array[i] = i;
+    }
+    return "ordered";
+}
+
+string generate_reversed_array(shared_ptr<int[]> array, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        array[i] = n - 1 - i;
+    }
+    return "reversed";
+}
+
+string generate_random_array(shared_ptr<int[]> array, int n)
+{
+    static default_random_engine engine;
+    uniform_int_distribution<int> dis(0, n - 1);
+    for (int i = 0; i < n; i++)
+    {
+        array[i] = dis(engine);
+    }
+    return "random";
+}
+
+string generate_partially_ordered_array(shared_ptr<int[]> array, int n)
+{
+    generate_ordered_array(array, n);
+    static default_random_engine engine;
+    uniform_int_distribution<int> dis(0, n - 1);
+    for (int i = 0; i < n / 10; i++)
+    {
+        swap(array[dis(engine)], array[dis(engine)]);
+    }
+    return "partially ordered";
+}
 
 int main()
 {
-    shared_ptr<int[]> data(new int[10] {10, 9, 8, 7, 6, 5, 4, 3, 2, 1});
-    auto r = shell_sort(data, 10);
-    for (size_t i = 0; i < 10; i++)
+    // init algorithms
+    vector<sort_algorithm> algorithms;
+    algorithms.push_back(straight_insert_sort);
+    algorithms.push_back(shell_sort);
+
+    // data orders
+    vector<array_generator> generators;
+    generators.push_back(generate_ordered_array);
+    generators.push_back(generate_reversed_array);
+    generators.push_back(generate_random_array);
+    generators.push_back(generate_partially_ordered_array);
+
+    // data scale
+    vector<int> scales;
+    scales.push_back(100);
+    scales.push_back(10000);
+    // scales.push_back(1000000);
+    // scales.push_back(100000000);
+
+    // csv header
+    cout << "algorithm, data scale, data type, duration, comparisons, swaps" << endl;
+
+    for (sort_algorithm& func : algorithms)
     {
-        cout << data[i] << " ";
+        for (int scale : scales)
+        {
+            for (array_generator& generator : generators)
+            {
+                // generate data
+                shared_ptr<int[]> data(new int[scale]);
+                string data_type = generator(data, scale);
+
+                // run
+                auto start = chrono::high_resolution_clock::now();
+                sort_result result = func(data, scale);
+                auto duration = chrono::duration_cast<chrono::microseconds>(
+                    chrono::high_resolution_clock::now() - start);
+
+                // print data
+                cout << result.name << ", " << scale << ", " << data_type
+                     << ", " << duration.count() << ", " << result.comparisons
+                     << ", " << result.swaps << endl;
+            }
+        }
     }
-    cout << endl;
-    cout << r.comparisons << endl << r.swaps << endl;
     return 0;
 }

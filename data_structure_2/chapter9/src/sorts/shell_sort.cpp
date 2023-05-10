@@ -3,6 +3,7 @@
 sort_result shell_sort(std::shared_ptr<int[]> array, int size)
 {
     sort_result result;
+    result.name = "shell sort";
     result.comparisons = 0;
     result.swaps = 0;
 
@@ -12,11 +13,18 @@ sort_result shell_sort(std::shared_ptr<int[]> array, int size)
         {
             int temp = array[i];
             int j = i - step;
-            for (; j >= 0 && array[j] > temp; j -= step)
+            for (; j >= 0; j -= step)
             {
                 result.comparisons++;
-                result.swaps++;
-                array[j + step] = array[j];
+                if (array[j] > temp)
+                {
+                    array[j + step] = array[j];
+                    result.swaps++;
+                }
+                else
+                {
+                    break;
+                }
             }
             array[j + step] = temp;
         }
