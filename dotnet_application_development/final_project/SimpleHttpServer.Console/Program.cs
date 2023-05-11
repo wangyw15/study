@@ -15,7 +15,7 @@ server.OnRequest += (HttpRequest request) =>
         ret.StatusCode = 200;
         ret.StatusMessage = "OK";
         ret.Content = File.ReadAllBytes(path);
-        ret.ContentType = MimeTypes.GetMimeType(Path.GetExtension(path)[1..]);
+        ret.ContentType = MimeType.GetMimeType(Path.GetExtension(path)[1..]);
 	}
     else
 	{
