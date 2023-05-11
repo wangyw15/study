@@ -1,6 +1,8 @@
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection.PortableExecutable;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SimpleHttpServer.Core;
@@ -68,7 +70,7 @@ public struct HttpResponse
     public string Version { get; set; }
     public int StatusCode { get; set; }
     public string StatusMessage { get; set; }
-    public string Content { get; set; }
+    public byte[] Content { get; set; }
     public string ContentType { get; set; }
 
     public HttpResponse()
@@ -76,7 +78,7 @@ public struct HttpResponse
         Version = "HTTP/1.1";
         StatusCode = 200;
         StatusMessage = "OK";
-        Content = "";
+        Content = new byte[0];
         ContentType = "text/plain";
     }
 
@@ -87,10 +89,34 @@ public struct HttpResponse
         ret.Append($"Content-Length: {Content.Length}\r\n");
         ret.Append($"Content-Type: {ContentType}\r\n");
         ret.Append("\r\n");
-        ret.Append(Content);
+        ret.Append(Encoding.UTF8.GetString(Content));
         ret.Append("\r\n\r\n");
         return ret.ToString();
     }
+
+    public static implicit operator byte[](HttpResponse resp)
+    {
+        var ret = new List<byte>();
+        ret.AddRange(Encoding.UTF8.GetBytes($"{resp.Version} {resp.StatusCode} {resp.StatusMessage}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
+		ret.AddRange(resp.Content);
+		ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
+		return ret.ToArray();
+    }
+
+	public static implicit operator ReadOnlySpan<byte>(HttpResponse resp)
+	{
+		var ret = new List<byte>();
+		ret.AddRange(Encoding.UTF8.GetBytes($"{resp.Version} {resp.StatusCode} {resp.StatusMessage}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
+		ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
+		ret.AddRange(resp.Content);
+		ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
+        return CollectionsMarshal.AsSpan(ret);
+	}
 }
 
 public class HttpServer
@@ -99,17 +125,14 @@ public class HttpServer
     public event RequestHandler? OnRequest;
     
     protected TcpListener _listener;
-    protected string _wwwroot;
 
-    public HttpServer(string wwwroot, IPAddress addr, int port)
+    public HttpServer(IPAddress addr, int port)
     {
-        _wwwroot = wwwroot;
         _listener = new TcpListener(addr, port);
     }
 
-    public HttpServer(string wwwroot, IPEndPoint ep)
+    public HttpServer(IPEndPoint ep)
     {
-        _wwwroot = wwwroot;
         _listener = new TcpListener(ep);
     }
 
@@ -119,8 +142,7 @@ public class HttpServer
         while (true)
         {
             var client = _listener.AcceptTcpClient();
-            var task = new Task(() => ConnectionHander(client));
-            task.Start();
+            Task.Run(() => ConnectionHander(client));
         }
     }
 
@@ -131,7 +153,6 @@ public class HttpServer
 
     protected void ConnectionHander(TcpClient client)
 	{
-        Console.WriteLine("New incoming request");
 		var stream = client.GetStream();
 		// read request
 		Span<byte> buffer = new byte[10240];
@@ -146,8 +167,7 @@ public class HttpServer
 			response = OnRequest.Invoke(request);
 		}
 		// write response
-		var responseMsg = response.ToString();
-		stream.Write(Encoding.UTF8.GetBytes(responseMsg));
+		stream.Write(response);
 		// close connection
 		stream.Flush();
 		client.Close();

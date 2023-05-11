@@ -1,17 +1,27 @@
 ﻿using SimpleHttpServer.Core;
 using System.Net;
+using System.Web;
 using HttpRequest = SimpleHttpServer.Core.HttpRequest;
 using HttpResponseMessage = SimpleHttpServer.Core.HttpResponse;
 
-var server = new HttpServer("./wwwroot", IPAddress.Loopback, 8080);
+var server = new HttpServer(IPAddress.Loopback, 8080);
 server.OnRequest += (HttpRequest request) =>
 {
-    var ret = new HttpResponseMessage()
+    var ret = new HttpResponseMessage();
+    var path = Path.Combine("wwwroot/", request.Path[1..]);
+	Console.WriteLine(path);
+    if (File.Exists(path))
     {
-        StatusCode = 200,
-        Content = "<html><body><h1>Hello World</h1></body></html>",
-        ContentType = "text/html"
-    };
+        ret.StatusCode = 200;
+        ret.StatusMessage = "OK";
+        ret.Content = File.ReadAllBytes(path);
+        ret.ContentType = MimeTypes.GetMimeType(Path.GetExtension(path)[1..]);
+	}
+    else
+	{
+		ret.StatusCode = 404;
+		ret.StatusMessage = "NOT FOUND";
+	}
     return ret;
 };
 server.Start();
