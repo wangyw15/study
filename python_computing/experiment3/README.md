@@ -51,13 +51,12 @@ print '-'
 （1）编写`Ackermann`函数的递归实现`Ack(m, n)`
 
 $$
-A(m,n)=\left\{
-\begin{aligned}
-&n+1 \quad &if \quad m=0 \\
-&A(m-1,1) \quad &if \quad m>0 \quad \text{and} \quad n=0 \\
-&A(m-1, A(m,n-1)) \quad &if \quad m>0 \quad \text{and} \quad n>0 \\
-\end{aligned}
-\right.
+A(m,n)=
+\begin{cases}
+n+1 & \text{if } m=0 \\
+A(m-1,1) & \text{if } m>0 \text{ and } n=0 \\
+A(m-1,A(m,n-1)) & \text{if } m>0 \text{ and } n>0
+\end{cases}
 $$
 
 测试`Ack(3, 4)`的值，阅读[维基百科 Ackermann_function 页面](https://en.wikipedia.org/wiki/Ackermann_function)，分析`m`和`n`取值对函数值计算的影响，深入理解递归。
