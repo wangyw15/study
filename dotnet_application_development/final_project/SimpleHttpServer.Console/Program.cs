@@ -1,12 +1,18 @@
 ﻿using SimpleHttpServer.Core;
+using System.Net;
 using HttpRequestMessage = SimpleHttpServer.Core.HttpRequestMessage;
+using HttpResponseMessage = SimpleHttpServer.Core.HttpResponseMessage;
 
-var msg = "GET / HTTP/1.1\nHost: developer.mozilla.org\nAccept-Language: cn";
-var parsed = HttpRequestMessage.ParseMessage(msg);
-Console.WriteLine(parsed.Method);
-Console.WriteLine(parsed.Path);
-Console.WriteLine(parsed.Version);
-foreach (var item in parsed.Headers)
+var server = new HttpServer("./wwwroot", IPAddress.Loopback, 8080);
+server.OnRequest += (HttpRequestMessage request) =>
 {
-	Console.WriteLine($"{item.Key} {item.Value}");
-}
+	var ret = new HttpResponseMessage()
+	{
+		StatusCode = 200,
+		Content = "<html><body><h1>Hello World</h1></body></html>"
+	};
+	// Console.WriteLine(ret);
+	return ret;
+};
+server.Start();
+Console.ReadLine();
