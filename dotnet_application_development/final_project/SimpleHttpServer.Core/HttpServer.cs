@@ -5,16 +5,16 @@ using System.Text;
 
 namespace SimpleHttpServer.Core;
 
-public struct HttpRequestMessage
+public struct HttpRequest
 {
     public string Method { get; set; }
     public string Path { get; set; }
     public string Version { get; set; }
     public Dictionary<string, string>? Headers { get; set; }
 
-    public static HttpRequestMessage ParseMessage(string msg)
+    public static HttpRequest ParseMessage(string msg)
     {
-        var ret = new HttpRequestMessage();
+        var ret = new HttpRequest();
         ret.Headers = new Dictionary<string, string>();
 
         var lines = msg.Split("\r\n");
@@ -32,10 +32,6 @@ public struct HttpRequestMessage
 				continue;
 			}
             var splittedLine = line.Split(':');
-			if (splittedLine.Length != 2)
-			{
-				continue;
-			}
             var key = splittedLine[0].Trim();
             var value = splittedLine[1].Trim();
             if (ret.Headers.ContainsKey(key))
@@ -67,54 +63,40 @@ public struct HttpRequestMessage
 	}
 }
 
-public struct HttpResponseMessage
+public struct HttpResponse
 {
     public string Version { get; set; }
     public int StatusCode { get; set; }
     public string StatusMessage { get; set; }
-    public Dictionary<string, string>? Headers { get; set; }
     public string Content { get; set; }
+	public string ContentType { get; set; }
 
-	public HttpResponseMessage()
+	public HttpResponse()
 	{
 		Version = "HTTP/1.1";
 		StatusCode = 200;
 		StatusMessage = "OK";
-		Headers = new Dictionary<string, string>();
-		Headers.Add("Content-Type", "text/html; charset=utf-8");
-		Headers.Add("Server", "SimpleHttpServer/0.1");
-		Headers.Add("Connection", "close");
 		Content = "";
+		ContentType = "text/plain";
 	}
 
 	public override string ToString()
 	{
 		var ret = new StringBuilder();
 		ret.Append($"{Version} {StatusCode} {StatusMessage}\r\n");
-        if (Headers == null)
-		{
-			Headers = new Dictionary<string, string>();
-		}
-		if (!Headers.ContainsKey("Content-Length"))
-		{
-			Headers.Add("Content-Length", Encoding.UTF8.GetByteCount(Content).ToString());
-		}
-		foreach (var header in Headers)
-		{
-			ret.Append($"{header.Key}: {header.Value}\r\n");
-		}
+		ret.Append($"Content-Length: {Content.Length}\r\n");
+		ret.Append($"Content-Type: {ContentType}\r\n");
 		ret.Append("\r\n");
         ret.Append(Content);
-		ret.Append("\r\n");
-
+		ret.Append("\r\n\r\n");
 		return ret.ToString();
 	}
 }
 
 public class HttpServer
 {
-	public delegate HttpResponseMessage RequestHandler(HttpRequestMessage request);
-	public event RequestHandler OnRequest;
+	public delegate HttpResponse RequestHandler(HttpRequest request);
+	public event RequestHandler? OnRequest;
     
 	protected TcpListener _listener;
     protected string _wwwroot;
@@ -123,27 +105,12 @@ public class HttpServer
     {
         _wwwroot = wwwroot;
         _listener = new TcpListener(addr, port);
-        // OnRequest += _DefaultHandler;
 	}
 
     public HttpServer(string wwwroot, IPEndPoint ep)
     {
         _wwwroot = wwwroot;
         _listener = new TcpListener(ep);
-		// OnRequest += _DefaultHandler;
-	}
-
-    protected HttpResponseMessage _DefaultHandler(HttpRequestMessage request)
-    {
-		var ret = new HttpResponseMessage();
-		ret.Version = "HTTP/1.1";
-		ret.StatusCode = 200;
-		ret.StatusMessage = "OK";
-		ret.Headers = new Dictionary<string, string>();
-		ret.Headers.Add("Content-Type", "text/html; charset=utf-8");
-		ret.Headers.Add("Server", "SimpleHttpServer/0.1");
-
-		return ret;
 	}
 
 	public void Start()
@@ -155,22 +122,24 @@ public class HttpServer
 			var stream = client.GetStream();
 			
 			// read request
-			Span<byte> buffer = new byte[1024];
-			stream.Read(buffer);
-			var msg = Encoding.UTF8.GetString(buffer);
-			var request = HttpRequestMessage.ParseMessage(msg);
+			Span<byte> buffer = new byte[10240];
+			var length = stream.Read(buffer);
+			var msg = Encoding.UTF8.GetString(buffer[0..length]);
+			var request = HttpRequest.ParseMessage(msg);
 
 			// handle request
-			var response = OnRequest.Invoke(request);
+			var response = new HttpResponse();
+			if (OnRequest != null)
+			{
+				response = OnRequest.Invoke(request);
+			}
 			// write response
 			var responseMsg = response.ToString();
-			Console.WriteLine(response);
-			var responseBytes = Encoding.UTF8.GetBytes(responseMsg);
-			stream.Write(responseBytes);
+			stream.Write(Encoding.UTF8.GetBytes(responseMsg));
 			// close connection
 			stream.Flush();
 			client.Close();
-            buffer.Clear();
+			buffer.Clear();
 		}
     }
 
