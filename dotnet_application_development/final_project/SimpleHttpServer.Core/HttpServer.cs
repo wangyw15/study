@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace SimpleHttpServer.Core;
 
-struct HttpRequestMessage
+public struct HttpRequestMessage
 {
     public string Method { get; set; }
     public string Path { get; set; }
@@ -42,7 +42,7 @@ struct HttpRequestMessage
     }
 }
 
-struct HttpResponseMessage
+public struct HttpResponseMessage
 {
     public string Version { get; set; }
     public int StatusCode { get; set; }
@@ -50,7 +50,7 @@ struct HttpResponseMessage
     public Dictionary<string, string> Headers { get; set; }
 }
 
-class HttpServer
+public class HttpServer
 {
     protected TcpListener _listener;
     protected string _wwwroot;
