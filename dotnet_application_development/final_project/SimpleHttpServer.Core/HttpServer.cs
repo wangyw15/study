@@ -12,21 +12,38 @@ public struct HttpRequest
     public string Method { get; set; }
     public string Path { get; set; }
     public string Version { get; set; }
+    public Dictionary<string, string>? Parameters { get; set; }
     public Dictionary<string, string>? Headers { get; set; }
 
     public static HttpRequest ParseMessage(string msg)
     {
         var ret = new HttpRequest();
         ret.Headers = new Dictionary<string, string>();
+        ret.Parameters = new Dictionary<string, string>();
 
         var lines = msg.Split("\r\n");
 
         // parse http basic info
         var splitedFirstLine = lines[0].Split(' ');
+        
+        // http method
         ret.Method = splitedFirstLine[0];
-        ret.Path = splitedFirstLine[1];
-        ret.Version = splitedFirstLine[2];
 
+        // url and params
+        var query = splitedFirstLine[1].Split('?');
+		ret.Path = query[0];
+		if (query.Length > 1)
+		{
+            foreach(var item in query[1].Split('&'))
+            {
+                ret.Parameters.Add(item.Split('=')[0], item.Split('=')[1]);
+            }
+		}
+        
+        // http version
+		ret.Version = splitedFirstLine[2];
+
+        // headers
         foreach (var line in lines[1..])
         {
             if (string.IsNullOrEmpty(line))
