@@ -32,17 +32,17 @@ public struct HttpRequest
 
         // url and params
         var query = splitedFirstLine[1].Split('?');
-		ret.Path = query[0];
-		if (query.Length > 1)
-		{
+        ret.Path = query[0];
+        if (query.Length > 1)
+        {
             foreach(var item in query[1].Split('&'))
             {
                 ret.Parameters.Add(item.Split('=')[0], item.Split('=')[1]);
             }
-		}
+        }
         
         // http version
-		ret.Version = splitedFirstLine[2];
+        ret.Version = splitedFirstLine[2];
 
         // headers
         foreach (var line in lines[1..])
@@ -116,25 +116,25 @@ public struct HttpResponse
     {
         var ret = new List<byte>();
         ret.AddRange(Encoding.UTF8.GetBytes($"{resp.Version} {resp.StatusCode} {resp.StatusMessage}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
-		ret.AddRange(resp.Content);
-		ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
-		return ret.ToArray();
+        ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
+        ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
+        ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
+        ret.AddRange(resp.Content);
+        ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
+        return ret.ToArray();
     }
 
-	public static implicit operator ReadOnlySpan<byte>(HttpResponse resp)
-	{
-		var ret = new List<byte>();
-		ret.AddRange(Encoding.UTF8.GetBytes($"{resp.Version} {resp.StatusCode} {resp.StatusMessage}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
-		ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
-		ret.AddRange(resp.Content);
-		ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
+    public static implicit operator ReadOnlySpan<byte>(HttpResponse resp)
+    {
+        var ret = new List<byte>();
+        ret.AddRange(Encoding.UTF8.GetBytes($"{resp.Version} {resp.StatusCode} {resp.StatusMessage}\r\n"));
+        ret.AddRange(Encoding.UTF8.GetBytes($"Content-Length: {resp.Content.Length}\r\n"));
+        ret.AddRange(Encoding.UTF8.GetBytes($"Content-Type: {resp.ContentType}\r\n"));
+        ret.AddRange(Encoding.UTF8.GetBytes("\r\n"));
+        ret.AddRange(resp.Content);
+        ret.AddRange(Encoding.UTF8.GetBytes("\r\n\r\n"));
         return CollectionsMarshal.AsSpan(ret);
-	}
+    }
 }
 
 public abstract class HttpServerBase
@@ -167,36 +167,36 @@ public abstract class HttpServerBase
     }
 
     protected void ConnectionHandler(TcpClient client)
-	{
-		var stream = client.GetStream();
-		// read request
-		Span<byte> buffer = new byte[10240];
-		var length = stream.Read(buffer);
-		var msg = Encoding.UTF8.GetString(buffer[0..length]);
-		var request = HttpRequest.ParseMessage(msg);
+    {
+        var stream = client.GetStream();
+        // read request
+        Span<byte> buffer = new byte[10240];
+        var length = stream.Read(buffer);
+        var msg = Encoding.UTF8.GetString(buffer[0..length]);
+        var request = HttpRequest.ParseMessage(msg);
 
-		// handle request
-		var response = OnRequest(request);
-		// write response
-		stream.Write(response);
-		// close connection
-		stream.Flush();
-		client.Close();
-		buffer.Clear();
-	}
+        // handle request
+        var response = OnRequest(request);
+        // write response
+        stream.Write(response);
+        // close connection
+        stream.Flush();
+        client.Close();
+        buffer.Clear();
+    }
 
-	protected abstract HttpResponse OnRequest(HttpRequest request);
+    protected abstract HttpResponse OnRequest(HttpRequest request);
 }
 
 public class HttpServer : HttpServerBase
 {
-	public delegate HttpResponse RequestHandler(HttpRequest request);
-	public event RequestHandler? OnGet;
+    public delegate HttpResponse RequestHandler(HttpRequest request);
+    public event RequestHandler? OnGet;
     
-	public HttpServer(IPAddress addr, int port) : base(addr, port)
-	{
+    public HttpServer(IPAddress addr, int port) : base(addr, port)
+    {
         
-	}
+    }
 
     public HttpServer(IPEndPoint ep) : base(ep)
     {
@@ -209,13 +209,13 @@ public class HttpServer : HttpServerBase
         {
             return OnGet.Invoke(request);
         }
-		else if (request.Method == "HEAD" && OnGet != null)
-		{
+        else if (request.Method == "HEAD" && OnGet != null)
+        {
             var response = OnGet.Invoke(request);
             response.Content = new byte[0];
-			return OnGet.Invoke(request);
-		}
-		return new HttpResponse()
+            return OnGet.Invoke(request);
+        }
+        return new HttpResponse()
         {
             StatusCode = 501,
             StatusMessage = "NOT IMPLEMENTED",

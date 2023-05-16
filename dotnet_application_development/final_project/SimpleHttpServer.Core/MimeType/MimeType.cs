@@ -8,10 +8,10 @@ namespace SimpleHttpServer.Core;
 
 public static partial class MimeType
 {
-	private static Dictionary<string, string> _types;
-	
-	public static string GetMimeType(string name)
-	{
-		return _types[name];
-	}
+    private static Dictionary<string, string> _types;
+    
+    public static string GetMimeType(string name)
+    {
+        return _types[name];
+    }
 }

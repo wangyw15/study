@@ -11,11 +11,11 @@ namespace SimpleHttpServer.SourceGenerator
     public class MimeTypeGenerator : ISourceGenerator
     {
         public void Execute(GeneratorExecutionContext context)
-		{
-			var generated = new StringBuilder();
-			generated.Append("namespace SimpleHttpServer.Core; public static partial class MimeType { static MimeType() { _types = new Dictionary<string, string> {");
+        {
+            var generated = new StringBuilder();
+            generated.Append("namespace SimpleHttpServer.Core; public static partial class MimeType { static MimeType() { _types = new Dictionary<string, string> {");
             var appendedExt = new List<string>();
-			foreach (var file in context.AdditionalFiles)
+            foreach (var file in context.AdditionalFiles)
             {
                 if (Path.GetExtension(file.Path) == ".csv")
                 {
@@ -30,22 +30,22 @@ namespace SimpleHttpServer.SourceGenerator
                         var name = splitted[0].Trim();
                         var template = splitted[1].Trim();
                         if (!appendedExt.Contains(name))
-						{
-							generated.Append("{\"" + name + "\",\"" + template + "\"},");
+                        {
+                            generated.Append("{\"" + name + "\",\"" + template + "\"},");
                             appendedExt.Add(name);
-						}
-					}
-					generated.Append("{\"js\",\"text/javascript\"},");
-					appendedExt.Add("js");
-					generated.Append("{\"jpg\",\"image/jpeg\"},");
-					appendedExt.Add("jpg");
-					generated.Append("{\"ico\",\"image/vnd.microsoft.icon\"},");
-					appendedExt.Add("ico");
-				}
-			}
-			generated.Append("}; }}");
-			context.AddSource("MimeTypes.g.cs", generated.ToString());
-		}
+                        }
+                    }
+                    generated.Append("{\"js\",\"text/javascript\"},");
+                    appendedExt.Add("js");
+                    generated.Append("{\"jpg\",\"image/jpeg\"},");
+                    appendedExt.Add("jpg");
+                    generated.Append("{\"ico\",\"image/vnd.microsoft.icon\"},");
+                    appendedExt.Add("ico");
+                }
+            }
+            generated.Append("}; }}");
+            context.AddSource("MimeTypes.g.cs", generated.ToString());
+        }
 
         public void Initialize(GeneratorInitializationContext context)
         {
