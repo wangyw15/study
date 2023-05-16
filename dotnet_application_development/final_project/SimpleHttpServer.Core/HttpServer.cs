@@ -157,7 +157,7 @@ public abstract class HttpServerBase
         while (true)
         {
             var client = _listener.AcceptTcpClient();
-            Task.Run(() => ConnectionHander(client));
+            Task.Run(() => ConnectionHandler(client));
         }
     }
 
@@ -166,7 +166,7 @@ public abstract class HttpServerBase
         _listener.Stop();
     }
 
-    protected void ConnectionHander(TcpClient client)
+    protected void ConnectionHandler(TcpClient client)
 	{
 		var stream = client.GetStream();
 		// read request

@@ -31,11 +31,17 @@ namespace SimpleHttpServer.SourceGenerator
                         var template = splitted[1].Trim();
                         if (!appendedExt.Contains(name))
 						{
-							generated.Append("{" + "\"" + name + "\"" + "," + "\"" + template + "\"" + "},");
+							generated.Append("{\"" + name + "\",\"" + template + "\"},");
                             appendedExt.Add(name);
 						}
 					}
-                }
+					generated.Append("{\"js\",\"text/javascript\"},");
+					appendedExt.Add("js");
+					generated.Append("{\"jpg\",\"image/jpeg\"},");
+					appendedExt.Add("jpg");
+					generated.Append("{\"ico\",\"image/vnd.microsoft.icon\"},");
+					appendedExt.Add("ico");
+				}
 			}
 			generated.Append("}; }}");
 			context.AddSource("MimeTypes.g.cs", generated.ToString());

@@ -13,5 +13,6 @@
 - [MSDN-CollectionsMarshal.AsSpan<T>(List<T>) 方法](https://learn.microsoft.com/zh-cn/dotnet/api/system.runtime.interopservices.collectionsmarshal.asspan)
 - [MSDN-源生成器](https://learn.microsoft.com/zh-cn/dotnet/csharp/roslyn-sdk/source-generators-overview)
 - [.Net Blog-Using C# Source Generators to create an external DSL](https://devblogs.microsoft.com/dotnet/using-c-source-generators-to-create-an-external-dsl/)
+- [MSDN-ReadOnlySpan\<T\> 结构](https://learn.microsoft.com/zh-cn/dotnet/api/system.readonlyspan-1)
 - [stackoverflow-how do i get TcpListener to accept multiple connections and work with each one individually?](https://stackoverflow.com/questions/5339782/how-do-i-get-tcplistener-to-accept-multiple-connections-and-work-with-each-one-i)
 - [IANA-Media Types](https://www.iana.org/assignments/media-types/media-types.xhtml)
