@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.WebSockets;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -204,21 +205,20 @@ public class HttpServer : HttpServerBase
 
     protected override HttpResponse OnRequest(HttpRequest request)
     {
-        if (request.Method == "GET")
+        if (request.Method == "GET" && OnGet != null)
         {
-            if (OnGet != null)
-            {
-                return OnGet.Invoke(request);
-            }
+            return OnGet.Invoke(request);
         }
-        else if (request.Method == "POST")
+		else if (request.Method == "HEAD" && OnGet != null)
+		{
+            var response = OnGet.Invoke(request);
+            response.Content = new byte[0];
+			return OnGet.Invoke(request);
+		}
+		return new HttpResponse()
         {
-
-        }
-        return new HttpResponse()
-        {
-            StatusCode = 404,
-            StatusMessage = "NOT FOUND",
+            StatusCode = 501,
+            StatusMessage = "NOT IMPLEMENTED",
         };
     }
 }
