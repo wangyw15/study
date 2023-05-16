@@ -136,19 +136,16 @@ public struct HttpResponse
 	}
 }
 
-public class HttpServer
+public abstract class HttpServerBase
 {
-    public delegate HttpResponse RequestHandler(HttpRequest request);
-    public event RequestHandler? OnRequest;
-    
     protected TcpListener _listener;
 
-    public HttpServer(IPAddress addr, int port)
+    public HttpServerBase(IPAddress addr, int port)
     {
         _listener = new TcpListener(addr, port);
     }
 
-    public HttpServer(IPEndPoint ep)
+    public HttpServerBase(IPEndPoint ep)
     {
         _listener = new TcpListener(ep);
     }
@@ -178,11 +175,7 @@ public class HttpServer
 		var request = HttpRequest.ParseMessage(msg);
 
 		// handle request
-		var response = new HttpResponse();
-		if (OnRequest != null)
-		{
-			response = OnRequest.Invoke(request);
-		}
+		var response = OnRequest(request);
 		// write response
 		stream.Write(response);
 		// close connection
@@ -190,4 +183,42 @@ public class HttpServer
 		client.Close();
 		buffer.Clear();
 	}
+
+	protected abstract HttpResponse OnRequest(HttpRequest request);
+}
+
+public class HttpServer : HttpServerBase
+{
+	public delegate HttpResponse RequestHandler(HttpRequest request);
+	public event RequestHandler? OnGet;
+    
+	public HttpServer(IPAddress addr, int port) : base(addr, port)
+	{
+        
+	}
+
+    public HttpServer(IPEndPoint ep) : base(ep)
+    {
+
+    }
+
+    protected override HttpResponse OnRequest(HttpRequest request)
+    {
+        if (request.Method == "GET")
+        {
+            if (OnGet != null)
+            {
+                return OnGet.Invoke(request);
+            }
+        }
+        else if (request.Method == "POST")
+        {
+
+        }
+        return new HttpResponse()
+        {
+            StatusCode = 404,
+            StatusMessage = "NOT FOUND",
+        };
+    }
 }
