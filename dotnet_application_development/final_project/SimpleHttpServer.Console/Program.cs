@@ -1,6 +1,5 @@
 ﻿using SimpleHttpServer.Core;
 using System.Net;
-using System.Web;
 using HttpRequest = SimpleHttpServer.Core.HttpRequest;
 using HttpResponseMessage = SimpleHttpServer.Core.HttpResponse;
 
