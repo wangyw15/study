@@ -17,7 +17,7 @@ namespace WebTodo
 		public MainWindow()
 		{
 			InitializeComponent();
-			var html = "<html>\r\n<head>\r\n<title>WebTodo</title>\r\n</head>\r\n<body>\r\n<p>\r\n<textarea cols=\"100\" rows=\"20\" id=\"content\" onchange=\"setContent()\"></textarea>\r\n</p>\r\n<script>\r\nvar content = document.querySelector(\"#content\");\r\nfunction setContent(){\r\nfetch('/set?content=' + content.value);\r\n}\r\n</script>\r\n</body>\r\n</html>";
+			var html = "<html>\r\n<head>\r\n<title>WebTodo</title>\r\n</head>\r\n<body>\r\n<p>\r\n<textarea cols=\"100\" rows=\"20\" id=\"content\" onchange=\"setContent()\"></textarea>\r\n</p>\r\n<script>\r\nvar content = document.querySelector(\"#content\");\r\nfetch('/get').then(resp => resp.text()).then(text => content.value = text);\r\nfunction setContent(){\r\nfetch('/set?content=' + content.value);\r\n}\r\n</script>\r\n</body>\r\n</html>";
 			_server = new HttpServer(new IPEndPoint(IPAddress.Any, 8080));
 			_server.OnGet += (HttpRequest request) =>
 			{
@@ -32,6 +32,13 @@ namespace WebTodo
 					ret.StatusCode = 200;
 					ret.StatusMessage = "OK";
 					ret.Content = new byte[0];
+					ret.ContentType = MimeType.GetMimeType("html");
+				}
+				else if (request.Path == "/get")
+				{
+					ret.StatusCode = 200;
+					ret.StatusMessage = "OK";
+					ret.Content = Encoding.UTF8.GetBytes(_content);
 					ret.ContentType = MimeType.GetMimeType("html");
 				}
 				else
