@@ -60,7 +60,7 @@ int main()
 {
     shared_ptr<int[]> ordered(new int[1000]);
     generate_ordered_array(ordered, 1000);
-    search_result result = interpolation_search(235, ordered, 1000);
+    search_result result = fibonacci_search(235, ordered, 1000);
     cout << result.name << ", " << result.position << ", " << result.comparisions << endl;
     return 0;
 }
