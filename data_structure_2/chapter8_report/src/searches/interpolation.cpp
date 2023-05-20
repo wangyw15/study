@@ -11,7 +11,7 @@ search_result interpolation_search(int target, std::shared_ptr<int[]> data, int 
     while (low < high)
     {
         mid = low + (target - data[low]) / (data[high] - data[low]) * (high - low);
-        result.comparisions++;
+        result.comparisons++;
         if (target < data[mid])
         {
             high = mid - 1;

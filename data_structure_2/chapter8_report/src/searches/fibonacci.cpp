@@ -45,7 +45,7 @@ search_result fibonacci_search(int target, std::shared_ptr<int[]> data, int n)
             mid = low + _fibonacci_array[k - 1] - 1;
         }
 
-        result.comparisions++;
+        result.comparisons++;
         if (target < filled[mid])
         {
             high = mid - 1;

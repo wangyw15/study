@@ -12,7 +12,7 @@ search_result binary_search(int target, std::shared_ptr<int[]> data, int n)
     while (low <= high)
     {
         mid = (low + high) / 2;
-        result.comparisions++;
+        result.comparisons++;
         if (target < data[mid])
         {
             high = mid - 1;

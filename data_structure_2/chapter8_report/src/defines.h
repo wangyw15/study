@@ -8,7 +8,7 @@
 struct search_result
 {
     std::string name = "";
-    long comparisions = 0;
+    long comparisons = 0;
     int position = -1;
 };
 
