@@ -77,9 +77,7 @@ int main()
 
     // data scale
     vector<int> scales;
-    scales.push_back(10);
-    scales.push_back(100);
-    scales.push_back(1000);
+    scales.push_back(10000);
 
     // file writer
     ofstream writer("result.csv");
@@ -100,7 +98,7 @@ int main()
 
                 // run
                 auto start = chrono::high_resolution_clock::now();
-                search_result result = func(0, data, scale);
+                search_result result = func(357, data, scale);
                 auto duration = chrono::duration_cast<chrono::microseconds>(
                     chrono::high_resolution_clock::now() - start);
 
@@ -114,10 +112,5 @@ int main()
             }
         }
     }
-
-    shared_ptr<int[]> ordered(new int[1000]);
-    generate_ordered_array(ordered, 1000);
-    search_result result = fibonacci_search(235, ordered, 1000);
-    cout << result.name << ", " << result.position << ", " << result.comparisons << endl;
     return 0;
 }

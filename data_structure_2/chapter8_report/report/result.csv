@@ -1,0 +1,4 @@
+algorithm, data scale, data type, duration, comparisons, position
+Binary search, 10000, ordered, 2, 13, 357
+Interpolation search, 10000, ordered, 7, 358, 357
+Fibonacci search, 10000, ordered, 112, 15, 357
