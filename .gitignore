@@ -56,3 +56,4 @@
 **/obj
 **/bin
 **/*.pdf
+**/cmake-build-debug/*
