@@ -6,6 +6,8 @@
 
 - [advanced_language_programming](advanced_language_programming)
   - 高级语言程序设计
+- [assembly_programming](assembly_programming)
+  - 汇编语言程序设计
 - [computer_composition](computer_composition)
   - 计算机组成原理
 - [computer_programming_training](computer_programming_training)
