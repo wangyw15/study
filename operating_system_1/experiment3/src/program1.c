@@ -1,5 +1,7 @@
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <sys/wait.h>
 
 int main()
 {
@@ -12,12 +14,15 @@ int main()
     else if (pid == 0)
     {
         printf("It is child process, pid is %d.\n", getpid());
-        printf("The child process is finished.\n");
+        sleep(3);
+        exit(0);
     }
     else
     {
         printf("It is parent process, pid is %d, child pid is %d.\n", getpid(), pid);
-        sleep(1);
+        int i;
+        pid_t exited = wait(&i);
+        printf("The child process %d is finished, returns %d.\n", exited, i);
     }
     return 0;
 }
