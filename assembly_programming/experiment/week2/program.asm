@@ -72,6 +72,7 @@ start:
         next:
             cmp al, 'z'
             jb next2
+            jmp final
         next2:
             sub al, 20h
         final:
