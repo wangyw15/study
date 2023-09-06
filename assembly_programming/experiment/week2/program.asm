@@ -1,11 +1,12 @@
 data segment
-    input_prompt db 'Enter a string: ', '$'
-    too_long_prompt db 'String too long', '$'
-    empty_line_prompt db 'Empty line', '$'
-    crlf db 0dh, 0ah, '$'
-    buffer db 50
-           db ?
-           db 50 dup('$')
+    input_prompt      db ' Enter: $'
+    too_long_prompt   db 'String too long$'
+    empty_line_prompt db 'Empty line$'
+    length_prompt     db 'Length: $'
+    crlf              db 0dh, 0ah, '$'
+    buffer            db 50
+                      db ?
+                      db 50 dup('$')
 data ends
 
 code segment
@@ -25,11 +26,11 @@ start:
     mov ah, 0ah
     int 21h
 
-    call newline
+    call proc_new_line
 
     cmp buffer+1, 48 ; buffer-2 is the max length of the string
-    ja too_long
-    cmp buffer+1, 0
+    ja too_long ; useless
+    cmp buffer+1, 0 ; detect empty line
     je empty_line
     jmp upper_case_process
     empty_line:
@@ -44,6 +45,16 @@ start:
         jmp exit
     
     upper_case_process:
+    ; print length prompt
+    lea dx, length_prompt
+    mov ah, 09h
+    int 21h
+    ; print length
+    mov al, buffer+1
+    call proc_print_number
+
+    call proc_new_line
+
     ; to upper case
     lea si, buffer+2
     mov cl, buffer+1
@@ -74,12 +85,56 @@ start:
         mov ah, 4ch
         int 21h
 
-newline proc near ; new line
+proc_new_line proc near ; new line
+    push ax
+    push dx
+
     lea dx, crlf
     mov ah, 09h
     int 21h
+
+    pop ax
+    pop dx
     ret
-newline endp
+proc_new_line endp
+
+proc_print_char proc near ; print char
+    push ax
+    mov ah, 02h
+    int 21h
+    pop ax
+    ret
+proc_print_char endp
+
+proc_print_number proc near ; print number in al
+    ; protect registers
+    push bx
+    push cx
+    push dx
+
+    mov ah, 0 ; reset high byte
+    mov cx, 0 ; count count of digits
+    mov bl, 10 ; print decimal
+    calculate_loop: ; get digits
+        inc cx
+        div bl
+        push ax
+        mov ah, 0
+        cmp al, 0
+        jne calculate_loop
+    
+    print_number_loop: ; print digits
+        pop ax
+        mov dl, ah
+        add dl, 30h
+        call proc_print_char
+        loop print_number_loop
+    
+    pop bx
+    pop cx
+    pop dx
+    ret
+proc_print_number endp
 
 code ends
 end start
