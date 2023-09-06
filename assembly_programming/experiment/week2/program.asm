@@ -3,6 +3,7 @@ data segment
     too_long_prompt   db 'String too long$'
     empty_line_prompt db 'Empty line$'
     length_prompt     db 'Length: $'
+    duration_prompt   db 'Execution time (in seconds): $'
     crlf              db 0dh, 0ah, '$'
     buffer            db 50
                       db ?
@@ -15,6 +16,10 @@ assume ds:data, cs:code
 start:
     mov ax, data
     mov ds, ax
+
+    ; get start time
+    call proc_get_seconds
+    push ax
 
     ; prompt
     lea dx, input_prompt
@@ -79,6 +84,20 @@ start:
     mov ah, 09h
     int 21h
 
+    call proc_new_line
+
+    ; executing duration
+    lea dx, duration_prompt
+    mov ah, 09h
+    int 21h
+
+    call proc_get_seconds
+    mov bx, ax
+    pop ax
+    sub bx, ax
+    mov ax, bx
+    call proc_print_number
+
     ; return to dos
     exit:
         mov al, 0
@@ -135,6 +154,42 @@ proc_print_number proc near ; print number in al
     pop dx
     ret
 proc_print_number endp
+
+proc_get_seconds proc near ; get current seconds in one day
+    ; protect
+    push bx
+    push cx
+    push dx
+
+    ; get time
+    mov ah, 2ch
+    int 21h
+    ; init
+    mov bx, 0
+    ; seconds
+    mov dl, dh
+    ; dx as result/temp
+    mov dh, 0
+    ; minutes
+    mov ax, 0
+    mov al, cl
+    mov bl, 60
+    mul bl
+    add dx, ax
+    ; hours
+    ; mov ax, 0
+    ; mov al, ch
+    ; mov bx, 3600
+    ; mul bx
+    ; add dx, ax
+
+    mov ax, dx
+    
+    pop bx
+    pop cx
+    pop dx
+    ret
+proc_get_seconds endp
 
 code ends
 end start
