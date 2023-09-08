@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,65 +28,108 @@ public partial class MainForm : Form
 				{
 					continue;
 				}
-				var connect = _server.Accept();
-				_connections.Add(connect.RemoteEndPoint.ToString(), connect);
-				listBoxConnectedUsers.Invoke(() =>
+
+				if (buttonMode.Text == "TCP")
 				{
-					listBoxConnectedUsers.Items.Add(connect.RemoteEndPoint.ToString());
-				});
-				Task.Run(() =>
-				{
-					var remote = connect.RemoteEndPoint as IPEndPoint;
-					if (connect.Connected)
+					var connect = _server.Accept();
+					_connections.Add(connect.RemoteEndPoint.ToString(), connect);
+					listBoxConnectedUsers.Invoke(() =>
 					{
-						_log($"已接受来自 {remote.Address.MapToIPv4()}:{remote.Port} 的连接");
-					}
-					else
+						listBoxConnectedUsers.Items.Add(connect.RemoteEndPoint.ToString());
+					});
+					Task.Run(() =>
 					{
-						_log($"连接 {remote.Address.MapToIPv4()}:{remote.Port} 失败");
-						return;
-					}
-					while (!connect.Poll(1000, SelectMode.SelectRead))
-					{
-						byte[] bytesBuffer = new byte[256];
-						try
+						var remote = connect.RemoteEndPoint as IPEndPoint;
+						if (connect.Connected)
 						{
-							int bytesReceived = connect.Receive(bytesBuffer);
-							if (bytesReceived != 0)
+							_log($"已接受来自 {remote.Address.MapToIPv4()}:{remote.Port} 的连接");
+						}
+						else
+						{
+							_log($"连接 {remote.Address.MapToIPv4()}:{remote.Port} 失败");
+						}
+						while (!connect.Poll(1000, SelectMode.SelectRead))
+						{
+							byte[] bytesBuffer = new byte[256];
+							try
 							{
-								var data = JsonSerializer.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
-								var success = false;
-								if (_users.ContainsKey(data["username"]))
+								int bytesReceived = connect.Receive(bytesBuffer);
+								if (bytesReceived != 0)
 								{
-									if (_users[data["username"]] == data["password"])
+									var data = JsonSerializer.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
+									var success = false;
+									if (_users.ContainsKey(data["username"]))
 									{
-										_log(data["username"] + ": " + data["message"]);
-										success = true;
+										if (_users[data["username"]] == data["password"])
+										{
+											_log(data["username"] + ": " + data["message"]);
+											success = true;
+										}
+									}
+									int sentBytes = 0;
+									var respdata = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
+									{
+										success
+									}));
+									while (sentBytes < respdata.Length)
+									{
+										sentBytes += connect.Send(respdata, sentBytes, respdata.Length - sentBytes, SocketFlags.None);
+									}
+									if (!success)
+									{
+										_log("用户名或密码错误");
 									}
 								}
-								int sentBytes = 0;
-								var respdata = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
-								{
-									success
-								}));
-								while (sentBytes < respdata.Length)
-								{
-									sentBytes += connect.Send(respdata, sentBytes, respdata.Length - sentBytes, SocketFlags.None);
-								}
-								if (!success)
-								{
-									_log("用户名或密码错误");
-								}
+							}
+							catch
+							{
+								break;
 							}
 						}
-						catch
+						connect.Close();
+						_log($"已断开来自 {remote.Address}:{remote.Port} 的连接");
+
+					});
+				}
+				else if (buttonMode.Text == "UDP")
+				{
+					byte[] bytesBuffer = new byte[256];
+					try
+					{
+						EndPoint point = new IPEndPoint(IPAddress.Any, 0);
+						int bytesReceived = _server.ReceiveFrom(bytesBuffer, ref point);
+						if (bytesReceived != 0)
 						{
-							break;
+							var data = JsonSerializer.Deserialize<Dictionary<string, string>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
+							var success = false;
+							if (_users.ContainsKey(data["username"]))
+							{
+								if (_users[data["username"]] == data["password"])
+								{
+									_log(data["username"] + ": " + data["message"]);
+									success = true;
+								}
+							}
+							int sentBytes = 0;
+							var respdata = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
+							{
+								success
+							}));
+							while (sentBytes < respdata.Length)
+							{
+								sentBytes += _server.SendTo(respdata, sentBytes, respdata.Length - sentBytes, SocketFlags.None, point);
+							}
+							if (!success)
+							{
+								_log("用户名或密码错误");
+							}
 						}
 					}
-					connect.Close();
-					_log($"已断开来自 {remote.Address}:{remote.Port} 的连接");
-				});
+					catch
+					{
+
+					}
+				}
 			}
 		});
 	}
@@ -177,11 +218,41 @@ public partial class MainForm : Form
 	{
 		if (buttonListenToggle.Text == "开始")
 		{
-			_server.Bind(new IPEndPoint(IPAddress.Any, (int)numericUpDownPort.Value));
-			_server.Listen();
-			_log("开始监听", false);
-			buttonListenToggle.Enabled = false;
-			_listening = true;
+			if (buttonMode.Text == "TCP")
+			{
+				_server.Bind(new IPEndPoint(IPAddress.Any, (int)numericUpDownPort.Value));
+				_server.Listen();
+				_log("开始监听", false);
+				buttonListenToggle.Enabled = false;
+				_listening = true;
+				buttonMode.Enabled = false;
+			}
+			else if (buttonMode.Text == "UDP")
+			{
+				_server.Bind(new IPEndPoint(IPAddress.Any, (int)numericUpDownPort.Value));
+				_log("开始监听", false);
+				buttonListenToggle.Enabled = false;
+				_listening = true;
+				buttonMode.Enabled = false;
+			}
+		}
+	}
+
+	private void buttonMode_Click(object sender, EventArgs e)
+	{
+		if (buttonMode.Text == "TCP" && !_listening)
+		{
+			buttonMode.Text = "UDP";
+			_server = new(SocketType.Dgram, ProtocolType.Udp);
+			listBoxConnectedUsers.Enabled = false;
+			buttonCloseConnection.Enabled = false;
+		}
+		else if (buttonMode.Text == "UDP")
+		{
+			buttonMode.Text = "TCP";
+			_server = new(SocketType.Stream, ProtocolType.Tcp);
+			listBoxConnectedUsers.Enabled = true;
+			buttonCloseConnection.Enabled = true;
 		}
 	}
 }

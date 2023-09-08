@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -17,10 +16,6 @@ public partial class MainForm : Form
 
 	private void buttonSend_Click(object sender, EventArgs e)
 	{
-		if (_socket == null || !_socket.Connected)
-		{
-			_log("未连接到服务器");
-		}
 		if (string.IsNullOrEmpty(textBoxUsername.Text) || string.IsNullOrWhiteSpace(textBoxUsername.Text))
 		{
 			_log("用户名不能为空");
@@ -36,31 +31,73 @@ public partial class MainForm : Form
 			_log("消息不能为空");
 			return;
 		}
-		int sentBytes = 0;
-		var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
+		
+		if (buttonMode.Text == "TCP")
 		{
-			username = textBoxUsername.Text,
-			password = textBoxPassword.Text,
-			message = textBoxMessage.Text
-		}));
-		while (sentBytes < data.Length)
-		{
-			sentBytes += _socket.Send(data, sentBytes, data.Length - sentBytes, SocketFlags.None);
-		}
-		// response
-		byte[] bytesBuffer = new byte[256];
-		try
-		{
-			int bytesReceived = _socket.Receive(bytesBuffer);
-			if (bytesReceived != 0)
+			if (_socket == null || !_socket.Connected)
 			{
-				var respdata = JsonSerializer.Deserialize<Dictionary<string, bool>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
-				_log(respdata["success"] ? "发送成功" : "发送失败");
+				_log("未连接到服务器");
+			}
+			int sentBytes = 0;
+			var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
+			{
+				username = textBoxUsername.Text,
+				password = textBoxPassword.Text,
+				message = textBoxMessage.Text
+			}));
+			while (sentBytes < data.Length)
+			{
+				sentBytes += _socket.Send(data, sentBytes, data.Length - sentBytes, SocketFlags.None);
+			}
+			// response
+			byte[] bytesBuffer = new byte[256];
+			try
+			{
+				int bytesReceived = _socket.Receive(bytesBuffer);
+				if (bytesReceived != 0)
+				{
+					var respdata = JsonSerializer.Deserialize<Dictionary<string, bool>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
+					_log(respdata["success"] ? "发送成功" : "发送失败");
+				}
+			}
+			catch
+			{
+				_log("发送失败");
 			}
 		}
-		catch
+		else if (buttonMode.Text == "UDP")
 		{
-			_log("发送失败");
+			if (_socket == null)
+			{
+				_socket = new (SocketType.Dgram, ProtocolType.Udp);
+			}
+			int sentBytes = 0;
+			var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
+			{
+				username = textBoxUsername.Text,
+				password = textBoxPassword.Text,
+				message = textBoxMessage.Text
+			}));
+			EndPoint point = new IPEndPoint(IPAddress.Parse(textBoxHost.Text), int.Parse(textBoxPort.Text));
+			while (sentBytes < data.Length)
+			{
+				sentBytes += _socket.SendTo(data, sentBytes, data.Length - sentBytes, SocketFlags.None, point);
+			}
+			// response
+			byte[] bytesBuffer = new byte[256];
+			try
+			{
+				int bytesReceived = _socket.ReceiveFrom(bytesBuffer, ref point);
+				if (bytesReceived != 0)
+				{
+					var respdata = JsonSerializer.Deserialize<Dictionary<string, bool>>(Encoding.UTF8.GetString(bytesBuffer, 0, bytesReceived));
+					_log(respdata["success"] ? "发送成功" : "发送失败");
+				}
+			}
+			catch
+			{
+				_log("发送失败");
+			}
 		}
 	}
 
@@ -101,7 +138,7 @@ public partial class MainForm : Form
 		{
 			_socket.Close();
 		}
-		_socket = new(SocketType.Stream, ProtocolType.Tcp);
+		_socket = new (SocketType.Stream, ProtocolType.Tcp);
 		_socket.Connect(new IPEndPoint(IPAddress.Parse(textBoxHost.Text), int.Parse(textBoxPort.Text)));
 		if (_socket.Connected)
 		{
@@ -150,6 +187,23 @@ public partial class MainForm : Form
 		{
 			_socket.Close();
 			_socket.Dispose();
+		}
+	}
+
+	private void buttonMode_Click(object sender, EventArgs e)
+	{
+
+		if (buttonMode.Text == "TCP" && (_socket == null || !_socket.Connected))
+		{
+			buttonMode.Text = "UDP";
+			buttonConnect.Enabled = false;
+			buttonSend.Enabled = true;
+		}
+		else if (buttonMode.Text == "UDP")
+		{
+			buttonMode.Text = "TCP";
+			buttonConnect.Enabled = true;
+			buttonSend.Enabled = false;
 		}
 	}
 }

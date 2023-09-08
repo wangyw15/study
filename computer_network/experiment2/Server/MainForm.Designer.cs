@@ -39,6 +39,7 @@ partial class MainForm
 		textBoxUserName = new TextBox();
 		textBoxPassword = new TextBox();
 		groupBoxConsole = new GroupBox();
+		buttonMode = new Button();
 		buttonListenToggle = new Button();
 		labelPort = new Label();
 		numericUpDownPort = new NumericUpDown();
@@ -157,6 +158,7 @@ partial class MainForm
 		// groupBoxConsole
 		// 
 		groupBoxConsole.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+		groupBoxConsole.Controls.Add(buttonMode);
 		groupBoxConsole.Controls.Add(buttonListenToggle);
 		groupBoxConsole.Controls.Add(labelPort);
 		groupBoxConsole.Controls.Add(numericUpDownPort);
@@ -165,15 +167,26 @@ partial class MainForm
 		groupBoxConsole.Controls.Add(textBoxLog);
 		groupBoxConsole.Location = new Point(333, 12);
 		groupBoxConsole.Name = "groupBoxConsole";
-		groupBoxConsole.Size = new Size(955, 619);
+		groupBoxConsole.Size = new Size(1066, 619);
 		groupBoxConsole.TabIndex = 1;
 		groupBoxConsole.TabStop = false;
 		groupBoxConsole.Text = "控制台";
 		// 
+		// buttonMode
+		// 
+		buttonMode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		buttonMode.Location = new Point(6, 29);
+		buttonMode.Name = "buttonMode";
+		buttonMode.Size = new Size(716, 34);
+		buttonMode.TabIndex = 6;
+		buttonMode.Text = "TCP";
+		buttonMode.UseVisualStyleBackColor = true;
+		buttonMode.Click += buttonMode_Click;
+		// 
 		// buttonListenToggle
 		// 
 		buttonListenToggle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-		buttonListenToggle.Location = new Point(837, 29);
+		buttonListenToggle.Location = new Point(948, 29);
 		buttonListenToggle.Name = "buttonListenToggle";
 		buttonListenToggle.Size = new Size(112, 30);
 		buttonListenToggle.TabIndex = 5;
@@ -185,7 +198,7 @@ partial class MainForm
 		// 
 		labelPort.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 		labelPort.AutoSize = true;
-		labelPort.Location = new Point(617, 32);
+		labelPort.Location = new Point(728, 32);
 		labelPort.Name = "labelPort";
 		labelPort.Size = new Size(46, 24);
 		labelPort.TabIndex = 4;
@@ -194,7 +207,7 @@ partial class MainForm
 		// numericUpDownPort
 		// 
 		numericUpDownPort.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-		numericUpDownPort.Location = new Point(669, 29);
+		numericUpDownPort.Location = new Point(780, 29);
 		numericUpDownPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 		numericUpDownPort.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
 		numericUpDownPort.Name = "numericUpDownPort";
@@ -205,7 +218,7 @@ partial class MainForm
 		// buttonCloseConnection
 		// 
 		buttonCloseConnection.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-		buttonCloseConnection.Location = new Point(617, 579);
+		buttonCloseConnection.Location = new Point(728, 579);
 		buttonCloseConnection.Name = "buttonCloseConnection";
 		buttonCloseConnection.Size = new Size(332, 34);
 		buttonCloseConnection.TabIndex = 2;
@@ -218,7 +231,7 @@ partial class MainForm
 		listBoxConnectedUsers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
 		listBoxConnectedUsers.FormattingEnabled = true;
 		listBoxConnectedUsers.ItemHeight = 24;
-		listBoxConnectedUsers.Location = new Point(617, 65);
+		listBoxConnectedUsers.Location = new Point(728, 65);
 		listBoxConnectedUsers.Name = "listBoxConnectedUsers";
 		listBoxConnectedUsers.Size = new Size(332, 508);
 		listBoxConnectedUsers.TabIndex = 1;
@@ -226,12 +239,12 @@ partial class MainForm
 		// textBoxLog
 		// 
 		textBoxLog.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-		textBoxLog.Location = new Point(6, 29);
+		textBoxLog.Location = new Point(6, 69);
 		textBoxLog.Multiline = true;
 		textBoxLog.Name = "textBoxLog";
 		textBoxLog.ReadOnly = true;
-		textBoxLog.ScrollBars = ScrollBars.Horizontal;
-		textBoxLog.Size = new Size(605, 584);
+		textBoxLog.ScrollBars = ScrollBars.Vertical;
+		textBoxLog.Size = new Size(716, 544);
 		textBoxLog.TabIndex = 0;
 		textBoxLog.Text = "日志";
 		// 
@@ -239,7 +252,7 @@ partial class MainForm
 		// 
 		AutoScaleDimensions = new SizeF(11F, 24F);
 		AutoScaleMode = AutoScaleMode.Font;
-		ClientSize = new Size(1300, 643);
+		ClientSize = new Size(1411, 643);
 		Controls.Add(groupBoxConsole);
 		Controls.Add(groupBoxUser);
 		Name = "MainForm";
@@ -271,4 +284,5 @@ partial class MainForm
 	private Label labelPort;
 	private NumericUpDown numericUpDownPort;
 	private Button buttonListenToggle;
+	private Button buttonMode;
 }

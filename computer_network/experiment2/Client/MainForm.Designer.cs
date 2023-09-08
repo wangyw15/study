@@ -34,6 +34,7 @@ partial class MainForm
 		textBoxUsername = new TextBox();
 		textBoxPassword = new TextBox();
 		groupBoxServer = new GroupBox();
+		buttonMode = new Button();
 		buttonDisconnect = new Button();
 		buttonConnect = new Button();
 		label1 = new Label();
@@ -54,7 +55,7 @@ partial class MainForm
 		groupBoxUser.Controls.Add(labelUserName);
 		groupBoxUser.Controls.Add(textBoxUsername);
 		groupBoxUser.Controls.Add(textBoxPassword);
-		groupBoxUser.Location = new Point(12, 205);
+		groupBoxUser.Location = new Point(12, 242);
 		groupBoxUser.Name = "groupBoxUser";
 		groupBoxUser.Size = new Size(622, 109);
 		groupBoxUser.TabIndex = 0;
@@ -99,6 +100,7 @@ partial class MainForm
 		// groupBoxServer
 		// 
 		groupBoxServer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		groupBoxServer.Controls.Add(buttonMode);
 		groupBoxServer.Controls.Add(buttonDisconnect);
 		groupBoxServer.Controls.Add(buttonConnect);
 		groupBoxServer.Controls.Add(label1);
@@ -107,10 +109,21 @@ partial class MainForm
 		groupBoxServer.Controls.Add(textBoxPort);
 		groupBoxServer.Location = new Point(12, 12);
 		groupBoxServer.Name = "groupBoxServer";
-		groupBoxServer.Size = new Size(622, 187);
+		groupBoxServer.Size = new Size(622, 224);
 		groupBoxServer.TabIndex = 5;
 		groupBoxServer.TabStop = false;
 		groupBoxServer.Text = "服务器";
+		// 
+		// buttonMode
+		// 
+		buttonMode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		buttonMode.Location = new Point(6, 181);
+		buttonMode.Name = "buttonMode";
+		buttonMode.Size = new Size(610, 34);
+		buttonMode.TabIndex = 8;
+		buttonMode.Text = "TCP";
+		buttonMode.UseVisualStyleBackColor = true;
+		buttonMode.Click += buttonMode_Click;
 		// 
 		// buttonDisconnect
 		// 
@@ -172,12 +185,12 @@ partial class MainForm
 		// textBoxLog
 		// 
 		textBoxLog.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-		textBoxLog.Location = new Point(12, 320);
+		textBoxLog.Location = new Point(12, 357);
 		textBoxLog.Multiline = true;
 		textBoxLog.Name = "textBoxLog";
 		textBoxLog.ReadOnly = true;
 		textBoxLog.ScrollBars = ScrollBars.Vertical;
-		textBoxLog.Size = new Size(622, 284);
+		textBoxLog.Size = new Size(622, 338);
 		textBoxLog.TabIndex = 5;
 		textBoxLog.Text = "日志";
 		// 
@@ -185,7 +198,7 @@ partial class MainForm
 		// 
 		buttonSend.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 		buttonSend.Enabled = false;
-		buttonSend.Location = new Point(522, 610);
+		buttonSend.Location = new Point(522, 701);
 		buttonSend.Name = "buttonSend";
 		buttonSend.Size = new Size(112, 30);
 		buttonSend.TabIndex = 6;
@@ -196,7 +209,7 @@ partial class MainForm
 		// textBoxMessage
 		// 
 		textBoxMessage.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-		textBoxMessage.Location = new Point(12, 610);
+		textBoxMessage.Location = new Point(12, 701);
 		textBoxMessage.Name = "textBoxMessage";
 		textBoxMessage.Size = new Size(504, 30);
 		textBoxMessage.TabIndex = 7;
@@ -205,7 +218,7 @@ partial class MainForm
 		// 
 		AutoScaleDimensions = new SizeF(11F, 24F);
 		AutoScaleMode = AutoScaleMode.Font;
-		ClientSize = new Size(646, 652);
+		ClientSize = new Size(646, 743);
 		Controls.Add(textBoxMessage);
 		Controls.Add(buttonSend);
 		Controls.Add(textBoxLog);
@@ -239,4 +252,5 @@ partial class MainForm
 	private TextBox textBoxMessage;
 	private Button buttonDisconnect;
 	private Button buttonConnect;
+	private Button buttonMode;
 }
