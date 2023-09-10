@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace Server;
 
@@ -86,9 +87,19 @@ public partial class MainForm : Form
 								break;
 							}
 						}
-						connect.Close();
 						_log($"已断开来自 {remote.Address}:{remote.Port} 的连接");
-
+						listBoxConnectedUsers.Invoke(() =>
+						{
+							try
+							{
+								listBoxConnectedUsers.Items.Remove(connect.RemoteEndPoint.ToString());
+							}
+							catch (ObjectDisposedException e)
+							{
+								
+							}
+						});
+						connect.Close();
 					});
 				}
 				else if (buttonMode.Text == "UDP")
