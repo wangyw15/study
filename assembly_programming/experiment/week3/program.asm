@@ -17,7 +17,7 @@ start:
     mov ah, 2
     int 21h
     push dx ; save dx
-    mov dl, 20h ; space
+    mov dl, 0h ; space
     mov ah, 2
     int 21h
     pop dx ; restore dx
