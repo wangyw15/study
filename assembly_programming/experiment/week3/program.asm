@@ -16,6 +16,11 @@ start:
     ; display character
     mov ah, 2
     int 21h
+    push dx ; save dx
+    mov dl, 20h ; space
+    mov ah, 2
+    int 21h
+    pop dx ; restore dx
     ; new line
     cmp cl, 10h
     je newline
@@ -35,7 +40,7 @@ start:
     inc dl
     cmp dl, 80h
     jne display
-    
+
     ; return to dos
     mov al, 0
     mov ah, 4ch
