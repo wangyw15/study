@@ -10,6 +10,8 @@
   - 汇编语言程序设计
 - [computer_composition](computer_composition)
   - 计算机组成原理
+- [computer_network](computer_network)
+  - 计算机网络
 - [computer_programming_training](computer_programming_training)
   - 计算机编程实训
 - [data_structure_1](data_structure_1)
