@@ -1,7 +1,5 @@
 # SHU大计算机系的一些作业
 
-> ~~汪神！~~ 
-
 # 目录结构
 
 - [advanced_language_programming](advanced_language_programming)
@@ -18,6 +16,8 @@
   - 数据结构(1)
 - [data_structure_2](data_structure_2)
   - 数据结构(2)
+- [database_principle_1](database_principle_1)
+  - 数据库原理(1)
 - [digital_logic_experiment](digital_logic_experiment)
   - 数字逻辑实验
 - [dotnet_application_development](dotnet_application_development)
