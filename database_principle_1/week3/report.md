@@ -7,7 +7,7 @@ select xm, xh from s where xh in
 (
     select xh from (
         select max(zpcj), xh from e
-            where zpcj is not null group by kh
+        where zpcj is not null group by kh
     )
 );
 ```
@@ -21,7 +21,12 @@ select xm, xh from s where xh in
 # 2. 求年龄大于所有女同学年龄的男学生姓名和年龄。
 
 ```sql
-select xm as name, 2023-(cast(substr(csrq, 1, 4) as int)) as age from s where cast(substr(csrq, 1, 4) as int) < (select cast(substr(csrq, 1, 4) as int) as year from s where xb == '女');
+select xm as name, 2023-(cast(substr(csrq, 1, 4) as int)) as age 
+from s
+where cast(substr(csrq, 1, 4) as int) < (
+    select cast(substr(csrq, 1, 4) as int) as year
+    from s where xb == '女'
+);
 ```
 
 | name | age |
@@ -41,7 +46,7 @@ select xh, kh, pscj, kscj, zpcj from e where xh == (
         )
         and not exists (
             select * from e as p2 
-                where p2.kh == o.kh and p2.xh == p1.xh
+            where p2.kh == o.kh and p2.xh == p1.xh
         )
     )
 );
