@@ -35,7 +35,13 @@ TODO
 # 查找有学生重修的课程，输出重修课的开课学期，课程名，教师工号
 
 ```sql
-select xq, kh, gh from e where zpcj < 60;
+select o.xq, km, o.gh from c
+inner join o on o.kh == c.kh
+where c.kh in (
+    select distinct kh from e as tmp where exists (
+        select * from e where tmp.kh == e.kh and tmp.xq != e.xq
+    )
+);
 ```
 
 |      xq      |    kh    | gh  |
@@ -47,7 +53,18 @@ select xq, kh, gh from e where zpcj < 60;
 # 查询上了马小红老师开的所有课的学生学号和课号及成绩
 
 ```sql
-select xh, kh, zpcj from e where gh == (select gh from t where xm == '马小红');
+select xh, kh, pscj, kscj, zpcj from e where xh == (
+    select distinct xh from e as p1 where not exists
+    (
+        select * from o where gh == (
+            select gh from t where xm == '马小红'
+        )
+        and not exists (
+            select * from e as p2 
+                where p2.kh == o.kh and p2.xh == p1.xh
+        )
+    )
+);
 ```
 
 |  xh  |    kh    | zpcj |
@@ -106,14 +123,16 @@ and DEVELOPER == "盛大公司";
 # 查询玩过所有游戏并获胜过的游戏玩家的昵称、积分、等级名以及还差多少分可以升级
 
 ```sql
-select NICKNAME, SCORE, Rank.RNAME, Rank.UP_SCORE from Players where not exists
+select NICKNAME, SCORE, Rank.RNAME, Rank.UP_SCORE from Players
+inner join Rank on Rank.RID == Players.RANK
+where not exists
 (
     select * from Games where not exists
     (
         select * from Battle where WINNER == Players.PID
             and Games.GID == Battle.GID
     )
-) inner join Rank on Rank.RID == Players.RANK;
+);
 ```
 
 ---
@@ -134,7 +153,9 @@ select GID, CID from Games where not exists
 # 查询至少在“B01(王者荣耀)”和“B02(帝国时代)”两个游戏中都获胜过的游戏玩家的昵称、手机和等级名
 
 ```sql
-select NICKNAME, EMAIL, Rank.RNAME from Players where exists
+select NICKNAME, EMAIL, Rank.RNAME from Players
+inner join Rank on Rank.RID == Players.RANK
+where exists
 (
     select * from Battle where Battle.WINNER == Players.PID 
         and Battle.GID == 'B01'
@@ -143,6 +164,5 @@ and exists
 (
     select * from Battle where Battle.WINNER == Players.PID 
         and Battle.GID == 'B02'
-)
-inner join Rank on Rank.RID == Players.RANK;
+);
 ```
