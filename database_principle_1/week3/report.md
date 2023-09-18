@@ -3,7 +3,13 @@
 1. 查询每门课程中分数最高的学生学号和学生姓名。
 
 ```sql
-select xm, xh from s where xh in (select xh from (select max(zpcj), xh from e where zpcj is not null group by kh));
+select xm, xh from s where xh in 
+(
+    select xh from (
+        select max(zpcj), xh from e
+            where zpcj is not null group by kh
+    )
+);
 ```
 
 | xm  |  xh  |
@@ -43,10 +49,11 @@ select xh, kh, pscj, kscj, zpcj from e where xh == (
 
 |  xh  |    kh    | pscj | kscj | zpcj |
 | :-: | :-: | :-: | :-: | :-: |
+| 1103 | 08305001 | 56.0 | 56.0 | 56.0 |
 | 1103 | 08305002 | 75.0 | 75.0 | 75.0 |
 | 1103 | 08305003 | 84.0 | 84.0 | 84.0 |
 | 1103 | 08305001 |      |      |      |
-| 1107 | 08305003 | 79.0 | 79.0 | 79.0 |
+| 1103 | 08305004 |      |      |      |
 
 4. 查询计算机学院男生选修本学院教授开设的课不及格的且还未重修的课，输出学生的学期，学号，课号，按学期升序，学期相同按学号升序排列。
 
