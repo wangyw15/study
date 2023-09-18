@@ -38,6 +38,10 @@ TODO
 select xq, kh, gh from e where zpcj < 60;
 ```
 
+|      xq      |    kh    | gh  |
+| :-: | :-: | :-: |
+| 2012-2013 秋季 | 08305001 | 103 |
+
 ---
 
 # 查询上了马小红老师开的所有课的学生学号和课号及成绩
@@ -45,6 +49,13 @@ select xq, kh, gh from e where zpcj < 60;
 ```sql
 select xh, kh, zpcj from e where gh == (select gh from t where xm == '马小红');
 ```
+
+|  xh  |    kh    | zpcj |
+| :-: | :-: | :-: |
+| 1103 | 08305002 | 75.0 |
+| 1103 | 08305003 | 84.0 |
+| 1103 | 08305001 |      |
+| 1107 | 08305003 | 79.0 |
 
 ---
 
@@ -81,7 +92,7 @@ select xh, kh, zpcj from e where gh == (select gh from t where xm == '马小红'
 # 查询胜率大于 50% 的玩家玩过的由“盛大公司”开发的游戏的名称和分值
 
 ```sql
-select GNAME from Games where GID == 
+select GNAME, VALUE from Games where GID == 
 (
     select GID from Battle 
     where PLAYER1 == (select pid from Players where WIN/LOST > 0.5) 
@@ -94,16 +105,44 @@ and DEVELOPER == "盛大公司";
 
 # 查询玩过所有游戏并获胜过的游戏玩家的昵称、积分、等级名以及还差多少分可以升级
 
-TODO
+```sql
+select NICKNAME, SCORE, Rank.RNAME, Rank.UP_SCORE from Players where not exists
+(
+    select * from Games where not exists
+    (
+        select * from Battle where WINNER == Players.PID
+            and Games.GID == Battle.GID
+    )
+) inner join Rank on Rank.RID == Players.RANK;
+```
 
 ---
 
 # 查询游戏玩家 P001 没有玩过的游戏名称及其类别 ID
 
-TODO
+```sql
+select GID, CID from Games where not exists
+(
+    select * from Battle where 
+        GID == Battle.GID and
+        (Battle.PLAYER1 == 'P001' or Battle.PLAYER2 == 'P001')
+);
+```
 
 ---
 
 # 查询至少在“B01(王者荣耀)”和“B02(帝国时代)”两个游戏中都获胜过的游戏玩家的昵称、手机和等级名
 
-TODO
+```sql
+select NICKNAME, EMAIL, Rank.RNAME from Players where exists
+(
+    select * from Battle where Battle.WINNER == Players.PID 
+        and Battle.GID == 'B01'
+)
+and exists
+(
+    select * from Battle where Battle.WINNER == Players.PID 
+        and Battle.GID == 'B02'
+)
+inner join Rank on Rank.RID == Players.RANK;
+```
