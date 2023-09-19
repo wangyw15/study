@@ -5,7 +5,8 @@
 
 int main()
 {
-    int i, r, j, k, l, process1, process2, fd[2];
+    printf("parent process: %d\n", getpid());
+    int process1, process2, fd[2];
     char buffer_write[50], buffer_read[50];
     pipe(fd);
     while ((process1 = fork()) == -1); // new process
@@ -16,8 +17,8 @@ int main()
         printf("child process 1: %d\n", getpid());
         write(fd[1], buffer_write, 50);
         lockf(fd[1], 0, 0);
-        sleep(5);
-        printf("p1 %d is weakup, parent pid is %d\n", getpid(), getppid());
+        sleep(5); // change this to 6 for wake up order test
+        printf("p1 %d is wakeup, parent pid is %d\n", getpid(), getppid());
         exit(0);
     }
     else
@@ -31,13 +32,13 @@ int main()
             write(fd[1], buffer_write, 50);
             lockf(fd[1], 0, 0);
             sleep(5);
-            printf("p2 %d is weakup, parent pid is %d\n", getpid(), getppid());
+            printf("p2 %d is wakeup, parent pid is %d\n", getpid(), getppid());
             exit(0);
         }
         else
         {
-            wait(NULL);
-            if ((r = read(fd[0], buffer_read, 50)) == -1)
+            wait(NULL); // comment this line for orphan process test
+            if (read(fd[0], buffer_read, 50) == -1)
             {
                 printf("read pipe failed\n");
             }
@@ -45,8 +46,8 @@ int main()
             {
                 printf("parent %d: %s\n", getpid(), buffer_read);
             }
-            wait(NULL);
-            if ((r = read(fd[0], buffer_read, 50)) == -1)
+            wait(NULL); // comment this line for orphan process test
+            if (read(fd[0], buffer_read, 50) == -1)
             {
                 printf("read pipe failed\n");
             }

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -25,7 +24,7 @@ int main()
     {
         printf("parent %d did not change the variable and global_int\n", getpid());
     }
-    printf("   pid=%d, global_int=%d, variable=%d\n", getpid(), variable, global_int);
+    printf("   pid=%d, global_int=%d, variable=%d\n", getpid(), global_int, variable);
     exit(0);
     // return 0;
 }

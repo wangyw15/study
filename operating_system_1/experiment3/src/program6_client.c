@@ -1,8 +1,5 @@
 #include <sys/types.h>
-#include <sys/ipc.h>
 #include <sys/msg.h>
-#include <stdlib.h>
-#include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
 
