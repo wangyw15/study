@@ -3,7 +3,7 @@ data segment
     digit         db 0
     other         db 0
     enter_prompt  db 'Enter: $'
-    letter_prompt db 'Letters: $'
+    letter_prompt db 0dh, 0ah, 'Letters: $'
     digit_prompt  db ' Digits: $'
     other_prompt  db ' Others: $'
 data ends
@@ -19,8 +19,14 @@ start:
     mov ah, 09h
     int 21h
 
+    mov cx, -1
     ; read chars
     read:
+        inc cx
+        ; no more than 80 chars
+        cmp cx, 80
+        je end_read
+
         mov ah, 01h
         int 21h
         ; check for enter
