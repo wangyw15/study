@@ -24,13 +24,13 @@ body>* {
 }
 
 /* source code */
-.sourceCode {
-    font-size: medium;
+div.sourceCode {
+    font-size: large;
     font-family: 'Consolas', monospace;
     color: var(--base0);
     background-color: var(--base3);
     border-radius: 5px;
-    padding: 1px 5px;
+    padding: 1rem;
 }
 
 .sourceCode .kw {
