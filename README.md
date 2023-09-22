@@ -24,6 +24,8 @@
   - .NET应用开发技术
 - [oop_course](oop_course)
   - 面向对象程序设计
+- [operating_system_1](operating_system_1)
+  - 操作系统(1)
 - [python_computing](python_computing)
   - Python计算
 
