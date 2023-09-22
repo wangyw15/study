@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <signal.h>
 
 #define PRODUCER_COUNT 3
 #define CONSUMER_COUNT 2
@@ -12,6 +13,7 @@ sem_t blank, product;
 pthread_t tid[PRODUCER_COUNT + CONSUMER_COUNT];
 pthread_mutex_t mutex;
 int buffer[BUFFER_SIZE];
+int *malloced_pointer[PRODUCER_COUNT + CONSUMER_COUNT];
 
 void *produce(void *arg)
 {
@@ -27,7 +29,7 @@ void *produce(void *arg)
         sem_post(&product); // signal that a product is produced (call consumer to consume)
         sleep(sleep(rand() % 3 + 1)); // sleep for 1-3 seconds
     }
-    return NULL;
+    return arg;
 }
 
 void *consumer(void *arg)
@@ -44,7 +46,37 @@ void *consumer(void *arg)
         sem_post(&blank); // signal that a product is consumed (call producer to produce)
         sleep(sleep(rand() % 3 + 1)); // sleep for 1-3 seconds
     }
-    return NULL;
+    return arg;
+}
+
+// handle SIGINT (Ctrl+C) signal
+void sigint_handler()
+{
+    int i;
+
+    // cancel producer threads
+    for (i = 0; i < PRODUCER_COUNT; i++)
+    {
+        pthread_cancel(tid[i]);
+        free(malloced_pointer[i]);
+        printf("producer %d cancelled\n", i);
+    }
+
+    // cancel consumer threads
+    for (i = 0; i < CONSUMER_COUNT; i++)
+    {
+        pthread_cancel(tid[PRODUCER_COUNT + i]);
+        free(malloced_pointer[PRODUCER_COUNT + i]);
+        printf("consumer %d cancelled\n", i);
+    }
+
+    // destroy mutex and semaphores
+    pthread_mutex_destroy(&mutex);
+    sem_destroy(&blank);
+    sem_destroy(&product);
+
+    printf("program terminated\n");
+    exit(0);
 }
 
 int main()
@@ -55,11 +87,14 @@ int main()
     sem_init(&blank, 0, BUFFER_SIZE); // initialize blank space to BUFFER_SIZE
     sem_init(&product, 0, 0); // initialize product to 0
 
+    signal(SIGINT, sigint_handler); // register SIGINT handler (Ctrl+C
+
     // create producer threads
     for (i = 0; i < PRODUCER_COUNT; i++)
     {
         int *p = malloc(sizeof(int));
-        *p = i;
+        *p = i; // producer id
+        malloced_pointer[i] = p; // save malloced pointer for later free
         pthread_create(&tid[i], NULL, produce, p);
     }
 
@@ -67,7 +102,8 @@ int main()
     for (i = 0; i < CONSUMER_COUNT; i++)
     {
         int *p = malloc(sizeof(int));
-        *p = i;
+        *p = i; // consumer id
+        malloced_pointer[PRODUCER_COUNT + i] = p; // save malloced pointer for later free
         pthread_create(&tid[PRODUCER_COUNT + i], NULL, consumer, p);
     }
 
