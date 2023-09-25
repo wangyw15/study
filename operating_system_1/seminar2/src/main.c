@@ -4,39 +4,33 @@
 #include <sys/shm.h> // shared memory
 #include <unistd.h>
 
-#define READER 0
-#define WRITER 1
-#define SHM_SIZE (1024 * 1024) // shared memory size
-#define DELAY (rand() % 3 + 1)
+#define READER_ID 0
+#define WRITER_ID 1
+#define SEMAPHORE_COUNT 2 // amount of semaphores
+#define DELAY (rand() % 5 + 1) // random delay
 
 union semun
 {
     int val; // value for setval()
     struct semid_ds *buf; // buffer for IPC_STAT and IPC_SET
-    unsigned short *array; // array for GETALL and SETALL
+    unsigned short *array; // array for GETALL and SETALL (semaphore data)
 };
 
 int semid = -1; // semaphore id
-int shmid = -1; // shared memory id
-
-struct readcount
-{
-    int read; // reader count
-    int l;
-} *rdc;
+int *read_count = NULL;
 
 // reader process
 void reader(int i)
 {
+    printf("reader process %d, readers: %d\n", i, *read_count);
     sleep(DELAY);
-    printf("This is process %d, and there are %d are reading\n", i, rdc->read);
 }
 
 // writer process
 void writer()
 {
+    printf("writer process, readers: %d\n", *read_count);
     sleep(DELAY);
-    printf("This is the writer process\n");
 }
 
 // P()
@@ -48,7 +42,7 @@ void _wait(int semid, int i)
     buffer.sem_flg = SEM_UNDO; // let system track the semaphore
     if (semop(semid, &buffer, 1) < 0) // wait for resource
     {
-        perror("Wait failed");
+        perror("_wait failed\n");
         exit(1);
     }
 }
@@ -62,42 +56,45 @@ void _signal(int semid, int i)
     sb.sem_flg = SEM_UNDO; // let system track the semaphore
     if (semop(semid, &sb, 1) < 0) // release resource
     {
-        perror("Signal failed");
+        perror("_signal failed\n");
         exit(1);
     }
 }
 
-void init() // initialization
+// initialization
+void init()
 {
-    // shared memory for readcount
-    if ((shmid = shmget(IPC_PRIVATE, SHM_SIZE, IPC_CREAT | 0666)) < 0)
+    int shmid = -1;
+    // init read_count
+    if ((shmid = shmget(IPC_PRIVATE, sizeof(int), 0600)) < 0)
     {
-        perror("Create shared memory failed");
-        exit(1);
+        perror("shmget for read_count failed");
+        exit(1);   
     }
-    rdc = (struct readcount *)shmat(shmid, NULL, 0); // attach shared memory
-    rdc->read = 0; // reset reader count
-    semid = semget(IPC_PRIVATE, 3, IPC_CREAT | 0666); // create semaphores
+    read_count = (int*)shmat(shmid, NULL, 0);
+    *read_count = 0;
+
+    semid = semget(IPC_PRIVATE, SEMAPHORE_COUNT, IPC_CREAT | 0666);
     if (semid < 0)
     {
-        perror("Create semaphore failed");
+        perror("semaphore creation failed\n");
         exit(1);
     }
+    
     union semun sem;
     sem.val = 1;
-    // semnum for multiple semaphores
     // exclusive read
-    // reader can read at first
-    if (semctl(semid, READER, SETVAL, sem) < 0)
+    // reader can read
+    if (semctl(semid, READER_ID, SETVAL, sem) < 0)
     {
-        perror("Semctl failed");
+        perror("semctl for reader failed");
         exit(1);
     }
-    // source
-    // no writer at first
-    if (semctl(semid, WRITER, SETVAL, sem) < 0)
+    // writer can write
+    sem.val = 1;
+    if (semctl(semid, WRITER_ID, SETVAL, sem) < 0)
     {
-        perror("Semctl failed");
+        perror("semctl for writer failed");
         exit(1);
     }
 }
@@ -113,39 +110,40 @@ int main()
             perror("Fork failed");
             exit(1);
         }
-        else if (child == 0)
+        else if (child == 0) // child process as writer
         {
-            printf("Kid %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
+            printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
             while (1)
             {
-                _wait(semid, READER); // wait for reader resource
-                if (rdc->read == 0) // notify writer to write
+                _wait(semid, READER_ID); // semaphore as mutex lock
+                if (*read_count == 0) // first reader
                 {
-                    _wait(semid, WRITER);
+                    _wait(semid, WRITER_ID);
                 }
-                rdc->read++; // increase reader count
-                _signal(semid, READER); // reader complete
+                (*read_count)++; // increase reader count
+                _signal(semid, READER_ID); // reading and release
+
                 reader(i); // print message
-                _wait(semid, READER);
-                rdc->read--; // decrease reader count
-                printf("Process %d have read\n", i);
-                if (rdc->read == 0)
+
+                _wait(semid, READER_ID);
+                (*read_count)--; // decrease reader count
+                if (*read_count == 0) // first reader
                 {
-                    _signal(semid, WRITER);
+                    _signal(semid, WRITER_ID);
                 }
-                _signal(semid, READER);
+                _signal(semid, READER_ID); // reader complete
+                printf("writer %d complete\n", i);
                 sleep(2);
             }
-            break;
         }
     }
     if (child > 0) // parent process
     {
         while (1)
         {
-            _wait(semid, WRITER);
+            _wait(semid, WRITER_ID); // wait for write
             writer();
-            _signal(semid, WRITER);
+            _signal(semid, WRITER_ID); // write complete
         }
     }
     return 0;
