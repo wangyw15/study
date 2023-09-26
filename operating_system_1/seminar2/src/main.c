@@ -1,26 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/sem.h> // semaphore
-#include <sys/shm.h> // shared memory
+#include <sys/mman.h>
+#include <semaphore.h> // POSIX semaphore
 #include <signal.h>
 #include <unistd.h>
 
-#define READER_ID 0
-#define WRITER_ID 1
-#define SEMAPHORE_COUNT 2 // amount of semaphores
 #define READER_COUNT 4
 #define DELAY (rand() % 5 + 1) // random delay
 
-union semun
-{
-    int val; // value for setval()
-    struct semid_ds *buf; // buffer for IPC_STAT and IPC_SET
-    unsigned short *array; // array for GETALL and SETALL (semaphore data)
-};
-
-int semid = -1; // semaphore id
 int *read_count = NULL;
-int shmid = -1;
+sem_t *wmutex;
+sem_t *rmutex;
 pid_t child_pid[READER_COUNT];
 int parent_process = 0;
 
@@ -38,67 +28,39 @@ void writer()
     sleep(DELAY);
 }
 
-// P()
-void _wait(int semid, int i)
-{
-    struct sembuf buffer;
-    buffer.sem_num = i; // semaphore id
-    buffer.sem_op = -1; // wait
-    buffer.sem_flg = SEM_UNDO; // let system track the semaphore and release automatically
-    if (semop(semid, &buffer, 1) < 0) // wait for resource
-    {
-        perror("_wait failed\n");
-        exit(1);
-    }
-}
-
-// V()
-void _signal(int semid, int i)
-{
-    struct sembuf sb;
-    sb.sem_num = i; // semaphore id
-    sb.sem_op = 1; // signal
-    sb.sem_flg = SEM_UNDO; // let system track the semaphore and release automatically
-    if (semop(semid, &sb, 1) < 0) // release resource
-    {
-        perror("_signal failed\n");
-        exit(1);
-    }
-}
-
 // initialization
 void init()
 {
-    // init read_count
-    if ((shmid = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0666)) < 0)
+    // allocate shared memory
+    if ((read_count = mmap(NULL, sizeof(int), 
+        PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0)) < 0)
     {
-        perror("shmget for read_count failed");
+        perror("mmap for read_count failed\n");
         exit(1);   
     }
-    read_count = (int*)shmat(shmid, NULL, 0);
-    *read_count = 0;
+    if ((rmutex = mmap(NULL, sizeof(sem_t), 
+        PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0)) < 0)
+    {
+        perror("mmap for rmutex failed\n");
+        exit(1);
+    }
+    if ((wmutex = mmap(NULL, sizeof(sem_t), 
+        PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0)) < 0)
+    {
+        perror("mmap for wmutex failed\n");
+        exit(1);
+    }
 
-    semid = semget(IPC_PRIVATE, SEMAPHORE_COUNT, IPC_CREAT | 0666);
-    if (semid < 0)
+    // initialization
+    *read_count = 0;
+    if (sem_init(wmutex, 1, 1) != 0)
     {
-        perror("semaphore creation failed\n");
+        perror("sem_init wmutex failed\n");
         exit(1);
     }
-    
-    union semun sem;
-    sem.val = 1;
-    // exclusive read
-    // reader can read
-    if (semctl(semid, READER_ID, SETVAL, sem) < 0)
+    if (sem_init(rmutex, 1, 1) != 0)
     {
-        perror("semctl for reader failed");
-        exit(1);
-    }
-    // writer can write
-    sem.val = 1;
-    if (semctl(semid, WRITER_ID, SETVAL, sem) < 0)
-    {
-        perror("semctl for writer failed");
+        perror("sem_init rmutex failed\n");
         exit(1);
     }
 }
@@ -111,28 +73,45 @@ void sigint_handler() // SIGINT handler
         int i;
         for (i = 0; i < READER_COUNT; i++)
         {
-            kill(child_pid[i], SIGINT);
+            kill(child_pid[i], SIGKILL);
             printf("\e[31mkilled\e[0m %d\n", child_pid[i] - getpid() - 1);
         }
 
-        // release shared memory
-        if (shmid)
-        {
-            shmctl(shmid, IPC_RMID, NULL);
-            printf("\e[32mreleased\e[0m shared memory\n");
-        }
+        // close semaphores
+        sem_close(wmutex);
+        sem_close(rmutex);
 
         // destroy semaphore
-        if (semid)
+        if (rmutex)
         {
-            semctl(semid, 0, IPC_RMID);
-            printf("\e[31mdestroy\e[0m semaphore\n");
+            sem_destroy(rmutex);
+            if (munmap(rmutex, sizeof(sem_t)) == 0)
+            {
+                printf("\e[32mreleased\e[0m rmutex\n");
+            }
+        }
+        if (wmutex)
+        {
+            sem_destroy(wmutex);
+            if (munmap(wmutex, sizeof(sem_t)) == 0)
+            {
+                printf("\e[32mreleased\e[0m wmutex\n");
+            }
+        }
+
+        // release read_count
+        if (read_count)
+        {
+            if (munmap(read_count, sizeof(int)) == 0)
+            {
+                printf("\e[32mreleased\e[0m read_count\n");
+            }
         }
         exit(0);
     }
     else
     {
-        kill(getpid(), SIGKILL);
+        kill(getpid(), SIGKILL); // suicide
     }
 }
 
@@ -151,26 +130,25 @@ int main()
         }
         else if (child == 0) // child process as writer
         {
-            // printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
             while (1)
             {
-                _wait(semid, READER_ID); // semaphore as mutex lock
+                sem_wait(rmutex); // semaphore as mutex lock
                 if (*read_count == 0) // notify writer
                 {
-                    _wait(semid, WRITER_ID);
+                    sem_wait(wmutex);
                 }
                 (*read_count)++; // increase reader count
-                _signal(semid, READER_ID); // comment this to perform exculsively read
+                sem_post(rmutex); // comment this to perform exculsively read
 
                 reader(i); // reader processing
 
-                _wait(semid, READER_ID);
+                sem_wait(rmutex);
                 (*read_count)--; // decrease reader count
                 if (*read_count == 0) // notify writer
                 {
-                    _signal(semid, WRITER_ID);
+                    sem_post(wmutex);
                 }
-                _signal(semid, READER_ID); // reader complete
+                sem_post(rmutex); // reader complete
                 printf("\e[33mreader\e[0m process %d, \e[32mcomplete\e[0m\n", i);
                 sleep(2);
             }
@@ -185,9 +163,10 @@ int main()
         parent_process = 1;
         while (1)
         {
-            _wait(semid, WRITER_ID); // wait for write
+            sem_wait(wmutex); // wait for write
             writer();
-            _signal(semid, WRITER_ID); // write complete
+            sem_post(wmutex); // write complete
+            sleep(2);
         }
     }
     return 0;

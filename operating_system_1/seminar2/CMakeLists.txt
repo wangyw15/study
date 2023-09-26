@@ -6,6 +6,8 @@ if (PARENT_PROJECT_NAME)
 endif ()
 project (${PNAME})
 
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+
 if (UNIX AND NOT APPLE)
     file (GLOB SRC_FILES "src/*.c")
     foreach (SRC_FILE ${SRC_FILES})
