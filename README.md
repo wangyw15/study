@@ -1,5 +1,9 @@
 # SHU大计算机系的一些作业
 
+> Stars are welcomed
+> 
+> Issues and pull requests are also
+
 # 目录结构
 
 - [advanced_language_programming](advanced_language_programming)
