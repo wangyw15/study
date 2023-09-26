@@ -7,6 +7,7 @@
 #define READER_ID 0
 #define WRITER_ID 1
 #define SEMAPHORE_COUNT 2 // amount of semaphores
+#define READER_COUNT 4
 #define DELAY (rand() % 5 + 1) // random delay
 
 union semun
@@ -29,7 +30,7 @@ void reader(int i)
 // writer process
 void writer()
 {
-    printf("writer process, readers: %d\n", *read_count);
+    printf("writer process  , readers: %d\n", *read_count);
     sleep(DELAY);
 }
 
@@ -82,7 +83,7 @@ void init()
     }
     
     union semun sem;
-    sem.val = 1;
+    sem.val = READER_COUNT;
     // exclusive read
     // reader can read
     if (semctl(semid, READER_ID, SETVAL, sem) < 0)
@@ -103,7 +104,7 @@ int main()
 {
     init();
     int i = -1, child = -1;
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < READER_COUNT; i++)
     {
         if ((child = fork()) < 0)
         {
@@ -112,7 +113,7 @@ int main()
         }
         else if (child == 0) // child process as writer
         {
-            printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
+            // printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
             while (1)
             {
                 _wait(semid, READER_ID); // semaphore as mutex lock
@@ -132,7 +133,7 @@ int main()
                     _signal(semid, WRITER_ID);
                 }
                 _signal(semid, READER_ID); // reader complete
-                printf("writer %d complete\n", i);
+                printf("reader process %d, complete\n", i);
                 sleep(2);
             }
         }
