@@ -63,9 +63,11 @@ paginate: true
 
 在读者-写者问题中，存在读者和写者这两种进程。根据题意，不同读者进程都需要读写 `read_count`。因此在这个问题中， `read_count` 是临界资源。
 
-对于 `fork()` 函数，创建出来的进程与原来的进程相互独立，因此对于 `read_ccount` 变量，不同进程读写的变量是不同的。这时候就需要共享内存来保存这一变量。
+对于 `fork()` 函数，创建出来的进程与原来的进程相互独立，因此对于 `read_count` 变量，不同进程读写的变量是不同的。这时候就需要共享内存来保存这一变量。
 
-共享内存相关的函数就在 `sys/shm.h` 头文件中。
+此外，两个信号量同样需要共享。
+
+<!-- 共享内存相关的函数就在 `sys/shm.h` 头文件中。 -->
 
 ---
 
@@ -73,7 +75,63 @@ paginate: true
 
 需要读者和写者两个信号量，因此使用信号量集来实现。
 
-有关信号量的函数在 `sys/sem.h` 头文件中。
+<!-- 有关信号量的函数在 `sys/sem.h` 头文件中。 -->
+
+---
+
+# POSIX 实现
+
+> 代码见 [operating_system_1/seminar2/src/main.c at HEAD](https://github.com/wangyw15/study/blob/main/operating_system_1/seminar2/src/main.c)
+
+---
+
+# 跨进程共享内存
+
+> `unistd.h`
+>
+> `sys/mman.h`
+
+```c
+// allocate
+if ((read_count = mmap(NULL, sizeof(int), 
+    PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0)) < 0)
+{
+    perror("mmap for read_count failed\n");
+    exit(1);   
+}
+// release
+munmap(read_count, sizeof(int));
+```
+
+此处为匿名，保存在内存中，易失
+
+也有以文件为基础的共享内存，因此可以跨机器使用
+
+---
+
+# 信号量
+
+> `semaphore.h`
+
+```c
+sem_init(wmutex, 1, 1); // initialization
+sem_wait(rmutex); // P
+sem_post(rmutex); // V
+sem_close(rmutex); // just close without release
+sem_destroy(rmutex); // close and release
+```
+
+[释放资源](#释放资源)
+
+---
+
+# SystemV 实现
+
+> 代码见 [operating_system_1/seminar2/src/main.c at 8fdeed8](https://github.com/wangyw15/study/blob/8fdeed8/operating_system_1/seminar2/src/main.c)
+
+共享内存使用 `sys/shm.h`
+
+信号量使用 `sys/sem.h`
 
 ---
 
