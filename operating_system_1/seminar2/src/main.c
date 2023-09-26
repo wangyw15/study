@@ -23,14 +23,14 @@ int *read_count = NULL;
 // reader process
 void reader(int i)
 {
-    printf("reader process %d, readers: %d\n", i, *read_count);
+    printf("\e[36mreader\e[0m process %d, readers: %d\n", i, *read_count);
     sleep(DELAY);
 }
 
 // writer process
 void writer()
 {
-    printf("writer process  , readers: %d\n", *read_count);
+    printf("\e[94mwriter\e[0m process  , readers: %d\n", *read_count);
     sleep(DELAY);
 }
 
@@ -122,18 +122,18 @@ int main()
                     _wait(semid, WRITER_ID);
                 }
                 (*read_count)++; // increase reader count
-                _signal(semid, READER_ID); // reading and release
+                //_signal(semid, READER_ID); // reading and release
 
                 reader(i); // print message
 
-                _wait(semid, READER_ID);
+                //_wait(semid, READER_ID);
                 (*read_count)--; // decrease reader count
                 if (*read_count == 0) // first reader
                 {
                     _signal(semid, WRITER_ID);
                 }
                 _signal(semid, READER_ID); // reader complete
-                printf("reader process %d, complete\n", i);
+                printf("\e[36mreader\e[0m process %d, \e[32mcomplete\e[0m\n", i);
                 sleep(2);
             }
         }
