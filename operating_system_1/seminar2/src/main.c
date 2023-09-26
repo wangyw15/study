@@ -117,18 +117,18 @@ int main()
             while (1)
             {
                 _wait(semid, READER_ID); // semaphore as mutex lock
-                if (*read_count == 0) // first reader
+                if (*read_count == 0) // notify writer
                 {
                     _wait(semid, WRITER_ID);
                 }
                 (*read_count)++; // increase reader count
-                //_signal(semid, READER_ID); // reading and release
+                _signal(semid, READER_ID); // comment this to perform exculsively read
 
-                reader(i); // print message
+                reader(i); // reader processing
 
-                //_wait(semid, READER_ID);
+                _wait(semid, READER_ID);
                 (*read_count)--; // decrease reader count
-                if (*read_count == 0) // first reader
+                if (*read_count == 0) // notify writer
                 {
                     _signal(semid, WRITER_ID);
                 }
@@ -138,7 +138,7 @@ int main()
             }
         }
     }
-    if (child > 0) // parent process
+    if (child > 0) // parent process as writer
     {
         while (1)
         {
