@@ -44,7 +44,7 @@ void _wait(int semid, int i)
     struct sembuf buffer;
     buffer.sem_num = i; // semaphore id
     buffer.sem_op = -1; // wait
-    buffer.sem_flg = SEM_UNDO; // let system track the semaphore
+    buffer.sem_flg = SEM_UNDO; // let system track the semaphore and release automatically
     if (semop(semid, &buffer, 1) < 0) // wait for resource
     {
         perror("_wait failed\n");
@@ -58,7 +58,7 @@ void _signal(int semid, int i)
     struct sembuf sb;
     sb.sem_num = i; // semaphore id
     sb.sem_op = 1; // signal
-    sb.sem_flg = SEM_UNDO; // let system track the semaphore
+    sb.sem_flg = SEM_UNDO; // let system track the semaphore and release automatically
     if (semop(semid, &sb, 1) < 0) // release resource
     {
         perror("_signal failed\n");
@@ -70,7 +70,7 @@ void _signal(int semid, int i)
 void init()
 {
     // init read_count
-    if ((shmid = shmget(IPC_PRIVATE, sizeof(int), 0600)) < 0)
+    if ((shmid = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0666)) < 0)
     {
         perror("shmget for read_count failed");
         exit(1);   
