@@ -105,11 +105,6 @@ void init()
 
 void sigint_handler() // SIGINT handler
 {
-    if (read_count)
-    {
-        shmdt(read_count); // detach shared memory
-        printf("detached shared memory\n");
-    }
     if (parent_process)
     {
         // kill child process
@@ -117,22 +112,27 @@ void sigint_handler() // SIGINT handler
         for (i = 0; i < READER_COUNT; i++)
         {
             kill(child_pid[i], SIGINT);
-            printf("killed %d\n", child_pid[i]);
+            printf("\e[31mkilled\e[0m %d\n", child_pid[i] - getpid() - 1);
         }
 
         // release shared memory
         if (shmid)
         {
             shmctl(shmid, IPC_RMID, NULL);
-            printf("released shared memory\n");
+            printf("\e[32mreleased\e[0m shared memory\n");
         }
 
         // destroy semaphore
         if (semid)
         {
             semctl(semid, 0, IPC_RMID);
-            printf("destroy semaphore\n");
+            printf("\e[31mdestroy\e[0m semaphore\n");
         }
+        exit(0);
+    }
+    else
+    {
+        kill(getpid(), SIGKILL);
     }
 }
 
@@ -151,7 +151,7 @@ int main()
         }
         else if (child == 0) // child process as writer
         {
-            printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
+            // printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
             while (1)
             {
                 _wait(semid, READER_ID); // semaphore as mutex lock
