@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/sem.h> // semaphore
 #include <sys/shm.h> // shared memory
+#include <signal.h>
 #include <unistd.h>
 
 #define READER_ID 0
@@ -19,6 +20,9 @@ union semun
 
 int semid = -1; // semaphore id
 int *read_count = NULL;
+int shmid = -1;
+pid_t child_pid[READER_COUNT];
+int parent_process = 0;
 
 // reader process
 void reader(int i)
@@ -65,7 +69,6 @@ void _signal(int semid, int i)
 // initialization
 void init()
 {
-    int shmid = -1;
     // init read_count
     if ((shmid = shmget(IPC_PRIVATE, sizeof(int), 0600)) < 0)
     {
@@ -100,10 +103,45 @@ void init()
     }
 }
 
+void sigint_handler() // SIGINT handler
+{
+    if (read_count)
+    {
+        shmdt(read_count); // detach shared memory
+        printf("detached shared memory\n");
+    }
+    if (parent_process)
+    {
+        // kill child process
+        int i;
+        for (i = 0; i < READER_COUNT; i++)
+        {
+            kill(child_pid[i], SIGINT);
+            printf("killed %d\n", child_pid[i]);
+        }
+
+        // release shared memory
+        if (shmid)
+        {
+            shmctl(shmid, IPC_RMID, NULL);
+            printf("released shared memory\n");
+        }
+
+        // destroy semaphore
+        if (semid)
+        {
+            semctl(semid, 0, IPC_RMID);
+            printf("destroy semaphore\n");
+        }
+    }
+}
+
 int main()
 {
     init();
-    int i = -1, child = -1;
+    signal(SIGINT, sigint_handler);
+    int i = -1;
+    pid_t child = -1;
     for (i = 0; i < READER_COUNT; i++)
     {
         if ((child = fork()) < 0)
@@ -113,7 +151,7 @@ int main()
         }
         else if (child == 0) // child process as writer
         {
-            // printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
+            printf("child %d, pid = %d, ppid = %d\n", i, getpid(), getppid());
             while (1)
             {
                 _wait(semid, READER_ID); // semaphore as mutex lock
@@ -137,9 +175,14 @@ int main()
                 sleep(2);
             }
         }
+        else
+        {
+            child_pid[i] = child;
+        }
     }
     if (child > 0) // parent process as writer
     {
+        parent_process = 1;
         while (1)
         {
             _wait(semid, WRITER_ID); // wait for write
