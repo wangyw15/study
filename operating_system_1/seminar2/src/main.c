@@ -27,7 +27,7 @@ int parent_process = 0;
 // reader process
 void reader(int i)
 {
-    printf("\e[36mreader\e[0m process %d, readers: %d\n", i, *read_count);
+    printf("\e[33mreader\e[0m process %d, readers: %d\n", i, *read_count);
     sleep(DELAY);
 }
 
@@ -86,7 +86,7 @@ void init()
     }
     
     union semun sem;
-    sem.val = READER_COUNT;
+    sem.val = 1;
     // exclusive read
     // reader can read
     if (semctl(semid, READER_ID, SETVAL, sem) < 0)
@@ -171,7 +171,7 @@ int main()
                     _signal(semid, WRITER_ID);
                 }
                 _signal(semid, READER_ID); // reader complete
-                printf("\e[36mreader\e[0m process %d, \e[32mcomplete\e[0m\n", i);
+                printf("\e[33mreader\e[0m process %d, \e[32mcomplete\e[0m\n", i);
                 sleep(2);
             }
         }
