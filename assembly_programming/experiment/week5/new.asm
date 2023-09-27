@@ -1,23 +1,25 @@
+; bug still exists
 .model small
 .stack
 
 .data
-    keyword_prompt        db 'Enter keyword: $'
-    sentence_prompt       db 'Enter sentence: $'
-    matched_prompt_prefix db 'Match at location: $'
-    matched_prompt_suffix db 'H of the sentence.$'
-    not_matched_prompt    db 'No match.$'
-    crlf                  db 0dh, 0ah, '$'
-    keyword_buffer        db 80, '?', 80 dup('$')
-    sentence_buffer       db 80, '?', 80 dup('$')
+keyword_prompt db 'Enter keyword: $'
+sentence_prompt db 'Enter sentence: $'
+matched_prompt_prefix db 'Match at location: $'
+matched_prompt_suffix db 'H of the sentence.$'
+not_matched_prompt db 'No match.$'
+crlf db 0dh, 0ah, '$'
+keyword_buffer db 80, '?', 80 dup('$')
+sentence_buffer db 80, '?', 80 dup('$')
 
 .code
 start:
     mov ax, @data
     mov ds, ax
+    mov es, ax ; for repe cmpsb
 
 begin:
-; get keyword
+    ; get keyword
     mov dx, offset keyword_prompt
     mov ah, 9
     int 21h
@@ -36,31 +38,29 @@ begin:
     call new_line_proc
 
     ; search for keyword
-    xor cx, cx ; reset cx
-sentence_loop:
-    ; ah for sentence, al for keyword, also applies to bx, cx
-    mov si, offset sentence_buffer + 1
-    add si, cx
-    mov di, offset keyword_buffer + 1
-keyword_loop:
+    lea si, sentence_buffer + 1
+    xor cx, cx
+    lea bx, sentence_buffer
+    inc bx
+    mov dl, ds:[bx]
+    xor dh, dh
+    inc dx
+search_loop:
+    dec dx
+    jz failed
     inc si
-    inc di
-    mov bh, ds:[si]
+    lea di, keyword_buffer + 2
+    mov cl, keyword_buffer + 1
+    mov al, ds:[si]
     mov bl, ds:[di]
-    cmp bh, bl
-    jne char_not_matched
-    ; char matched
-    ; al for keyword location, ignore ah
-    mov ax, di
-    sub ax, offset keyword_buffer + 1
-    cmp al, keyword_buffer + 1 ; check if al is at the end of keyword
-    je fully_matched
-    jmp keyword_loop
-char_not_matched:
-    inc cx
-    cmp cl, sentence_buffer + 1
-    je failed
-    jmp sentence_loop
+    repe cmpsb
+    cmp cx, 0
+    jne search_loop
+
+    ; check if fully matched
+    cmp cx, 0
+    je matched
+    jmp failed
 
 failed:
     mov dx, offset not_matched_prompt
@@ -69,17 +69,21 @@ failed:
     call new_line_proc
     jmp begin
 
-fully_matched:
+matched:
     ; print matched location
     mov dx, offset matched_prompt_prefix
     mov ah, 9
     int 21h
 
-    mov ax, cx
-    add ax, 1
+    mov ax, si
+    lea bx, keyword_buffer
+    inc bx
+    mov bl, ds:[bx]
+    sub ax, bx
+    sub ax, offset sentence_buffer + 1
     mov cx, 2
 
-    ; ignore ah (rol ax, 8)
+; ignore ah (rol ax, 8)
     rol ax, 1
     rol ax, 1
     rol ax, 1
