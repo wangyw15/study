@@ -53,7 +53,7 @@ search_loop:
     mov cl, keyword_buffer + 1
     mov al, ds:[si]
     mov bl, ds:[di]
-    repe cmpsb
+    repe cmpsb ; cx always -1
     cmp cx, 0
     jne search_loop
 
