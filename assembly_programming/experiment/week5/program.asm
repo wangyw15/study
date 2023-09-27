@@ -60,8 +60,11 @@ je fully_matched
 jmp keyword_loop
 char_not_matched:
 inc cx
+cmp cl, sentence_buffer + 1
+je failed
 jmp sentence_loop
 
+failed:
 mov dx, offset not_matched_prompt
 mov ah, 9
 int 21h
@@ -75,24 +78,30 @@ mov ah, 9
 int 21h
 
 mov ax, cx
-mov cx, 8
-; if zero then print 0
-cmp ax, 0
-jne print_loop
-mov dl, '0'
-mov ah, 2
-int 21h
-jmp print_matched_prompt_suffix
+add ax, 1
+mov cx, 2
+
+; ignore ah (rol ax, 8)
+rol ax, 1
+rol ax, 1
+rol ax, 1
+rol ax, 1
+rol ax, 1
+rol ax, 1
+rol ax, 1
+rol ax, 1
 
 print_loop:
-; rol ax, 2
+; rol ax, 4
+rol ax, 1
+rol ax, 1
 rol ax, 1
 rol ax, 1
 ; to ascii
 mov dl, al
-and dl, 03h
-cmp dl, 0
-je continue_print_loop
+and dl, 0fh
+; cmp dl, 0
+; je continue_print_loop
 cmp dl, 9
 jbe print_digit
 add dl, 'A' - 10
@@ -100,10 +109,13 @@ jmp print_char
 print_digit:
 add dl, '0'
 print_char:
+push ax
 mov ah, 2
 int 21h
+pop ax
 continue_print_loop:
-loop print_loop
+dec cx
+jnz print_loop
 
 print_matched_prompt_suffix:
 mov dx, offset matched_prompt_suffix
