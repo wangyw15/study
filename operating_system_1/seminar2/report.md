@@ -81,7 +81,7 @@ paginate: true
 
 # POSIX 实现
 
-> 代码见 [operating_system_1/seminar2/src/main.c at HEAD](https://github.com/wangyw15/study/blob/main/operating_system_1/seminar2/src/main.c)
+> 代码见 [operating_system_1/seminar2/src/posix.c](https://github.com/wangyw15/study/blob/main/operating_system_1/seminar2/src/posix.c)
 
 ---
 
@@ -127,7 +127,7 @@ sem_destroy(rmutex); // close and release
 
 # SystemV 实现
 
-> 代码见 [operating_system_1/seminar2/src/main.c at 8fdeed8](https://github.com/wangyw15/study/blob/8fdeed8/operating_system_1/seminar2/src/main.c)
+> 代码见 [operating_system_1/seminar2/src/systemv.c](https://github.com/wangyw15/study/blob/main/operating_system_1/seminar2/src/systemv.c)
 
 共享内存使用 `sys/shm.h`
 
