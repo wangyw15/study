@@ -1,10 +1,14 @@
+#pragma warning disable CS8618
+
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SchoolManagementSystem.Models;
 
 [Table("d")]
 public class Institute
 {
     [Column("yxh")]
-    public int ID { get; set; }
+    public int Id { get; set; }
 
     [Column("mc")]
     public string Name { get; set; }

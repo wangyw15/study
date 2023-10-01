@@ -1,10 +1,16 @@
+#pragma warning disable CS8618
+
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SchoolManagementSystem.Models;
 
 [Table("s")]
 public class Student
 {
     [Column("xh")]
-    public int ID { get; set; }
+    public int Id { get; set; }
 
     [Column("xm")]
     public string Name { get; set; }
@@ -22,5 +28,5 @@ public class Student
     public string Phone { get; set; }
 
     [Column("yxh")]
-    public int InstituteID { get; set; }
+    public int InstituteId { get; set; }
 }

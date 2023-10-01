@@ -1,10 +1,14 @@
+#pragma warning disable CS8618
+
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SchoolManagementSystem.Models;
 
 [Table("c")]
 public class Course
 {
     [Column("kh")]
-    public string ID { get; set; }
+    public string Id { get; set; }
 
     [Column("km")]
     public string Name { get; set; }
@@ -16,5 +20,5 @@ public class Course
     public double Hour { get; set; }
 
     [Column("yxh")]
-    public int InstituteID { get; set; }
+    public int InstituteId { get; set; }
 }

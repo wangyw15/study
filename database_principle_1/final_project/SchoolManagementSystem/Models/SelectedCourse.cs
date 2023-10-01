@@ -1,19 +1,25 @@
+#pragma warning disable CS8618
+
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
+namespace SchoolManagementSystem.Models;
+
 [Table("e")]
+[PrimaryKey(nameof(StudentId), nameof(Semester), nameof(CourseId))]
 public class SelectedCourse
 {
     [Column("xh")]
-    public int StudentID { get; set; }
+    public int StudentId { get; set; }
 
     [Column("xq")]
     public string Semester { get; set; }
 
     [Column("kh")]
-    public string CourseID { get; set; }
+    public string CourseId { get; set; }
 
     [Column("gh")]
-    public int TeacherID { get; set; }
+    public int TeacherId { get; set; }
 
     [Column("pscj")]
     public double Grade { get; set; }

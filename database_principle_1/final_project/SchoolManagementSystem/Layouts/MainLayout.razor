@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+@attribute [Authorize(Roles = $"{Role.Administrator},{Role.Teacher},{Role.Student}")]
+@inject SchoolStateProvider _provider
+
+<Layout>
+    <style>
+        .header > * {
+            color: white;
+            display: inline;
+        }
+
+        .header > div {
+            margin: 0 0 0 1rem;
+        }
+    </style>
+    <Header class="header">
+        <h1>教务管理系统</h1>
+        <div>
+            @if (_provider.CurrentUser.Role == Role.Administrator)
+            {
+                <span>管理员</span>
+            }
+            else if (_provider.CurrentUser.Role == Role.Teacher)
+            {
+                <span>工号：@_provider.CurrentUser.Id</span>
+            }
+            else if (_provider.CurrentUser.Role == Role.Student)
+            {
+                <span>学号：@_provider.CurrentUser.Id</span>
+            }
+        </div>
+    </Header>
+    <Layout>
+        @Body
+    </Layout>
+</Layout>

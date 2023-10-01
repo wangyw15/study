@@ -1,0 +1,12 @@
+﻿@layout Layouts.EmptyLayout
+@inject NavigationManager nav
+
+<h3>重定向至登录界面</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        nav.NavigateTo("/login", true);
+    }
+}

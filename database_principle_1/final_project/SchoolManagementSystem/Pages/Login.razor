@@ -1,0 +1,77 @@
+﻿@page "/login"
+@layout Layouts.EmptyLayout
+@inject SchoolContext _context
+@inject IMessageService _message
+@inject SchoolStateProvider _provider
+@inject NavigationManager _navigation
+
+<style>
+    main {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(to bottom right, cyan, pink 60%, pink);
+    }
+
+    .login-container {
+        display: grid;
+        grid: repeat(3, 1fr) / 1fr 1fr 5fr;
+        justify-items: end;
+        align-items: center;
+        grid-gap: 1rem;
+        padding: 1rem;
+        background: aliceblue;
+        border-radius: 10px;
+        box-shadow: 5px 5px 14px -6px black;
+    }
+
+        .login-container .title {
+            grid-row: 1 / 4;
+        }
+
+        .login-container .confirm {
+            grid-column: 2 / 4;
+            width: 100%;
+        }
+</style>
+
+<div class="login-container">
+    <h3 class="title">请登录</h3>
+    <div>用户名</div>
+    <Input Placeholder="用户名" @bind-Value="username" />
+    <div>密码</div>
+    <InputPassword Placeholder="密码" @bind-Value="password" />
+    <Button Type="@ButtonType.Primary" class="confirm" OnClick="OnLogin">登录</Button>
+</div>
+
+
+@code {
+    string username { get; set; } = "";
+    string password { get; set; } = "";
+
+    async void OnLogin()
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            _message.Error("用户名不能为空");
+            return;
+        }
+        if (string.IsNullOrEmpty(password))
+        {
+            _message.Error("密码不能为空");
+            return;
+        }
+        var result = await _provider.Login(username, password);
+        if (result)
+        {
+            _message.Info("登录成功");
+            _navigation.NavigateTo("/", true);
+        }
+        else
+        {
+            _message.Warning("用户名或密码错误");
+        }
+    }
+}
