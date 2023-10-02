@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using System.ComponentModel.DataAnnotations;
 @layout Layouts.EmptyLayout
 @inject SchoolContext _context
 @inject IMessageService _message
@@ -15,55 +16,42 @@
         background: linear-gradient(to bottom right, cyan, pink 60%, pink);
     }
 
-    .login-container {
-        display: grid;
-        grid: repeat(3, 1fr) / 1fr 1fr 5fr;
-        justify-items: end;
-        align-items: center;
-        grid-gap: 1rem;
+    .login-form {
+        
         padding: 1rem;
         background: aliceblue;
         border-radius: 10px;
         box-shadow: 5px 5px 14px -6px black;
     }
-
-        .login-container .title {
-            grid-row: 1 / 4;
-        }
-
-        .login-container .confirm {
-            grid-column: 2 / 4;
-            width: 100%;
-        }
 </style>
 
-<div class="login-container">
-    <h3 class="title">请登录</h3>
-    <div>用户名</div>
-    <Input Placeholder="用户名" @bind-Value="username" />
-    <div>密码</div>
-    <InputPassword Placeholder="密码" @bind-Value="password" />
-    <Button Type="@ButtonType.Primary" class="confirm" OnClick="OnLogin">登录</Button>
-</div>
+<Form Model="@model" OnFinish="OnFinish" Class="login-form" LabelColSpan="8" WrapperColSpan="32">
+    <FormItem Label="学工号">
+        <Input @bind-Value="context.Username" />
+    </FormItem>
+    <FormItem Label="密码">
+        <InputPassword @bind-Value="context.Password" />
+    </FormItem>
+    <FormItem WrapperColOffset="8" WrapperColSpan="32">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">登录</Button>
+    </FormItem>
+</Form>
 
 
 @code {
-    string username { get; set; } = "";
-    string password { get; set; } = "";
-
-    async void OnLogin()
+#pragma warning disable 4014
+    private class LoginModel
     {
-        if (string.IsNullOrEmpty(username))
-        {
-            _message.Error("用户名不能为空");
-            return;
-        }
-        if (string.IsNullOrEmpty(password))
-        {
-            _message.Error("密码不能为空");
-            return;
-        }
-        var result = await _provider.Login(username, password);
+        [Required]
+        public string Username { get; set; } = "";
+        [Required]
+        public string Password { get; set; } = "";
+    }
+    LoginModel model = new();
+    
+    private async void OnFinish(EditContext context)
+    {
+        var result = await _provider.Login(model.Username, model.Password);
         if (result)
         {
             _message.Info("登录成功");

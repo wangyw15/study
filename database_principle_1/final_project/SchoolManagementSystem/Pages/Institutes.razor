@@ -1,0 +1,10 @@
+﻿@page "/institutes"
+@attribute [Authorize(Roles = Role.All)]
+@inject SchoolContext _db
+
+<Table DataSource="_db.Institutes" ScrollY="100%">
+    <PropertyColumn Property="c=>c.Id" Title="院系号"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Name" Title="名称"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Address" Title="地址"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Telephone" Title="联系电话"></PropertyColumn>
+</Table>

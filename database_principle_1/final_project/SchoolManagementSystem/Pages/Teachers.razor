@@ -1,0 +1,12 @@
+﻿@page "/teachers"
+@attribute [Authorize(Roles = Role.Administrator)]
+@inject SchoolContext _db
+
+<Table DataSource="_db.Teachers" ScrollY="100%">
+    <PropertyColumn Property="c=>c.Id" Title="工号"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Name" Title="姓名"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Gender" Title="性别"></PropertyColumn>
+    <PropertyColumn Property="c=>c.DateOfBirth" Title="出生日期"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Salary" Title="基本工资"></PropertyColumn>
+    <PropertyColumn Property="c=>c.InstituteId" Title="院系号"></PropertyColumn>
+</Table>

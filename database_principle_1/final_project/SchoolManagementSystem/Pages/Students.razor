@@ -1,0 +1,13 @@
+﻿@page "/students"
+@attribute [Authorize(Roles = Role.Administrator)]
+@inject SchoolContext _db
+
+<Table DataSource="_db.Students" ScrollY="100%">
+    <PropertyColumn Property="c=>c.Id" Title="学号"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Name" Title="姓名"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Gender" Title="性别"></PropertyColumn>
+    <PropertyColumn Property="c=>c.DateOfBirth" Title="出生日期"></PropertyColumn>
+    <PropertyColumn Property="c=>c.BirthPlace" Title="籍贯"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Phone" Title="手机号码"></PropertyColumn>
+    <PropertyColumn Property="c=>c.InstituteId" Title="院系号"></PropertyColumn>
+</Table>

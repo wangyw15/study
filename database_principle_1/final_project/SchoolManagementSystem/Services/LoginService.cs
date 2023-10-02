@@ -9,11 +9,14 @@ public class Role
     public const string Administrator = "ADMINISTRATOR";
     public const string Teacher = "TEACHER";
     public const string Student = "STUDENT";
+    public const string Upper = $"{Administrator},{Teacher}";
+    public const string All = $"{Administrator},{Teacher},{Student}";
 }
 
 public struct User
 {
     public int Id;
+    public string Name;
     public string Role;
 }
 
@@ -75,7 +78,7 @@ public class SchoolStateProvider : AuthenticationStateProvider
             }
             return new AuthenticationState(CreateIdentity(token));
         }
-        catch
+        catch (NullReferenceException ex)
         {
             return new AuthenticationState(new ClaimsPrincipal());
         }
@@ -106,6 +109,7 @@ public class SchoolStateProvider : AuthenticationStateProvider
         if (username == "admin")
         {
             user.Id = 0;
+            user.Name = "";
             user.Role = Role.Administrator;
             result.Token = token;
             result.User = user;
@@ -118,6 +122,7 @@ public class SchoolStateProvider : AuthenticationStateProvider
             {
                 var teacher = teacherResult.First();
                 user.Id = teacher.Id;
+                user.Name = teacher.Name;
                 user.Role = Role.Teacher;
                 result.Token = token;
                 result.User = user;
@@ -130,6 +135,7 @@ public class SchoolStateProvider : AuthenticationStateProvider
                 {
                     var student = studentResult.First();
                     user.Id = student.Id;
+                    user.Name = student.Name;
                     user.Role = Role.Student;
                     result.Token = token;
                     result.User = user;
@@ -148,17 +154,26 @@ public class SchoolStateProvider : AuthenticationStateProvider
         return false;
     }
     
-    public async Task<bool> Logout(string token)
+    public async Task<bool> Logout()
     {
-        if (!string.IsNullOrEmpty(token))
+        try
         {
-            if (_tokens.Validate(token))
+            var result = await _storage.GetAsync<string>("token");
+            var token = result.Success ? result.Value : null;
+            if (!string.IsNullOrEmpty(token))
             {
-                await _storage.DeleteAsync("token");
-                _tokens.Remove(token);
-                NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(CreateIdentity(token))));
-                return true;
+                if (_tokens.Validate(token))
+                {
+                    await _storage.DeleteAsync("token");
+                    _tokens.Remove(token);
+                    NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(CreateIdentity(token))));
+                    return true;
+                }
             }
+        }
+        catch (NullReferenceException ex)
+        {
+
         }
         return false;
     }

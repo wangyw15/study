@@ -1,0 +1,87 @@
+﻿@page "/courses"
+@attribute [Authorize(Roles = Role.All)]
+@inject IMessageService _message
+@inject SchoolContext _db
+
+<Table DataSource="_db.Courses" ScrollY="100%">
+    <PropertyColumn Property="c=>c.Id" Title="课程号"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Name" Title="课程名"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Credit" Title="学分"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Hour" Title="学时"></PropertyColumn>
+    <PropertyColumn Property="c=>GetInstituteName(c.InstituteId)" Title="学院"></PropertyColumn>
+    <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+        <ActionColumn Title="编辑">
+            <Popconfirm Title="要删除这个课程吗"
+                    OnConfirm="() => {DeleteCourse(context);}"
+                    OkText="是"
+                    CancelText="否">
+                <a>删除</a>
+            </Popconfirm>
+        </ActionColumn>
+    </AuthorizeView>
+</Table>
+
+<AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+    <Form Model="@newCourse" LabelColSpan="4" WrapperColSpan="16" OnFinish="AddCourse" style="margin: 1rem 0 0 0;">
+        <FormItem Label="课程号">
+            <Input @bind-Value="context.Id"/>
+        </FormItem>
+        <FormItem Label="课程名">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="学分">
+            <AntDesign.InputNumber Min="0" @bind-Value="context.Credit" />
+        </FormItem>
+        <FormItem Label="学时">
+            <AntDesign.InputNumber Min="0" @bind-Value="context.Hour" />
+        </FormItem>
+        <FormItem Label="学院">
+            <Select TItem="@Institute"
+                TItemValue="int"
+                DataSource="_db.Institutes"
+                LabelName="@nameof(Institute.Name)"
+                ValueName="@nameof(Institute.Id)"
+                DefaultValue="1"
+                @bind-Value="context.InstituteId"/>
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">添加</Button>
+        </FormItem>
+    </Form>
+</AuthorizeView>
+
+@code {
+    private Course newCourse { get; set; } = new Course();
+
+    string GetInstituteName(int id)
+    {
+        var result = from x in _db.Institutes where x.Id == id select x;
+        if (result.Any())
+        {
+            return result.First().Name;
+        }
+        return "未知学院";
+    }
+
+    void AddCourse(EditContext context)
+    {
+        if (!_db.Courses.Any(c => c.Id == newCourse.Id))
+        {
+            _db.Courses.Add(newCourse);
+            _db.SaveChanges();
+            StateHasChanged();
+            _message.Info("添加成功");
+        }
+        else
+        {
+            _message.Error("课程号已存在");
+        }
+    }
+
+    void DeleteCourse(Course entity)
+    {
+        _db.Courses.Remove(entity);
+        _db.SaveChanges();
+        StateHasChanged();
+    }
+}

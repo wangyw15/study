@@ -1,5 +1,5 @@
 ﻿@page "/"
-@attribute [Authorize(Roles = $"{Role.Administrator},{Role.Teacher},{Role.Student}")]
+@attribute [Authorize(Roles = Role.All)]
 @inject SchoolStateProvider _provider
 
-Logged in as @_provider.CurrentUser.Role @_provider.CurrentUser.Id
+教务管理系统

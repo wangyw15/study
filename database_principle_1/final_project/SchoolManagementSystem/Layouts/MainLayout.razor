@@ -1,36 +1,76 @@
 ﻿@inherits LayoutComponentBase
-@attribute [Authorize(Roles = $"{Role.Administrator},{Role.Teacher},{Role.Student}")]
+@attribute [Authorize(Roles = Role.All)]
 @inject SchoolStateProvider _provider
+@inject NavigationManager _nav
+@inject IMessageService _message
 
-<Layout>
+<Layout Style="min-height: 100%">
     <style>
-        .header > * {
+        .header {
             color: white;
-            display: inline;
-        }
-
-        .header > div {
-            margin: 0 0 0 1rem;
         }
     </style>
     <Header class="header">
-        <h1>教务管理系统</h1>
-        <div>
-            @if (_provider.CurrentUser.Role == Role.Administrator)
-            {
-                <span>管理员</span>
-            }
-            else if (_provider.CurrentUser.Role == Role.Teacher)
-            {
-                <span>工号：@_provider.CurrentUser.Id</span>
-            }
-            else if (_provider.CurrentUser.Role == Role.Student)
-            {
-                <span>学号：@_provider.CurrentUser.Id</span>
-            }
-        </div>
-    </Header>
-    <Layout>
-        @Body
-    </Layout>
-</Layout>
+        <h1 style="display: inline; color: white;">教务管理系统</h1>
+        <AuthorizeView Roles="@Role.All">
+            <Space>
+                <SpaceItem>
+                    <div style="display: inline;">
+                        欢迎，@_provider.CurrentUser.Name
+                    </div>
+                </SpaceItem>
+                <SpaceItem>
+                    <div style="display: inline;">
+                        @if (_provider.CurrentUser.Role == Role.Administrator)
+                        {
+                            <span>管理员</span>
+                        }
+                        else if (_provider.CurrentUser.Role == Role.Teacher)
+                        {
+                            <span>工号：@_provider.CurrentUser.Id</span>
+                        }
+                        else if (_provider.CurrentUser.Role == Role.Student)
+                        {
+                            <span>学号：@_provider.CurrentUser.Id</span>
+                        }
+                    </div>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Danger Type="@ButtonType.Text" OnClick="Logout">退出登录</Button>
+                 </SpaceItem>
+             </Space>
+         </AuthorizeView>
+     </Header>
+     <Layout>
+         <Sider Width="200">
+             <Menu Mode="MenuMode.Inline" Style="height: 100%; border-right: 0;">
+                 <MenuItem><NavLink href="/">首页</NavLink></MenuItem>
+                 <AuthorizeView Roles="@Role.All">
+                     <MenuItem><NavLink href="/courses">课程列表</NavLink></MenuItem>
+                     <MenuItem><NavLink href="/institutes">学院列表</NavLink></MenuItem>
+                 </AuthorizeView>
+                 <AuthorizeView Roles="@Role.Administrator">
+                     <MenuItem><NavLink href="/students">学生列表</NavLink></MenuItem>
+                     <MenuItem><NavLink href="/teachers">教师列表</NavLink></MenuItem>
+                 </AuthorizeView>
+             </Menu>
+         </Sider>
+         <Layout Style="padding: 24px 24px;">
+             <Content Style="padding: 24px; margin: 0; min-height: 280px; background: white;">
+                 @Body
+             </Content>
+         </Layout>
+     </Layout>
+ </Layout>
+
+ @code {
+#pragma warning disable 4014
+    async void Logout()
+    {
+        if (await _provider.Logout())
+        {
+            _message.Info("已退出登录，重定向至首页...");
+            _nav.NavigateTo("/", true);
+        }
+    }
+}
