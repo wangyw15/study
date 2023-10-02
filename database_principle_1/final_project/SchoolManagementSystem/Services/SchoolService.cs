@@ -31,5 +31,37 @@ public class SchoolContext : DbContext
         }
         return "未知学院";
     }
+
+    public string GetCourseName(string id)
+    {
+        var result = from x in Courses where x.Id == id select x;
+        if (result.Any())
+        {
+            return result.First().Name;
+        }
+        return "";
+    }
+
+    public string GetTeacherName(int id)
+    {
+        var result = from x in Teachers where x.Id == id select x;
+        if (result.Any())
+        {
+            return result.First().Name;
+        }
+        return "";
+    }
+
+    public string GetCourseTime(string id, string semester, int teacherId)
+    {
+        var result = from x in OpeningCourses 
+                     where x.CourseId == id && x.Semester == semester && x.TeacherId == teacherId 
+                     select x;
+        if (result.Any())
+        {
+            return result.First().Time;
+        }
+        return "";
+    }
 }
 

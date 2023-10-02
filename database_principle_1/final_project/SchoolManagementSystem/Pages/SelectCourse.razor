@@ -1,0 +1,32 @@
+﻿@page "/select"
+@attribute [Authorize(Roles = Role.Student)]
+@inject SchoolStateProvider _provider
+@inject SchoolContext _db
+
+<Divider>已选课程</Divider>
+
+<Select @bind-Value="semester" DefaultActiveFirstOption TItem="string" TItemValue="string">
+    <SelectOptions>
+        @foreach (var i in _db.OpeningCourses.Select(x => x.Semester).Distinct())
+        {
+            <SelectOption TItem="string" TItemValue="string" Label="@i" Value="@i" />
+        }
+    </SelectOptions>
+</Select>
+
+<p></p>
+
+<Table ScrollY="100%"
+       DataSource="_db.SelectedCourses.Where(x=>x.StudentId == _provider.CurrentUser.Id && x.Semester == semester)">
+    <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
+    <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
+    <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
+    <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
+    <PropertyColumn Title="上课时间" Property="c=>_db.GetCourseTime(c.CourseId, c.Semester, c.TeacherId)" />
+</Table>
+
+<Divider>新选课程</Divider>
+
+@code {
+    string semester { get; set; } = "";
+}
