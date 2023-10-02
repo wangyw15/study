@@ -2,19 +2,18 @@
 @attribute [Authorize(Roles = Role.Student)]
 @inject SchoolStateProvider _provider
 @inject SchoolContext _db
-
-<Divider>已选课程</Divider>
+@inject IMessageService _message
 
 <Select @bind-Value="semester" DefaultActiveFirstOption TItem="string" TItemValue="string">
-    <SelectOptions>
-        @foreach (var i in _db.OpeningCourses.Select(x => x.Semester).Distinct())
+     <SelectOptions>
+         @foreach (var i in _db.OpeningCourses.Select(x => x.Semester).Distinct())
         {
             <SelectOption TItem="string" TItemValue="string" Label="@i" Value="@i" />
         }
     </SelectOptions>
 </Select>
 
-<p></p>
+<Divider>已选课程</Divider>
 
 <Table ScrollY="100%"
        DataSource="_db.SelectedCourses.Where(x=>x.StudentId == _provider.CurrentUser.Id && x.Semester == semester)">
@@ -23,10 +22,63 @@
     <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
     <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
     <PropertyColumn Title="上课时间" Property="c=>_db.GetCourseTime(c.CourseId, c.Semester, c.TeacherId)" />
+    <ActionColumn Title="编辑">
+        <Popconfirm Title="要删选这门课吗"
+                    OnConfirm="() => DeleteSelected(context)"
+                    OkText="是"
+                    CancelText="否">
+            <a>删选</a>
+        </Popconfirm>
+    </ActionColumn>
 </Table>
 
 <Divider>新选课程</Divider>
 
+<Table ScrollY="100%"
+       DataSource="_db.OpeningCourses.Where(x=>x.Semester == semester &&
+                  (!_db.SelectedCourses.Where(y=>y.StudentId == _provider.CurrentUser.Id)
+                  .Any(y=>y.Semester == x.Semester && y.CourseId == x.CourseId)))">
+    <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
+    <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
+    <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
+    <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
+    <PropertyColumn Title="上课时间" Property="c=>_db.GetCourseTime(c.CourseId, c.Semester, c.TeacherId)" />
+    <ActionColumn Title="编辑">
+        <Button Type="@ButtonType.Link" OnClick="() => AddSelectCourse(context)">选择</Button>
+    </ActionColumn>
+</Table>
+
 @code {
     string semester { get; set; } = "";
+
+    void AddSelectCourse(OpeningCourse entity)
+    {
+        if (_db.SelectedCourses.Any(x => x.StudentId == _provider.CurrentUser.Id
+            && x.Semester == entity.Semester
+            && x.CourseId == entity.CourseId))
+        {
+            _message.Error("已经选择过这门课了");
+            return;
+        }
+        var selected = new SelectedCourse
+            {
+                StudentId = _provider.CurrentUser.Id,
+                Semester = entity.Semester,
+                CourseId = entity.CourseId,
+                TeacherId = entity.TeacherId,
+                Grade = null,
+                Test = null,
+                TotalGrade = null,
+            };
+        _db.SelectedCourses.Add(selected);
+        _db.SaveChanges();
+        _message.Success("选课成功");
+    }
+
+    void DeleteSelected(SelectedCourse entity)
+    {
+        _db.SelectedCourses.Remove(entity);
+        _db.SaveChanges();
+        _message.Success("删选成功");
+    }
 }

@@ -12,7 +12,7 @@
     <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
         <ActionColumn Title="编辑">
             <Popconfirm Title="要删除这个课程吗"
-                        OnConfirm="() => {DeleteCourse(context);}"
+                        OnConfirm="() => DeleteCourse(context)"
                         OkText="是"
                         CancelText="否">
                 <a>删除</a>
@@ -21,9 +21,9 @@
     </AuthorizeView>
 </Table>
 
-<Divider>添加课程</Divider>
-
 <AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+    <Divider>添加课程</Divider>
+    
     <Form Model="@newCourse"
           LabelColSpan="4"
           WrapperColSpan="16"
@@ -64,7 +64,7 @@
         {
             _db.Courses.Add(newCourse);
             _db.SaveChanges();
-            _message.Info("添加成功");
+            _message.Success("添加成功");
         }
         else
         {
@@ -76,5 +76,6 @@
     {
         _db.Courses.Remove(entity);
         _db.SaveChanges();
+        _message.Success("删除成功");
     }
 }

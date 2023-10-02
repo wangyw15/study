@@ -14,7 +14,7 @@
     <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
         <ActionColumn Title="编辑">
             <Popconfirm Title="要删除这个教师吗"
-                        OnConfirm="() => {DeleteTeacher(context);}"
+                        OnConfirm="() => DeleteTeacher(context)"
                         OkText="是"
                         CancelText="否">
                 <a>删除</a>
@@ -23,9 +23,9 @@
     </AuthorizeView>
 </Table>
 
-<Divider>添加教师</Divider>
-
 <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+    <Divider>添加教师</Divider>
+
     <Form Model="@newTeacher"
           LabelColSpan="4"
           WrapperColSpan="16"
