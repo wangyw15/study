@@ -1,10 +1,72 @@
 ﻿@page "/institutes"
 @attribute [Authorize(Roles = Role.All)]
 @inject SchoolContext _db
+@inject IMessageService _message
 
 <Table DataSource="_db.Institutes" ScrollY="100%">
     <PropertyColumn Property="c=>c.Id" Title="院系号"></PropertyColumn>
     <PropertyColumn Property="c=>c.Name" Title="名称"></PropertyColumn>
     <PropertyColumn Property="c=>c.Address" Title="地址"></PropertyColumn>
     <PropertyColumn Property="c=>c.Telephone" Title="联系电话"></PropertyColumn>
+    <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+        <ActionColumn Title="编辑">
+            <Popconfirm Title="要删除这个学院吗"
+                        OnConfirm="() => {DeleteInstitute(context);}"
+                        OkText="是"
+                        CancelText="否">
+                <a>删除</a>
+            </Popconfirm>
+        </ActionColumn>
+    </AuthorizeView>
 </Table>
+
+<Divider>添加学院</Divider>
+
+<AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+    <Form Model="@newInstitute"
+          LabelColSpan="4"
+          WrapperColSpan="16"
+          OnFinish="AddInstitute">
+        <FormItem Label="院系号">
+            <AntDesign.InputNumber @bind-Value="context.Id" Min="1"
+                                   DefaultValue="(from x in _db.Institutes select x.Id).Max() + 1" />
+        </FormItem>
+        <FormItem Label="名称">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="地址">
+            <Input @bind-Value="context.Address" />
+        </FormItem>
+        <FormItem Label="联系电话">
+            <Input @bind-Value="context.Telephone" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">添加</Button>
+        </FormItem>
+    </Form>
+</AuthorizeView>
+
+@code {
+    Institute newInstitute { get; set; } = new Institute();
+
+    void AddInstitute(EditContext context)
+    {
+        if (!_db.Institutes.Any(x => x.Id == newInstitute.Id))
+        {
+            _db.Institutes.Add(newInstitute);
+            _db.SaveChanges();
+            _message.Success("添加成功");
+        }
+        else
+        {
+            _message.Error("院系号已存在");
+        }
+    }
+
+    void DeleteInstitute(Institute entity)
+    {
+        _db.Institutes.Remove(entity);
+        _db.SaveChanges();
+        _message.Success("删除成功");
+    }
+}

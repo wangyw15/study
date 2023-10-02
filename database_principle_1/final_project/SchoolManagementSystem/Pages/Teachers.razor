@@ -1,6 +1,8 @@
 ﻿@page "/teachers"
+@using System.ComponentModel.DataAnnotations;
 @attribute [Authorize(Roles = Role.Administrator)]
 @inject SchoolContext _db
+@inject IMessageService _message
 
 <Table DataSource="_db.Teachers" ScrollY="100%">
     <PropertyColumn Property="c=>c.Id" Title="工号"></PropertyColumn>
@@ -8,5 +10,92 @@
     <PropertyColumn Property="c=>c.Gender" Title="性别"></PropertyColumn>
     <PropertyColumn Property="c=>c.DateOfBirth" Title="出生日期"></PropertyColumn>
     <PropertyColumn Property="c=>c.Salary" Title="基本工资"></PropertyColumn>
-    <PropertyColumn Property="c=>c.InstituteId" Title="院系号"></PropertyColumn>
+    <PropertyColumn Property="c=>_db.GetInstituteName(c.InstituteId)" Title="学院"></PropertyColumn>
+    <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+        <ActionColumn Title="编辑">
+            <Popconfirm Title="要删除这个教师吗"
+                        OnConfirm="() => {DeleteTeacher(context);}"
+                        OkText="是"
+                        CancelText="否">
+                <a>删除</a>
+            </Popconfirm>
+        </ActionColumn>
+    </AuthorizeView>
 </Table>
+
+<Divider>添加教师</Divider>
+
+<AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+    <Form Model="@newTeacher"
+          LabelColSpan="4"
+          WrapperColSpan="16"
+          OnFinish="AddTeacher">
+        <FormItem Label="工号">
+            <AntDesign.InputNumber @bind-Value="context.Id" Min="0"
+                                   DefaultValue="_db.Teachers.Select(x => x.Id).Max() + 1" />
+        </FormItem>
+        <FormItem Label="姓名">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="性别">
+            <Input @bind-Value="context.Gender" />
+        </FormItem>
+        <FormItem Label="出生日期">
+            <DatePicker @bind-Value="dateOfBirth" Format="yyyy-MM-dd" />
+        </FormItem>
+        <FormItem Label="职称">
+            <Input @bind-Value="context.Degree" />
+        </FormItem>
+        <FormItem Label="基本工资">
+            <AntDesign.InputNumber @bind-Value="context.Salary" Min="0" />
+        </FormItem>
+        <FormItem Label="学院">
+            <Select TItem="@Institute"
+                    TItemValue="int"
+                    DataSource="_db.Institutes"
+                    LabelName="@nameof(Institute.Name)"
+                    ValueName="@nameof(Institute.Id)"
+                    DefaultValue="_db.Institutes.Select(x => x.Id).Min()"
+                    @bind-Value="context.InstituteId" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">添加</Button>
+        </FormItem>
+    </Form>
+</AuthorizeView>
+
+@code {
+    [Required]
+    DateTime? dateOfBirth = null;
+
+    Teacher newTeacher { get; set; } = new Teacher();
+
+    void AddTeacher(EditContext context)
+    {
+        if (dateOfBirth.HasValue)
+        {
+            if (!_db.Teachers.Any(x => x.Id == newTeacher.Id))
+            {
+                newTeacher.DateOfBirth = dateOfBirth.Value.ToString("yyyy-MM-dd");
+                _db.Teachers.Add(newTeacher);
+                _db.SaveChanges();
+                _message.Success("添加成功");
+            }
+            else
+            {
+                _message.Error("工号已存在");
+            }
+        }
+        else
+        {
+            _message.Error("未选择出生日期");
+        }
+    }
+
+    void DeleteTeacher(Teacher entity)
+    {
+        _db.Teachers.Remove(entity);
+        _db.SaveChanges();
+        _message.Success("删除成功");
+    }
+}

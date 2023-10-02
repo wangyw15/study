@@ -21,5 +21,15 @@ public class SchoolContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
+    
+    public string GetInstituteName(int id)
+    {
+        var result = from x in Institutes where x.Id == id select x;
+        if (result.Any())
+        {
+            return result.First().Name;
+        }
+        return "未知学院";
+    }
 }
 

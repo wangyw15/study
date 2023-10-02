@@ -1,6 +1,8 @@
 ﻿@page "/students"
+@using System.ComponentModel.DataAnnotations;
 @attribute [Authorize(Roles = Role.Administrator)]
 @inject SchoolContext _db
+@inject IMessageService _message
 
 <Table DataSource="_db.Students" ScrollY="100%">
     <PropertyColumn Property="c=>c.Id" Title="学号"></PropertyColumn>
@@ -9,5 +11,92 @@
     <PropertyColumn Property="c=>c.DateOfBirth" Title="出生日期"></PropertyColumn>
     <PropertyColumn Property="c=>c.BirthPlace" Title="籍贯"></PropertyColumn>
     <PropertyColumn Property="c=>c.Phone" Title="手机号码"></PropertyColumn>
-    <PropertyColumn Property="c=>c.InstituteId" Title="院系号"></PropertyColumn>
+    <PropertyColumn Property="c=>_db.GetInstituteName(c.InstituteId)" Title="学院"></PropertyColumn>
+    <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+        <ActionColumn Title="编辑">
+            <Popconfirm Title="要删除这个学生吗"
+                        OnConfirm="() => {DeleteStudent(context);}"
+                        OkText="是"
+                        CancelText="否">
+                <a>删除</a>
+            </Popconfirm>
+        </ActionColumn>
+    </AuthorizeView>
 </Table>
+
+<Divider>添加学生</Divider>
+
+<AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+    <Form Model="@newStudent"
+          LabelColSpan="4"
+          WrapperColSpan="16"
+          OnFinish="AddStudent">
+        <FormItem Label="学号">
+            <AntDesign.InputNumber @bind-Value="context.Id" Min="0"
+                                   DefaultValue="_db.Students.Select(x => x.Id).Max() + 1" />
+        </FormItem>
+        <FormItem Label="姓名">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="性别">
+            <Input @bind-Value="context.Gender" />
+        </FormItem>
+        <FormItem Label="出生日期">
+            <DatePicker @bind-Value="dateOfBirth" Format="yyyy-MM-dd" />
+        </FormItem>
+        <FormItem Label="籍贯">
+            <Input @bind-Value="context.BirthPlace" />
+        </FormItem>
+        <FormItem Label="手机号">
+            <Input @bind-Value="context.Phone" />
+        </FormItem>
+        <FormItem Label="学院">
+            <Select TItem="@Institute"
+                    TItemValue="int"
+                    DataSource="_db.Institutes"
+                    LabelName="@nameof(Institute.Name)"
+                    ValueName="@nameof(Institute.Id)"
+                    DefaultValue="_db.Institutes.Select(x => x.Id).Min()"
+                    @bind-Value="context.InstituteId" />
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">添加</Button>
+        </FormItem>
+    </Form>
+</AuthorizeView>
+
+@code {
+    [Required]
+    DateTime? dateOfBirth = null;
+
+    Student newStudent { get; set; } = new Student();
+
+    void AddStudent(EditContext context)
+    {
+        if (dateOfBirth.HasValue)
+        {
+            if (!_db.Students.Any(x => x.Id == newStudent.Id))
+            {
+                newStudent.DateOfBirth = dateOfBirth.Value.ToString("yyyy-MM-dd");
+                _db.Students.Add(newStudent);
+                _db.SaveChanges();
+                _message.Success("添加成功");
+            }
+            else
+            {
+                _message.Error("学号已存在");
+            }
+        }
+        else
+        {
+            _message.Error("未选择出生日期");
+        }
+    }
+
+    void DeleteStudent(Student entity)
+    {
+        _db.Students.Remove(entity);
+        _db.SaveChanges();
+        _message.Success("删除成功");
+    }
+}
