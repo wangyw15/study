@@ -62,6 +62,15 @@
             _message.Error("已经选择过这门课了");
             return;
         }
+        var selectedTime = _db.GetCourseTime(entity.CourseId, entity.Semester, entity.TeacherId);
+        var allSelectedTime = _db.SelectedCourses.Where(x => x.StudentId == _provider.CurrentUser.Id
+                                                          && x.Semester == entity.Semester)
+            .Select(x => _db.GetCourseTime(x.CourseId, x.Semester, x.TeacherId));
+        if (allSelectedTime.Any(x => x == selectedTime))
+        {
+            _message.Error("时间冲突");
+            return;
+        }
         var selected = new SelectedCourse
             {
                 StudentId = _provider.CurrentUser.Id,

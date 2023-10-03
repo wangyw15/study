@@ -22,8 +22,8 @@
     <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
     <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
     <PropertyColumn Title="上课时间" Property="c=>_db.GetCourseTime(c.CourseId, c.Semester, c.TeacherId)" />
-    <ActionColumn Title="编辑">
-        <AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+    <AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+        <ActionColumn Title="编辑">
             @if (_provider.CurrentUser.Role == Role.Administrator || _provider.CurrentUser.Id == context.TeacherId)
             {
                 <Popconfirm Title="要删除这个开课吗"
@@ -33,8 +33,8 @@
                     <a>删除</a>
                 </Popconfirm>
             }
-        </AuthorizeView>
-    </ActionColumn>
+        </ActionColumn>
+    </AuthorizeView>
 </Table>
 
 @code {
