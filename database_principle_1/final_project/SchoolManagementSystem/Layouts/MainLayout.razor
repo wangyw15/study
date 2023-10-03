@@ -45,12 +45,15 @@
          <Sider Width="200">
              <Menu Mode="MenuMode.Inline" Style="height: 100%; border-right: 0;">
                  <MenuItem><NavLink href="/">首页</NavLink></MenuItem>
+                 <AuthorizeView Roles="@Role.Student">
+                     <MenuItem RouterLink="/select" RouterMatch="NavLinkMatch.All">选课</MenuItem>
+                 </AuthorizeView>
+                 <AuthorizeView Roles="@Role.All">
+                     <MenuItem RouterLink="/open" RouterMatch="NavLinkMatch.All">开课列表</MenuItem>
+                 </AuthorizeView>
                  <AuthorizeView Roles="@Role.All">
                      <MenuItem RouterLink="/courses" RouterMatch="NavLinkMatch.All">课程列表</MenuItem>
                      <MenuItem RouterLink="/institutes" RouterMatch="NavLinkMatch.All">学院列表</MenuItem>
-                 </AuthorizeView>
-                 <AuthorizeView Roles="@Role.Student">
-                     <MenuItem RouterLink="/select" RouterMatch="NavLinkMatch.All">选课</MenuItem>
                  </AuthorizeView>
                  <AuthorizeView Roles="@Role.Administrator">
                      <MenuItem RouterLink="/students" RouterMatch="NavLinkMatch.All">学生列表</MenuItem>

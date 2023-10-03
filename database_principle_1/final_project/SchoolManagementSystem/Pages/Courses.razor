@@ -2,6 +2,9 @@
 @attribute [Authorize(Roles = Role.All)]
 @inject IMessageService _message
 @inject SchoolContext _db
+@inject SchoolStateProvider _provider
+
+<Divider>课程列表</Divider>
 
 <Table DataSource="_db.Courses" ScrollY="100%">
     <PropertyColumn Property="c=>c.Id" Title="课程号"></PropertyColumn>
@@ -9,19 +12,57 @@
     <PropertyColumn Property="c=>c.Credit" Title="学分"></PropertyColumn>
     <PropertyColumn Property="c=>c.Hour" Title="学时"></PropertyColumn>
     <PropertyColumn Property="c=>_db.GetInstituteName(c.InstituteId)" Title="学院"></PropertyColumn>
-    <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
-        <ActionColumn Title="编辑">
-            <Popconfirm Title="要删除这个课程吗"
-                        OnConfirm="() => DeleteCourse(context)"
-                        OkText="是"
-                        CancelText="否">
-                <a>删除</a>
-            </Popconfirm>
-        </ActionColumn>
-    </AuthorizeView>
+    <ActionColumn Title="编辑">
+        <Space>
+            <AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
+                <SpaceItem>
+                    <Popconfirm Title="要删除这个课程吗"
+                                OnConfirm="() => DeleteCourse(context)"
+                                OkText="是"
+                                CancelText="否">
+                        <a>删除</a>
+                    </Popconfirm>
+                </SpaceItem>
+            </AuthorizeView>
+            <AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+                <SpaceItem>
+                    <Button Type="@ButtonType.Link" OnClick="() => OpenCourseDialog(context)">开课</Button>
+                </SpaceItem>
+            </AuthorizeView>
+        </Space>
+    </ActionColumn>
 </Table>
 
 <AuthorizeView Roles="@Role.Upper" Context="authorize_context">
+    <Modal Title="开课"
+           Visible="@showOpenCourseDialog"
+           OnOk="() => formNewOpeningCourse.Submit()"
+           OnCancel="() => showOpenCourseDialog = false">
+        <Form Model="@newOpenCourse"
+              @ref="@formNewOpeningCourse"
+              LabelColSpan="4"
+              WrapperColSpan="16"
+              OnFinish="AddOpenCourse">
+            <FormItem Label="学期">
+                <Input @bind-Value="context.Semester" />
+            </FormItem>
+            <FormItem Label="课程号">
+                <Input @bind-Value="context.CourseId" Disabled />
+            </FormItem>
+            <FormItem Label="教师工号">
+                <AntDesign.InputNumber @bind-Value="context.TeacherId" Disabled="_provider.CurrentUser.Id != 0" />
+            </FormItem>
+            <FormItem Label="教师名">
+                <span>@_db.GetTeacherName(context.TeacherId)</span>
+            </FormItem>
+            <FormItem Label="上课时间">
+                <Input @bind-Value="context.Time" />
+            </FormItem>
+         </Form>
+     </Modal>
+ </AuthorizeView>
+
+<AuthorizeView Roles="@Role.Administrator" Context="authorize_context">
     <Divider>添加课程</Divider>
     
     <Form Model="@newCourse"
@@ -55,8 +96,11 @@
     </Form>
 </AuthorizeView>
 
-@code {
+ @code {
     Course newCourse { get; set; } = new Course();
+    Form<OpeningCourse> formNewOpeningCourse;
+    OpeningCourse newOpenCourse { get; set; } = new OpeningCourse();
+    bool showOpenCourseDialog { get; set; } = false;
 
     void AddCourse(EditContext context)
     {
@@ -77,5 +121,32 @@
         _db.Courses.Remove(entity);
         _db.SaveChanges();
         _message.Success("删除成功");
+    }
+
+    void OpenCourseDialog(Course entity)
+    {
+        showOpenCourseDialog = true;
+        newOpenCourse.CourseId = entity.Id;
+        newOpenCourse.TeacherId = _provider.CurrentUser.Id;
+    }
+
+    void AddOpenCourse()
+    {
+        if (!_db.Teachers.Any(x => x.Id == newOpenCourse.TeacherId))
+        {
+            _message.Error("工号不存在");
+            return;
+        }
+        if (_db.OpeningCourses.Any(x => x.Semester == newOpenCourse.Semester &&
+                                        x.Time == newOpenCourse.Time &&
+                                        x.TeacherId == newOpenCourse.TeacherId))
+        {
+            _message.Error("这位教师在这一学期这一时间已经有课了");
+            return;
+        }
+        _db.OpeningCourses.Add(newOpenCourse);
+        _db.SaveChanges();
+        _message.Success("开课成功");
+        showOpenCourseDialog = false;
     }
 }

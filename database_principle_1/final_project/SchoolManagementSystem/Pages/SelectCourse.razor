@@ -4,6 +4,8 @@
 @inject SchoolContext _db
 @inject IMessageService _message
 
+<Divider>选课</Divider>
+
 <Select @bind-Value="semester" DefaultActiveFirstOption TItem="string" TItemValue="string">
      <SelectOptions>
          @foreach (var i in _db.OpeningCourses.Select(x => x.Semester).Distinct())

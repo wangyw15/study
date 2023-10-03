@@ -3,6 +3,8 @@
 @inject SchoolContext _db
 @inject IMessageService _message
 
+<Divider>学院列表</Divider>
+
 <Table DataSource="_db.Institutes" ScrollY="100%">
     <PropertyColumn Property="c=>c.Id" Title="院系号"></PropertyColumn>
     <PropertyColumn Property="c=>c.Name" Title="名称"></PropertyColumn>
