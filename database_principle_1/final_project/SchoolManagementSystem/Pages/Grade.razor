@@ -22,15 +22,29 @@
         <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
         <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
         <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
-        <PropertyColumn Title="平时成绩" Property="c =>
-        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).Grade.ToString()" />
-        <PropertyColumn Title="考试成绩" Property="c =>
-        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).Test.ToString()" />
-        <PropertyColumn Title="总评成绩" Property="c =>
-        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).TotalGrade.ToString()" />
+        <PropertyColumn Title="平时成绩" Property="c => c.Grade.HasValue ? c.Grade.ToString() : unknown" />
+        <PropertyColumn Title="考试成绩" Property="c => c.Test.HasValue ? c.Test.ToString() : unknown" />
+        <PropertyColumn Title="总评成绩" Property="c => c.TotalGrade.HasValue ? c.TotalGrade.ToString() : unknown" />
+    </Table>
+</AuthorizeView>
+
+<AuthorizeView Roles="@Role.Upper" Context="authorized_context">
+    <Divider>修改成绩</Divider>
+
+    <Table ScrollY="100%"
+           DataSource="_db.SelectedCourses.Where(x=>x.Semester == semester && 
+            (_provider.CurrentUser.Role == Role.Administrator || x.TeacherId == _provider.CurrentUser.Id))">
+        <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
+        <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
+        <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
+        <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
+        <PropertyColumn Title="平时成绩" Property="c => c.Grade.HasValue ? c.Grade.ToString() : unknown" />
+        <PropertyColumn Title="考试成绩" Property="c => c.Test.HasValue ? c.Test.ToString() : unknown" />
+        <PropertyColumn Title="总评成绩" Property="c => c.TotalGrade.HasValue ? c.TotalGrade.ToString() : unknown" />
     </Table>
 </AuthorizeView>
 
 @code {
+    const string unknown = "未出成绩";
     string semester { get; set; } = "";
 }

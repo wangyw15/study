@@ -63,17 +63,5 @@ public class SchoolContext : DbContext
         }
         return "";
     }
-
-    public SelectedCourse GetSelectedCourse(string courseId, string semester, int studentId)
-    {
-        var result = from x in SelectedCourses
-                     where x.CourseId == courseId && x.Semester == semester && x.StudentId == studentId
-                     select x;
-        if (result.Any())
-        {
-            return result.First();
-        }
-        return new SelectedCourse();
-    }
 }
 
