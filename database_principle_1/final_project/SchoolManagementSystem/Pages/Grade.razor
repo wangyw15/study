@@ -29,22 +29,101 @@
 </AuthorizeView>
 
 <AuthorizeView Roles="@Role.Upper" Context="authorized_context">
+    <style>
+        .editable-cell {
+            position: relative;
+        }
+
+        .editable-cell-value-wrap {
+            padding: 5px 12px;
+            cursor: pointer;
+            min-height: 2rem;
+        }
+
+        .editable-row:hover .editable-cell-value-wrap {
+            padding: 4px 11px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        [data-theme='dark'] .editable-row:hover .editable-cell-value-wrap {
+            border: 1px solid #434343;
+        }
+    </style>
     <Divider>修改成绩</Divider>
 
-    <Table ScrollY="100%"
+    <Table ScrollY="100%" RowClassName="@(_=>"editable-row")"
            DataSource="_db.SelectedCourses.Where(x=>x.Semester == semester && 
             (_provider.CurrentUser.Role == Role.Administrator || x.TeacherId == _provider.CurrentUser.Id))">
         <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
         <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
+        <PropertyColumn Title="学号" Property="c=>c.StudentId" />
+        <PropertyColumn Title="学生姓名" Property="c=>_db.GetStudentName(c.StudentId)" />
         <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
         <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
-        <PropertyColumn Title="平时成绩" Property="c => c.Grade.HasValue ? c.Grade.ToString() : unknown" />
-        <PropertyColumn Title="考试成绩" Property="c => c.Test.HasValue ? c.Test.ToString() : unknown" />
-        <PropertyColumn Title="总评成绩" Property="c => c.TotalGrade.HasValue ? c.TotalGrade.ToString() : unknown" />
+        <PropertyColumn Title="平时成绩" Property="c => c.Grade.HasValue ? c.Grade.ToString() : unknown">
+            @if (editing == context && editingType == GradeType.Grade)
+            {
+                <Input @bind-Value="context.Grade" OnBlur="StopEdit" AutoFocus />
+            }
+            else
+            {
+                <div class="editable-cell-value-wrap" style="padding-right:24px" @onclick="()=>StartEdit(context, GradeType.Grade)">
+                    @context.Grade
+                </div>
+            }
+        </PropertyColumn>
+        <PropertyColumn Title="考试成绩" Property="c => c.Test.HasValue ? c.Test.ToString() : unknown">
+            @if (editing == context && editingType == GradeType.Test)
+            {
+                <Input @bind-Value="context.Test" OnBlur="StopEdit" AutoFocus />
+            }
+            else
+            {
+                <div class="editable-cell-value-wrap" style="padding-right:24px" @onclick="()=>StartEdit(context, GradeType.Test)">
+                    @context.Test
+                </div>
+            }
+        </PropertyColumn>
+        <PropertyColumn Title="总评成绩" Property="c => c.TotalGrade.HasValue ? c.TotalGrade.ToString() : unknown">
+            @if (editing == context && editingType == GradeType.TotalGrade)
+            {
+                <Input @bind-Value="context.TotalGrade" OnBlur="StopEdit" AutoFocus />
+            }
+            else
+            {
+                <div class="editable-cell-value-wrap" style="padding-right:24px" @onclick="()=>StartEdit(context, GradeType.TotalGrade)">
+                    @context.TotalGrade
+                </div>
+            }
+        </PropertyColumn>
     </Table>
 </AuthorizeView>
 
 @code {
+    private enum GradeType
+    {
+        Grade,
+        Test,
+        TotalGrade
+    }
+
     const string unknown = "未出成绩";
+
     string semester { get; set; } = "";
+    SelectedCourse? editing { get; set; } = null;
+    GradeType editingType { get; set; } = GradeType.Grade;
+
+    void StartEdit(SelectedCourse entity, GradeType gradeType)
+    {
+        editing = entity;
+        editingType = gradeType;
+    }
+
+    void StopEdit()
+    {
+        editing = null;
+        _db.SaveChanges();
+        _message.Success("成绩修改成功");
+    }
 }

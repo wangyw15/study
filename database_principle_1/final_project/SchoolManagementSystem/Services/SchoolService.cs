@@ -52,6 +52,16 @@ public class SchoolContext : DbContext
         return "";
     }
 
+    public string GetStudentName(int id)
+    {
+        var result = from x in Students where x.Id == id select x;
+        if (result.Any())
+        {
+            return result.First().Name;
+        }
+        return "";
+    }
+
     public string GetCourseTime(string courseId, string semester, int teacherId)
     {
         var result = from x in OpeningCourses 
