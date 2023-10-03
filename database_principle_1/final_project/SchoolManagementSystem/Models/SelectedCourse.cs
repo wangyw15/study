@@ -22,11 +22,11 @@ public class SelectedCourse
     public int TeacherId { get; set; }
 
     [Column("pscj")]
-    public double? Grade { get; set; }
+    public double? Grade { get; set; } = null;
 
     [Column("kscj")]
-    public double? Test { get; set; }
+    public double? Test { get; set; } = null;
 
     [Column("zpcj")]
-    public double? TotalGrade { get; set; }
+    public double? TotalGrade { get; set; } = null;
 }

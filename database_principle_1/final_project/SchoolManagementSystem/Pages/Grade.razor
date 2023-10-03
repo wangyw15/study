@@ -1,0 +1,36 @@
+﻿@page "/grades"
+@attribute [Authorize(Roles = Role.All)]
+@inject IMessageService _message
+@inject SchoolContext _db
+@inject SchoolStateProvider _provider
+
+<Select @bind-Value="semester" DefaultActiveFirstOption TItem="string" TItemValue="string">
+     <SelectOptions>
+         @foreach (var i in _db.OpeningCourses.Select(x => x.Semester).Distinct())
+        {
+            <SelectOption TItem="string" TItemValue="string" Label="@i" Value="@i" />
+        }
+    </SelectOptions>
+</Select>
+
+<AuthorizeView Roles="@Role.Student" Context="authorized_context">
+    <Divider>查看成绩</Divider>
+
+    <Table ScrollY="100%"
+           DataSource="_db.SelectedCourses.Where(x=>x.StudentId == _provider.CurrentUser.Id && x.Semester == semester)">
+        <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
+        <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
+        <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
+        <PropertyColumn Title="教师" Property="c=>_db.GetTeacherName(c.TeacherId)" />
+        <PropertyColumn Title="平时成绩" Property="c =>
+        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).Grade.ToString()" />
+        <PropertyColumn Title="考试成绩" Property="c =>
+        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).Test.ToString()" />
+        <PropertyColumn Title="总评成绩" Property="c =>
+        _db.GetSelectedCourse(c.CourseId, c.Semester, _provider.CurrentUser.Id).TotalGrade.ToString()" />
+    </Table>
+</AuthorizeView>
+
+@code {
+    string semester { get; set; } = "";
+}

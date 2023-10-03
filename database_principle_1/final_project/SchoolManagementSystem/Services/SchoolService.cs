@@ -52,16 +52,28 @@ public class SchoolContext : DbContext
         return "";
     }
 
-    public string GetCourseTime(string id, string semester, int teacherId)
+    public string GetCourseTime(string courseId, string semester, int teacherId)
     {
         var result = from x in OpeningCourses 
-                     where x.CourseId == id && x.Semester == semester && x.TeacherId == teacherId 
+                     where x.CourseId == courseId && x.Semester == semester && x.TeacherId == teacherId 
                      select x;
         if (result.Any())
         {
             return result.First().Time;
         }
         return "";
+    }
+
+    public SelectedCourse GetSelectedCourse(string courseId, string semester, int studentId)
+    {
+        var result = from x in SelectedCourses
+                     where x.CourseId == courseId && x.Semester == semester && x.StudentId == studentId
+                     select x;
+        if (result.Any())
+        {
+            return result.First();
+        }
+        return new SelectedCourse();
     }
 }
 

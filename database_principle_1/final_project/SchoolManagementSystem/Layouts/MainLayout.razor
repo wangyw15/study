@@ -49,6 +49,9 @@
                      <MenuItem RouterLink="/select" RouterMatch="NavLinkMatch.All">选课</MenuItem>
                  </AuthorizeView>
                  <AuthorizeView Roles="@Role.All">
+                     <MenuItem RouterLink="/grades" RouterMatch="NavLinkMatch.All">成绩</MenuItem>
+                 </AuthorizeView>
+                 <AuthorizeView Roles="@Role.All">
                      <MenuItem RouterLink="/open" RouterMatch="NavLinkMatch.All">开课列表</MenuItem>
                  </AuthorizeView>
                  <AuthorizeView Roles="@Role.All">
