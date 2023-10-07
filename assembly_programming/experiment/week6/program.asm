@@ -17,8 +17,10 @@ start:
 
     call add_data_proc
     call print_table_proc
-    
+query_loop:
     call search_phone_by_name_proc
+    call new_line_proc
+    jmp query_loop
 
 exit:
     ; properly exit
@@ -131,7 +133,7 @@ compare_complete:
     call print_string_proc
 compare_fail:
     pop cx
-    add bx, 20 ; next name
+    add bx, 30 ; next name
     loop search_phone_loop
 
     pop dx
