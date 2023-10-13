@@ -16,6 +16,22 @@ jmp short label
 段内短转移，范围是-128~127
 
 ```assembly
+jnz label_far
+```
+
+条件跳转范围同样是-128~127，如果需要跳转的距离超过了这个范围，可以使用多个跳转
+
+```assembly
+            jz label_near
+            jmp label_far
+label_near: ...
+```
+
+---
+
+# 段内
+
+```assembly
 jump near ptr label
 ```
 
@@ -72,3 +88,9 @@ end start
 ![](images/code_1.png)
 
 ![](images/code_2.png)
+
+---
+
+# 多重循环应该注意的问题
+
+如果使用 `cx` 寄存器和 `loop` 指令，应在进入内层循环时使用其它寄存器，或者使用 `push` 和 `pop` 保存 `cx` 的值
