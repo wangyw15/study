@@ -113,8 +113,8 @@ proc_new_line proc near ; new line
     mov ah, 09h
     int 21h
 
-    pop ax
     pop dx
+    pop ax
     ret
 proc_new_line endp
 
@@ -150,9 +150,9 @@ proc_print_number proc near ; print number in al
         call proc_print_char
         loop print_number_loop
     
-    pop bx
-    pop cx
     pop dx
+    pop cx
+    pop bx
     ret
 proc_print_number endp
 
@@ -186,9 +186,9 @@ proc_get_seconds proc near ; get current seconds in one day
 
     mov ax, dx
     
-    pop bx
-    pop cx
     pop dx
+    pop cx
+    pop bx
     ret
 proc_get_seconds endp
 
