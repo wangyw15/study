@@ -15,9 +15,9 @@
 用户菜单如下：
 
 ```
-********************************************************
+*********************************************************
 Please input
-1 print ‘hello world!’
+1 print 'hello world!'
 2 adder
 3 display current time
 4 quit
