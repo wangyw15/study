@@ -8,7 +8,7 @@ marp: true
 ## (1) 查询至少播放两部电影的座位数大于300的影院名
 
 $$
-\Pi_2(\sigma_{6>'300'}(\mathbf{C}\bowtie\Pi_3(\sigma_{3=9 \wedge 2 \ne 8(\mathbf{S} \times \mathbf{S})})))
+\Pi_2(\sigma_{6>'300'}(\mathbf{C}\bowtie\Pi_3(\sigma_{3=9 \wedge 2 \ne 8}(\mathbf{S} \times \mathbf{S}))))
 $$
 
 ## (2) 查询放映过张艺谋导演的全部影片的影院名
