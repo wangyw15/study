@@ -36,10 +36,30 @@
 
 <Divider>新选课程</Divider>
 
+<Form Model="@parameters"
+      LabelColSpan="4"
+      WrapperColSpan="16">
+    <FormItem Label="课程号">
+        <Input @bind-Value="context.CourseId" />
+    </FormItem>
+    <FormItem Label="课程名称">
+        <Input @bind-Value="context.CourseName" />
+    </FormItem>
+    <FormItem Label="教师号">
+        <Input @bind-Value="context.TeacherId" />
+    </FormItem>
+    <FormItem Label="教师名称">
+        <Input @bind-Value="context.TeacherName" />
+    </FormItem>
+</Form>
+
 <Table ScrollY="100%"
-       DataSource="_db.OpeningCourses.Where(x=>x.Semester == semester &&
-                  (!_db.SelectedCourses.Where(y=>y.StudentId == _provider.CurrentUser.Id)
-                  .Any(y=>y.Semester == x.Semester && y.CourseId == x.CourseId)))">
+       DataSource="_db.OpeningCourses.Where(x=> x.Semester == semester && 
+           x.CourseId.Contains(parameters.CourseId) &&
+           x.TeacherId.ToString().Contains(parameters.TeacherId) &&
+           (from y in _db.Teachers where y.Name.Contains(parameters.TeacherName) select y.Id).Contains(x.TeacherId) &&
+           (from y in _db.Courses where y.Name.Contains(parameters.CourseName) select y.Id).Contains(x.CourseId) &&
+           !(from y in _db.SelectedCourses where y.StudentId == _provider.CurrentUser.Id && y.Semester == x.Semester && y.CourseId == x.CourseId select y).Any())">
     <PropertyColumn Title="课程号" Property="c=>c.CourseId" />
     <PropertyColumn Title="课程名称" Property="c=>_db.GetCourseName(c.CourseId)" />
     <PropertyColumn Title="教师号" Property="c=>c.TeacherId" />
@@ -51,7 +71,17 @@
 </Table>
 
 @code {
+    private class SearchParameters
+    {
+        public string CourseId { get; set; } = "";
+        public string CourseName { get; set; } = "";
+        public string TeacherId { get; set; } = "";
+        public string TeacherName { get; set; } = "";
+        
+    }
+
     string semester { get; set; } = "";
+    SearchParameters parameters { get; set; } = new ();
 
     void AddSelectCourse(OpeningCourse entity)
     {
@@ -63,10 +93,10 @@
             return;
         }
         var selectedTime = _db.GetCourseTime(entity.CourseId, entity.Semester, entity.TeacherId);
-        var allSelectedTime = _db.SelectedCourses.Where(x => x.StudentId == _provider.CurrentUser.Id
-                                                          && x.Semester == entity.Semester)
-            .Select(x => _db.GetCourseTime(x.CourseId, x.Semester, x.TeacherId));
-        if (allSelectedTime.Any(x => x == selectedTime))
+        var allSelectedTime = (from x in _db.SelectedCourses where x.StudentId == _provider.CurrentUser.Id &&
+                                                                  x.Semester == entity.Semester
+                              select _db.GetCourseTime(x.CourseId, x.Semester, x.TeacherId)).ToList();
+        if (allSelectedTime.Contains(selectedTime))
         {
             _message.Error("时间冲突");
             return;
