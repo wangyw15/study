@@ -1,9 +1,14 @@
-#!/bin/sh
-loopcount = 0
-result = 0
-until [ $loopcount –ge 10 ]
+#!/bin/bash
+i=0
+result=0
+# until [ $i -ge 10 ]
+# do
+#     i=`expr $i + 1`
+#     result=`expr $result + \( $i \* 2 \)`
+# done
+until (( i >= 10 ))
 do
-    loopcount = `expr $loopcount +1`
-    result = `$result + ( $ loopcount * 2)`
+    ((i++))
+    ((result += i * 2))
 done
 echo "result is $result"

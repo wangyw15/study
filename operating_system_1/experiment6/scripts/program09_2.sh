@@ -1,9 +1,14 @@
 #!/bin/bash
-loopcount = 0
-result = 0
-while [ $loopcount –lt 10 ]
+i=0
+result=0
+# while [ $i -le 10 ]
+# do
+#     i=`expr $i + 1`
+#     result=`expr $result + \( $i \* 2 \)`
+# done
+while (( i <= 10))
 do
-    loopcount = `expr $loopcount +1`
-    result = `$result + ( $loopcount * 2)`
+    ((i++))
+    ((result += i * 2))
 done
 echo "result is $result"

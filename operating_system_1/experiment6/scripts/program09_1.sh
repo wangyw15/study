@@ -1,8 +1,17 @@
 #!/bin/bash
-for filename in ˋlsˋ
-    do
-        cp $filename backup/$filename
-        if [ $? –ne 0 ]
-            echo "copy $filename failed"
+
+files=`ls`
+
+if [[ ! -d "backup" ]]
+then
+    mkdir backup
+fi
+
+for filename in $files
+do
+    cp $filename backup/
+    if [[ $? -ne 0 ]]
+    then
+        echo "copy $filename failed"
     fi
 done
