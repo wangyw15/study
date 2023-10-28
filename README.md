@@ -36,3 +36,9 @@
 # 课本
 
 课本太多所以就放在[百度网盘](https://pan.baidu.com/s/18Yjki1YKnsPp9Yod8MBqww?pwd=7t7q)了，提取码：7t7q
+
+# `report.css` 使用方法
+
+```bash
+pandoc -t html5 --css report.css report.md -o report.pdf --pdf-engine=wkhtmltopdf --pdf-engine-opt=--enable-local-file-access
+```

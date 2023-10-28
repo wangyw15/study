@@ -23,16 +23,31 @@ body>* {
     margin: 1rem;
 }
 
-/* source code */
-div.sourceCode {
+body>*:not(h1, h2, h3, h4) {
     font-size: large;
-    font-family: 'Consolas', monospace;
-    color: var(--base0);
-    background-color: var(--base3);
-    border-radius: 5px;
-    padding: 1rem;
 }
 
+h1>code, h2>code, h3>code, h4>code {
+    font-size: inherit;
+}
+
+/* source code */
+/* common properties */
+div.sourceCode, code {
+    font-size: large;
+    font-family: 'Consolas', monospace;
+}
+
+/* code block */
+body>div.sourceCode, body>code, body>pre {
+    border: solid black 1px;
+    border-radius: 5px;
+    padding: 1rem;
+    color: var(--base0);
+    background-color: var(--base3);
+}
+
+/* colored code */
 .sourceCode .kw {
     color: var(--cyan);
 }
@@ -49,11 +64,17 @@ div.sourceCode {
     color: var(--blue)
 }
 
-/* table */
+/* three line table */
 table {
     border-collapse: collapse;
     border: solid black;
     border-width: 2px 0 2px 0;
+    text-align: center;
+
+    /* center */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 thead {
