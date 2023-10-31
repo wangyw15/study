@@ -29,8 +29,8 @@ main_loop:
     ; space for wait
     cmp sheet[si], ' '
     jne play_note
-    mov cx, 65535
     call delay
+
     inc si
     jmp continue
 
@@ -40,9 +40,9 @@ play_note:
     inc si
     cmp sheet[si], ' '
     jne short_note
-    add cx, 500
+    add cx, 250
 short_note:
-    add cx, 500
+    add cx, 250
 
     ; play note
     ; get frequency
@@ -57,7 +57,7 @@ short_note:
     cmp sheet[si], ' '
     je continue
     ; get frequency
-    mov cx, 500
+    mov cx, 250
     mov dl, sheet[si]
     mov ah, 2
     int 21h
@@ -78,10 +78,19 @@ exit: ; properly exit
     int 21h
 
 delay proc near
-; cx: duration
-delay_loop:
-    nop
-    loop delay_loop
+    push ax
+    push cx
+
+    mov cx, 250
+delay_outer_loop:
+    mov ax, 500
+delay_inner_loop:
+    dec ax
+    jnz delay_inner_loop
+    loop delay_outer_loop
+
+    pop cx
+    pop ax
     ret
 delay endp
 
