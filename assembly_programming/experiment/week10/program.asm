@@ -21,28 +21,24 @@ start:
     mov si, 0; si for sheet
 
 main_loop:
-    mov dl, sheet[si] ; dl for note
-    ; print note
-    mov ah, 2
-    int 21h
-
     ; space for wait
     cmp sheet[si], ' '
     jne play_note
     
-    call delay
-    call delay
+    ; print space
+    mov dl, ' '
+    mov ah, 2
+    int 21h
+
     call delay
     call delay
 
-    inc si
     jmp continue
 
 play_note:
     ; get duration
-    xor cx, cx
-    inc si
-    cmp sheet[si], ' '
+    xor cx, cx ; reset duration
+    cmp sheet[si+1], ' '
     jne short_note
     add cx, 300
 short_note:
@@ -50,18 +46,6 @@ short_note:
 
     ; play note
     ; get frequency
-    sub dl, '0'
-    xor dh, dh
-    add dx, dx ; because frequency is 2 bytes
-    mov di, dx
-    mov bx, frequency[di]
-    call play_sound
-
-    ; sub note (if exists)
-    cmp sheet[si], ' '
-    je continue
-    ; get frequency
-    mov cx, 300
     mov dl, sheet[si]
     mov ah, 2
     int 21h
@@ -72,8 +56,23 @@ short_note:
     mov bx, frequency[di]
     call play_sound
 
+    ; sub note (if exists)
+    cmp sheet[si+1], ' '
+    je continue
+    ; get frequency
+    mov cx, 300
+    mov dl, sheet[si+1]
+    mov ah, 2
+    int 21h
+    sub dl, '0'
+    xor dh, dh
+    add dx, dx ; because frequency is 2 bytes
+    mov di, dx
+    mov bx, frequency[di]
+    call play_sound
+
 continue:
-    inc si
+    add si, 2
     cmp sheet[si], '$'
     jne main_loop
 
