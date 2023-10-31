@@ -11,7 +11,7 @@
               dw 880
               dw 988
               dw 1048
-    sheet db '1 2 3 1   1 2 3 1   3 4 5   3 4 5   56543 1   56543 1   2 0 1   2 0 1 $'
+    sheet db '1 2 3 1   1 2 3 1   3 4 5     3 4 5     56543 1   56543 1   2 0 1     2 0 1 $'
 
 .code
 start:
@@ -29,6 +29,10 @@ main_loop:
     ; space for wait
     cmp sheet[si], ' '
     jne play_note
+    
+    call delay
+    call delay
+    call delay
     call delay
 
     inc si
@@ -40,9 +44,9 @@ play_note:
     inc si
     cmp sheet[si], ' '
     jne short_note
-    add cx, 250
+    add cx, 300
 short_note:
-    add cx, 250
+    add cx, 300
 
     ; play note
     ; get frequency
@@ -57,7 +61,7 @@ short_note:
     cmp sheet[si], ' '
     je continue
     ; get frequency
-    mov cx, 250
+    mov cx, 300
     mov dl, sheet[si]
     mov ah, 2
     int 21h
