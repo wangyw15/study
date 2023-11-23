@@ -45,10 +45,49 @@ public class HighPriorityFirst(List<Process> processes) : IScheduler
 
     public void Print()
     {
-        foreach (var process in processes)
+        foreach (var (pid, finishTime) in _finishTime)
         {
-            Console.WriteLine(process);
+            Console.WriteLine($"PID: {pid}, finish time: {finishTime}");
         }
+    }
+}
+
+public class RoundRobin(List<Process> processes) : IScheduler
+{
+    private Dictionary<int, int> _finishTime = new();
+    private int _currentTime = 0;
+
+    public void Schedule()
+    {
+        while (true)
+        {
+            if (processes.All(process => process.PCB.State == ProcessState.Finish))
+            {
+                break;
+            }
+            foreach (var process in processes)
+            {
+                if (process.PCB.State == ProcessState.Finish)
+                {
+                    continue;
+                }
+                process.Run();
+                process.Update();
+                _currentTime++;
+                if (process.Finished)
+                {
+                    _finishTime[process.PCB.PID] = _currentTime;
+                }
+                else
+                {
+                    process.Wait();
+                }
+            }
+        }
+    }
+
+    public void Print()
+    {
         foreach (var (pid, finishTime) in _finishTime)
         {
             Console.WriteLine($"PID: {pid}, finish time: {finishTime}");
