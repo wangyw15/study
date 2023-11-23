@@ -5,7 +5,7 @@ class Program
     static void Main()
     {
         Console.Write("Process amount: ");
-        var amount = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+        var amount = int.Parse(Console.ReadLine() ?? "5");
         var hpfProcesses = new List<Process>();
         var rrProcesses = new List<Process>();
 
@@ -21,6 +21,7 @@ class Program
             rrProcesses.Add(new Process(i, priority, arrivalTime, totalCpuTime));
         }
 
+        Console.WriteLine("Processes:");
         foreach (var process in hpfProcesses)
         {
             Console.WriteLine(process);
@@ -30,12 +31,10 @@ class Program
         Console.WriteLine(Environment.NewLine + "HPF:");
         IScheduler scheduler = new HighPriorityFirst(hpfProcesses);
         scheduler.Schedule();
-        scheduler.Print();
 
         // RR
         Console.WriteLine(Environment.NewLine + "RR:");
         scheduler = new RoundRobin(rrProcesses);
         scheduler.Schedule();
-        scheduler.Print();
     }
 }

@@ -50,26 +50,26 @@ PCB 进程标识数 链指针 优先数/轮转时间片数 占用CPU时间片数
 TYPE THE ALGORITHM:PRIORITY
 OUTPUT OF PRIORITY
 ==============================
-RUNNING PROC. WAITING QUEUE
-              3 4 1 5
+RUNNING PROC
+2
+WAITING QUEUE
+3 4 1 5
 ==============================
-ID 1 2 3 4 5
-PRIORITY 9 38 30 29 0
-CPUTIME 0 0 0 0 0
-ALLTIME 3 3 6 3 4 STATE
-W R W W W
-NEXT 5 3 4 1 0 =========
-=====================
-""
-""
-""
+ID       1  2  3  4  5
+PRIORITY 9  38 30 29 0
+CPUTIME  0  0  0  0  0
+ALLTIME  3  3  6  3  4
+STATE    W  R  W  W  W
+NEXT     5  3  4  1  0
+==============================
+......
 ==============================
 SYSTEM FINISHED
 ```
 
 ### （2）说明
 
-程序启动后，屏幕上显示“TYPETHEALGORTITHM”，要求用户打入使用何种调度算法。本程序只编制了优先数法（"priority"）和简单轮转法（"RoundRobin"）两种。打入某一算法后，系统自动形成各进程控制块，实施该算法的进程调度算法，并打印各进程在调度过程中的状态和参数的变化。
+程序启动后，屏幕上显示“TYPE THE ALGORITHM”，要求用户打入使用何种调度算法。本程序只编制了优先数法（"priority"）和简单轮转法（"RoundRobin"）两种。打入某一算法后，系统自动形成各进程控制块，实施该算法的进程调度算法，并打印各进程在调度过程中的状态和参数的变化。
 
 ## 4、小结
 
