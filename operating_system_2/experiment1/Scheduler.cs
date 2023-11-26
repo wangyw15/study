@@ -3,13 +3,15 @@
 public interface IScheduler
 {
     public void Schedule();
+
+    public void PrintFinishTime();
 }
 
 public class Util
 {
     private const int NumberWidth = 4;
 
-    public static void PrintProcesses(List<Process> processes, bool compact = false)
+    public static void PrintProcesses(List<Process> processes, bool compact = true)
     {
         if (compact)
         {
@@ -117,6 +119,15 @@ public class HighPriorityFirst(List<Process> processes) : IScheduler
                orderby x.PCB.Priority descending
                select x;
     }
+
+    public void PrintFinishTime()
+    {
+        Console.WriteLine("Finish time:");
+        foreach (var (pid, time) in _finishTime)
+        {
+            Console.WriteLine($"Process {pid}: {time}");
+        }
+    }
 }
 
 public class RoundRobin(List<Process> processes) : IScheduler
@@ -151,6 +162,70 @@ public class RoundRobin(List<Process> processes) : IScheduler
                     process.Wait();
                 }
             }
+        }
+    }
+
+    public void PrintFinishTime()
+    {
+        Console.WriteLine("Finish time:");
+        foreach (var (pid, time) in _finishTime)
+        {
+            Console.WriteLine($"Process {pid}: {time}");
+        }
+    }
+}
+
+public class FeedbackQueue(List<Process> processes) : IScheduler
+{
+    private Dictionary<int, int> _finishTime = new();
+    private int _currentTime;
+
+    public void Schedule()
+    {
+        foreach (var process in processes)
+        {
+            // set to queue 1
+            process.PCB.Priority = 1;
+        }
+        while (true)
+        {
+            var chain = GetReadyChain().ToList();
+            if (chain.Count == 0)
+            {
+                break;
+            }
+            var process = chain.First();
+            process.Run();
+            Util.PrintProcesses(processes);
+            process.Update();
+            _currentTime++;
+            if (process.Finished)
+            {
+                _finishTime[process.PCB.PID] = _currentTime;
+            }
+            else
+            {
+                process.Wait();
+                // set to queue 2
+                process.PCB.Priority = 0;
+            }
+        }
+    }
+
+    private IEnumerable<Process> GetReadyChain()
+    {
+        return from x in processes
+            where x.PCB.State != ProcessState.Finish
+            orderby x.PCB.Priority descending
+            select x;
+    }
+
+    public void PrintFinishTime()
+    {
+        Console.WriteLine("Finish time:");
+        foreach (var (pid, time) in _finishTime)
+        {
+            Console.WriteLine($"Process {pid}: {time}");
         }
     }
 }
