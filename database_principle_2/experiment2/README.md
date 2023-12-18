@@ -8,7 +8,7 @@
 6. Individually kill the slave and master instance and discuss the behavior of HDFS.
 
 
-Reference
+# Reference
 
 1. https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/SingleCluster.html
 2. Download configuration: [slaves](https://www.aidac-shu.com/assets/slaves)

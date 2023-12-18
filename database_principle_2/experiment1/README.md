@@ -6,9 +6,12 @@
 4. Create database and user in instance A;
 5. Do remote connection at instances B and list the databases stored at instance A.
 
-Reference: https://snapshooter.com/blog/how-to-configure-mysql-for-remote-connection-on-ubuntu-1804
+# Reference
+
+> https://snapshooter.com/blog/how-to-configure-mysql-for-remote-connection-on-ubuntu-1804
 
 Useful Command Lines in Instance A (Server):
+
 1. `sudo apt-get update`
 2. `sudo apt-get install vim`
 3. `sudo apt-get install openssh-server`
