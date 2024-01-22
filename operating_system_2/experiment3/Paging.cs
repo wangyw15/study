@@ -139,3 +139,43 @@ public class LRUPaging : PagingAlgorithm
         return 1.0 - interrupt / pageSequence.Count;
     }
 }
+
+public class FIFOPaging : PagingAlgorithm
+{
+    public double Run(List<int> pageSequence, int physicalMemorySize)
+    {
+        double interrupt = 0;
+        var memory = new Queue<int>(physicalMemorySize);
+        var usedMemory = 0;
+
+        int clock = 0;
+        foreach (var instruction in pageSequence)
+        {
+            var found = false;
+            // 命中
+            if (memory.Contains(instruction))
+            {
+                found = true;
+            }
+            // 未命中但内存有空余
+            else if (usedMemory != physicalMemorySize)
+            {
+                memory.Enqueue(instruction);
+                usedMemory++;
+                interrupt++;
+                found = true;
+            }
+            // 缺页
+            if (!found)
+            {
+                // 先进先出
+                memory.Dequeue();
+                // 替换
+                memory.Enqueue(instruction);
+                interrupt++;
+            }
+            clock++;
+        }
+        return 1.0 - interrupt / pageSequence.Count;
+    }
+}

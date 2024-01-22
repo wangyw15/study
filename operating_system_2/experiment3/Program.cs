@@ -19,6 +19,9 @@ class Program
             var lru = new LRUPaging();
             Console.WriteLine($"LRU: {lru.Run(pages, physicalSize)}");
 
+            var fifo = new FIFOPaging();
+            Console.WriteLine($"FIFO: {fifo.Run(pages, physicalSize)}");
+            
             Console.WriteLine();
         }
     }
