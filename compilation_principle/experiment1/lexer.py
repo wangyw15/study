@@ -1,7 +1,8 @@
 import re
 
-
-_identifier_pattern = r"[a-z]\w*"
+_valid_identifier_pattern = r"[a-z_]\w*"
+_procedure_end_pattern = r"end[;.]"
+_use_identifier_pattern = r"([^\w]|){}([^\w]|)"
 
 
 def get_defined_identifiers(code: str) -> list[str]:
@@ -45,11 +46,35 @@ def get_defined_identifiers(code: str) -> list[str]:
             else:
                 current_identifier = current_identifier.strip()
             # test if the identifier is valid
-            if re.fullmatch(_identifier_pattern, current_identifier):
+            if re.fullmatch(_valid_identifier_pattern, current_identifier):
                 identifiers.append(current_identifier)
             else:
-                raise SyntaxError("Invalid identifier")
+                raise SyntaxError("Invalid identifier: " + current_identifier)
     return identifiers
+
+
+def count_identifiers(code: str) -> dict[str, int]:
+    identifiers = get_defined_identifiers(code)
+    # first appears in definition
+    result: dict[str, int] = {i: 1 for i in identifiers}
+    lines = code.split("\n")
+
+    # define statement at start
+    in_code_section = False
+    for line in lines:
+        # ignores case for now
+        lower_line = line.lower().strip()
+        if not in_code_section:
+            if lower_line == "begin":
+                in_code_section = True
+            continue
+        if re.fullmatch(_procedure_end_pattern, lower_line):
+            in_code_section = False
+            continue
+        for identifier in identifiers:
+            if re.search(_use_identifier_pattern.format(identifier), lower_line):
+                result[identifier] += 1
+    return result
 
 
 __all__ = [

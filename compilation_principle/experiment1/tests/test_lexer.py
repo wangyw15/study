@@ -11,6 +11,16 @@ Begin
 End.
     """
 
+code_valid_identifiers = """
+Const num=100;
+Var a_1,b2_,b_3,_b3,a1,B2;
+Begin
+    Read(A1);
+    b2:=a1+num;
+    write(A1,B2);
+End.
+    """
+
 code_multiline_var = """
 Const num=100;
 Var a1,
@@ -72,42 +82,95 @@ End.
 
 
 def test_get_defined_identifiers_normal():
-    result1 = lexer.get_defined_identifiers(code_normal)
-    assert "num" in result1
-    assert "a1" in result1
-    assert "b2" in result1
-    # assert result["num"] == 2
-    # assert result["a1"] == 4
-    # assert result["b2"] == 3
+    result = lexer.get_defined_identifiers(code_normal)
+    assert "num" in result
+    assert "a1" in result
+    assert "b2" in result
+
+
+def test_get_defined_identifiers_valid():
+    result = lexer.get_defined_identifiers(code_valid_identifiers)
+    assert "num" in result
+    assert "a1" in result
+    assert "b2" in result
+    assert "a_1" in result
+    assert "b2_" in result
+    assert "b_3" in result
+    assert "_b3" in result
 
 
 def test_get_defined_identifiers_multiline_var():
-    result2 = lexer.get_defined_identifiers(code_multiline_var)
-    assert "num" in result2
-    assert "a1" in result2
-    assert "a2" in result2
-    assert "b2" in result2
+    result = lexer.get_defined_identifiers(code_multiline_var)
+    assert "num" in result
+    assert "a1" in result
+    assert "a2" in result
+    assert "b2" in result
 
 
 def test_get_defined_identifiers_multiline_var_const():
-    result3 = lexer.get_defined_identifiers(code_multiline_const)
-    assert "num1" in result3
-    assert "num2" in result3
-    assert "num3" in result3
-    assert "a1" in result3
-    assert "b2" in result3
+    result = lexer.get_defined_identifiers(code_multiline_const)
+    assert "num1" in result
+    assert "num2" in result
+    assert "num3" in result
+    assert "a1" in result
+    assert "b2" in result
 
 
 def test_get_defined_identifiers_mixed_multiline_var_const():
-    result4 = lexer.get_defined_identifiers(code_mixed_multiline)
-    assert "num1" in result4
-    assert "num2" in result4
-    assert "a1" in result4
-    assert "a2" in result4
-    assert "b1" in result4
-    assert "b2" in result4
+    result = lexer.get_defined_identifiers(code_mixed_multiline)
+    assert "num1" in result
+    assert "num2" in result
+    assert "a1" in result
+    assert "a2" in result
+    assert "b1" in result
+    assert "b2" in result
 
 
 def test_get_defined_identifier_invalid_identifier():
     with pytest.raises(SyntaxError):
         lexer.get_defined_identifiers(code_invalid_identifier)
+
+
+def test_count_identifiers_normal():
+    result = lexer.count_identifiers(code_normal)
+    assert result["num"] == 2
+    assert result["a1"] == 4
+    assert result["b2"] == 3
+
+
+def test_count_identifiers_valid():
+    result = lexer.count_identifiers(code_valid_identifiers)
+    assert result["num"] == 2
+    assert result["a1"] == 4
+    assert result["b2"] == 3
+    assert result["a_1"] == 1
+    assert result["b2_"] == 1
+    assert result["b_3"] == 1
+    assert result["_b3"] == 1
+
+
+def test_count_identifiers_multiline_var():
+    result = lexer.count_identifiers(code_multiline_var)
+    assert result["num"] == 2
+    assert result["a1"] == 4
+    assert result["a2"] == 3
+    assert result["b2"] == 3
+
+
+def test_count_identifiers_multiline_var_const():
+    result = lexer.count_identifiers(code_multiline_const)
+    assert result["num1"] == 2
+    assert result["num2"] == 2
+    assert result["num3"] == 2
+    assert result["a1"] == 4
+    assert result["b2"] == 3
+
+
+def test_count_identifiers_mixed_multiline_var_const():
+    result = lexer.count_identifiers(code_mixed_multiline)
+    assert result["num1"] == 3
+    assert result["num2"] == 3
+    assert result["a1"] == 4
+    assert result["a2"] == 4
+    assert result["b1"] == 3
+    assert result["b2"] == 3
