@@ -64,13 +64,16 @@ def count_identifiers(code: str) -> dict[str, int]:
     for line in lines:
         # ignores case for now
         lower_line = line.lower().strip()
+        # start code section
         if not in_code_section:
             if lower_line == "begin":
                 in_code_section = True
             continue
+        # end code section
         if re.fullmatch(_procedure_end_pattern, lower_line):
             in_code_section = False
             continue
+        # find identifier
         for identifier in identifiers:
             if re.search(_use_identifier_pattern.format(identifier), lower_line):
                 result[identifier] += 1
@@ -78,5 +81,6 @@ def count_identifiers(code: str) -> dict[str, int]:
 
 
 __all__ = [
-    "get_defined_identifiers"
+    "get_defined_identifiers",
+    "count_identifiers",
 ]

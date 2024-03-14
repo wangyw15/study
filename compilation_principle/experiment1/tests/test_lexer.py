@@ -47,16 +47,16 @@ End.
     """
 
 code_mixed_multiline = """
-Const num1=100, num2=200;
+Const num1 = 100, num2 = 200;
 Var a1, a2,
     b1, b2;
 Begin
     Read(A1);
     Read(a2);
-    b1:=a1+nUm1+num2;
-    B2:=A2+num1+NuM2;
-    write(A1,b1);
-    write(a2,B2);
+    b1 := a1 - nUm1 * num2 ;
+    B2 := A2 - num1 * NuM2 ;
+    write(A1, b1);
+    write(a2, B2);
 End.
     """
 
