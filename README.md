@@ -10,6 +10,8 @@
   - 高级语言程序设计
 - [assembly_programming](assembly_programming)
   - 汇编语言程序设计
+- [compilation_principle](compilation_principle)
+  - 编译原理
 - [computer_composition](computer_composition)
   - 计算机组成原理
 - [computer_network](computer_network)
@@ -22,6 +24,8 @@
   - 数据结构(2)
 - [database_principle_1](database_principle_1)
   - 数据库原理(1)
+- [database_principle_2](database_principle_2)
+  - 数据库原理(2)
 - [digital_logic_experiment](digital_logic_experiment)
   - 数字逻辑实验
 - [dotnet_application_development](dotnet_application_development)
@@ -30,6 +34,8 @@
   - 面向对象程序设计
 - [operating_system_1](operating_system_1)
   - 操作系统(1)
+- [operating_system_2](operating_system_2)
+  - 操作系统(2)
 - [python_computing](python_computing)
   - Python计算
 
