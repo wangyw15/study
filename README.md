@@ -12,6 +12,8 @@
   - 汇编语言程序设计
 - [compilation_principle](compilation_principle)
   - 编译原理
+- [computer_architecture](computer_architecture)
+  - 计算机系统结构
 - [computer_composition](computer_composition)
   - 计算机组成原理
 - [computer_network](computer_network)
