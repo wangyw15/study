@@ -1,21 +1,21 @@
 import pytest
 
-import test_code
 from compiler import lexer
+from . import code_helper
 
-code_normal = test_code.get_test_code("experiment1_example")
+code_normal = code_helper.get_test_code("experiment1_example")
 
-code_valid_identifiers = test_code.get_test_code("single_line_identifiers")
+code_valid_identifiers = code_helper.get_test_code("single_line_identifiers")
 
-code_multiline_var = test_code.get_test_code("multi_line_var")
+code_multiline_var = code_helper.get_test_code("multi_line_var")
 
-code_multiline_const = test_code.get_test_code("multi_line_const")
+code_multiline_const = code_helper.get_test_code("multi_line_const")
 
-code_mixed_multiline = test_code.get_test_code("multi_line_const_var")
+code_mixed_multiline = code_helper.get_test_code("multi_line_const_var")
 
-code_invalid_identifier = test_code.get_test_code("invalid_identifiers")
+code_invalid_identifier = code_helper.get_test_code("invalid_identifiers")
 
-code_undefined_symbol = test_code.get_test_code("undefined_symbol")
+code_undefined_symbol = code_helper.get_test_code("undefined_symbol")
 
 
 def test_get_defined_identifiers_normal():
