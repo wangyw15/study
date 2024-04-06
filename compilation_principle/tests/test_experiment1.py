@@ -1,84 +1,21 @@
-import lexer
 import pytest
 
-code_normal = """
-Const num=100;
-Var a1,b2;
-Begin
-    Read(A1);
-    b2:=a1+num;
-    write(A1,B2);
-End.
-    """
+import test_code
+from compiler import lexer
 
-code_valid_identifiers = """
-Const num=100;
-Var a_1,b2_,b_3,_b3,a1,B2;
-Begin
-    Read(A1);
-    b2:=a1+num;
-    write(A1,B2);
-End.
-    """
+code_normal = test_code.get_test_code("experiment1_example")
 
-code_multiline_var = """
-Const num=100;
-Var a1,
-    a2,
-    b2;
-Begin
-    Read(A1);
-    Read(a2);
-    b2:=a1+A2+num;
-    write(A1,B2);
-End.
-    """
+code_valid_identifiers = test_code.get_test_code("single_line_identifiers")
 
-code_multiline_const = """
-Const num1=100,
-      num2=200,
-      num3=300;
-Var a1,b2;
-Begin
-    Read(A1);
-    b2:=a1+num1+num2+num3;
-    write(A1,B2);
-End.
-    """
+code_multiline_var = test_code.get_test_code("multi_line_var")
 
-code_mixed_multiline = """
-Const num1 = 100, num2 = 200;
-Var a1, a2,
-    b1, b2;
-Begin
-    Read(A1);
-    Read(a2);
-    b1 := a1 - nUm1 * num2 ;
-    B2 := A2 - num1 * NuM2 ;
-    write(A1, b1);
-    write(a2, B2);
-End.
-    """
+code_multiline_const = test_code.get_test_code("multi_line_const")
 
-code_invalid_identifier = """
-Const num=100;
-Var a1,b2,2b;
-Begin
-    Read(A1);
-    b2:=a1+num;
-    write(A1,B2);
-End.
-    """
+code_mixed_multiline = test_code.get_test_code("multi_line_const_var")
 
-code_undefined_symbol = """
-Const num=100;
-Var a1,b2;
-Begin
-    Read(A1);
-    b1:=a1+num;
-    write(A1,B2);
-End.
-    """
+code_invalid_identifier = test_code.get_test_code("invalid_identifiers")
+
+code_undefined_symbol = test_code.get_test_code("undefined_symbol")
 
 
 def test_get_defined_identifiers_normal():

@@ -1,4 +1,9 @@
-import lexer
+import argparse
+
+from compiler import lexer
+
+parser = argparse.ArgumentParser(description="Compilation principle experiment")
+subparsers = parser.add_subparsers(dest="subparser_name")
 
 code = """
 Const num=100;

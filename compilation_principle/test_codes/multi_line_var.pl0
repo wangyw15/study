@@ -1,0 +1,10 @@
+Const num=100;
+Var a1,
+    a2,
+    b2;
+Begin
+    Read(A1);
+    Read(a2);
+    b2:=a1+A2+num;
+    write(A1,B2);
+End.
