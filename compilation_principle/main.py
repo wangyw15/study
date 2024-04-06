@@ -52,6 +52,10 @@ def main():
             result = lexer.count_identifiers(code)
             for identifier, count in result.items():
                 print(f"({identifier}, {count})")
+        elif arg.experiment_name == "experiment2":
+            result = lexer.get_symbols(code)
+            for i in result:
+                print(f"({i[0]}, {i[1]})")
 
 
 if __name__ == "__main__":

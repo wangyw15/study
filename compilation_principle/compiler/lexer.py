@@ -1,8 +1,35 @@
 import re
+import enum
 
-_valid_identifier_pattern = r"[a-z_]\w*"
 _procedure_end_pattern = r"end[;.]"
 _use_identifier_pattern = r"([^\w]|){}([^\w]|)"
+
+
+class SymbolType(enum.Enum):
+    # operators
+    PLUS = r"\+"
+    MINUS = "-"
+    TIMES = r"\*"
+    SLASH = r"\/"
+    # symbols
+    LEFT_PARENTHESIS = r"\("
+    RIGHT_PARENTHESIS = r"\)"
+    EQUAL = "="
+    PERIOD = r"\."
+    BECOMES = ":="
+    SEMICOLON = ";"
+    COMMA = ","
+    # keywords
+    CONST = "const"
+    VAR = "var"
+    BEGIN = "begin"
+    END = "end"
+    # built-in functions
+    READ = "read"
+    WRITE = "write"
+    # identifiers
+    IDENTIFIER = r"[a-z_]\w*"
+    NUMBER = r"\d+"
 
 
 def get_defined_identifiers(code: str) -> list[str]:
@@ -46,7 +73,7 @@ def get_defined_identifiers(code: str) -> list[str]:
             else:
                 current_identifier = current_identifier.strip()
             # test if the identifier is valid
-            if re.fullmatch(_valid_identifier_pattern, current_identifier):
+            if re.fullmatch(SymbolType.IDENTIFIER.value, current_identifier):
                 identifiers.append(current_identifier)
             else:
                 raise SyntaxError("Invalid identifier: " + current_identifier)
@@ -80,7 +107,69 @@ def count_identifiers(code: str) -> dict[str, int]:
     return result
 
 
+def is_symbol_boundary(char: str, next_char: str) -> bool:
+    boundary_chars = list("+-*/()=.:;,")
+    return (
+        re.fullmatch(SymbolType.IDENTIFIER.value, char)
+        and next_char in boundary_chars
+        or char in boundary_chars
+        and re.fullmatch(SymbolType.IDENTIFIER.value, next_char)
+        or re.fullmatch(SymbolType.NUMBER.value, char)
+        and next_char in boundary_chars
+        or char in boundary_chars
+        and re.fullmatch(SymbolType.NUMBER.value, next_char)
+        or char in boundary_chars
+        and next_char in boundary_chars
+        or char.isspace()
+        or next_char.isspace()
+    )
+
+
+def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
+    result: list[tuple[SymbolType, str]] = []
+    identifiers = get_defined_identifiers(code)
+
+    symbols: list[str] = []
+    # spilt symbols
+    symbol_tmp = ""
+    code = code + " "  # for enumerate
+    for index, char in enumerate(code[:-1]):
+        char: str
+        if not char.isspace():
+            symbol_tmp += char
+
+        # detect word boundary
+        if is_symbol_boundary(char, code[index + 1]):
+            if symbol_tmp:
+                symbols.append(symbol_tmp)
+                symbol_tmp = ""
+
+    # combine symbols
+    symbols += [""]  # for last symbol
+    for index, symbol in enumerate(symbols[:-1]):
+        if symbol == ":" and symbols[index + 1] == "=":
+            symbols[index] = ":="
+            del symbols[index + 1]
+    symbols.pop()  # remove last empty symbol
+
+    # detect symbols
+    for symbol in symbols:
+        symbol_type = None
+        if symbol.lower() in identifiers:
+            symbol_type = SymbolType.IDENTIFIER
+        else:
+            for t in SymbolType:
+                if re.fullmatch(t.value, symbol):
+                    symbol_type = t
+                    break
+        if symbol_type:
+            result.append((symbol_type, symbol))
+
+    return result
+
+
 __all__ = [
     "get_defined_identifiers",
     "count_identifiers",
+    "get_symbols",
 ]
