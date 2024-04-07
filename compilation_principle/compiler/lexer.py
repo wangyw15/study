@@ -30,6 +30,7 @@ class SymbolType(enum.Enum):
     # identifiers
     IDENTIFIER = r"[a-z_]\w*"
     NUMBER = r"\d+"
+    UNKNOWN = ""
 
 
 def get_defined_identifiers(code: str) -> list[str]:
@@ -145,12 +146,17 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
                 symbol_tmp = ""
 
     # combine symbols
-    symbols += [""]  # for last symbol
+    symbols.append("")  # for last symbol
+    processed_symbols: list[str] = []
     for index, symbol in enumerate(symbols[:-1]):
         if symbol == ":" and symbols[index + 1] == "=":
-            symbols[index] = ":="
-            del symbols[index + 1]
-    symbols.pop()  # remove last empty symbol
+            processed_symbols.append(":=")
+            continue
+        elif symbols[index - 1] == ":" and symbol == "=":
+            continue
+        if symbol:
+            processed_symbols.append(symbol)
+    symbols = processed_symbols
 
     # detect symbols
     for symbol in symbols:
@@ -162,6 +168,8 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
                 if re.fullmatch(t.value, symbol, re.IGNORECASE):
                     symbol_type = t
                     break
+        if not symbol_type:
+            symbol_type = SymbolType.UNKNOWN
         if symbol_type:
             result.append((symbol_type, symbol))
 
@@ -169,6 +177,7 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
 
 
 __all__ = [
+    "SymbolType",
     "get_defined_identifiers",
     "count_identifiers",
     "get_symbols",
