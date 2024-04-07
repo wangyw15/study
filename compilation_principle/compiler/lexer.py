@@ -73,7 +73,7 @@ def get_defined_identifiers(code: str) -> list[str]:
             else:
                 current_identifier = current_identifier.strip()
             # test if the identifier is valid
-            if re.fullmatch(SymbolType.IDENTIFIER.value, current_identifier):
+            if re.fullmatch(SymbolType.IDENTIFIER.value, current_identifier, re.IGNORECASE):
                 identifiers.append(current_identifier)
             else:
                 raise SyntaxError("Invalid identifier: " + current_identifier)
@@ -97,12 +97,12 @@ def count_identifiers(code: str) -> dict[str, int]:
                 in_code_section = True
             continue
         # end code section
-        if re.fullmatch(_procedure_end_pattern, lower_line):
+        if re.fullmatch(_procedure_end_pattern, lower_line, re.IGNORECASE):
             in_code_section = False
             continue
         # find identifier
         for identifier in identifiers:
-            if re.search(_use_identifier_pattern.format(identifier), lower_line):
+            if re.search(_use_identifier_pattern.format(identifier), lower_line, re.IGNORECASE):
                 result[identifier] += 1
     return result
 
@@ -110,14 +110,14 @@ def count_identifiers(code: str) -> dict[str, int]:
 def is_symbol_boundary(char: str, next_char: str) -> bool:
     boundary_chars = list("+-*/()=.:;,")
     return (
-        re.fullmatch(SymbolType.IDENTIFIER.value, char)
+        re.fullmatch(SymbolType.IDENTIFIER.value, char, re.IGNORECASE)
         and next_char in boundary_chars
         or char in boundary_chars
-        and re.fullmatch(SymbolType.IDENTIFIER.value, next_char)
-        or re.fullmatch(SymbolType.NUMBER.value, char)
+        and re.fullmatch(SymbolType.IDENTIFIER.value, next_char, re.IGNORECASE)
+        or re.fullmatch(SymbolType.NUMBER.value, char, re.IGNORECASE)
         and next_char in boundary_chars
         or char in boundary_chars
-        and re.fullmatch(SymbolType.NUMBER.value, next_char)
+        and re.fullmatch(SymbolType.NUMBER.value, next_char, re.IGNORECASE)
         or char in boundary_chars
         and next_char in boundary_chars
         or char.isspace()
@@ -159,7 +159,7 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
             symbol_type = SymbolType.IDENTIFIER
         else:
             for t in SymbolType:
-                if re.fullmatch(t.value, symbol):
+                if re.fullmatch(t.value, symbol, re.IGNORECASE):
                     symbol_type = t
                     break
         if symbol_type:
