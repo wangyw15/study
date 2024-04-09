@@ -13,3 +13,6 @@ target_link_libraries("${PROJECT_NAME}_1" OpenMP::OpenMP_C)
 
 add_executable ("${PROJECT_NAME}_2" "src/requirement2.c")
 target_link_libraries("${PROJECT_NAME}_2" OpenMP::OpenMP_C)
+
+add_executable ("${PROJECT_NAME}_3" "src/requirement3.c")
+target_link_libraries("${PROJECT_NAME}_3" OpenMP::OpenMP_C)
