@@ -8,5 +8,8 @@ project (${PNAME})
 
 find_package (OpenMP REQUIRED)
 
-add_executable ("${PROJECT_NAME}_main" "src/main.c")
-target_link_libraries("${PROJECT_NAME}_main" OpenMP::OpenMP_C)
+add_executable ("${PROJECT_NAME}_1" "src/requirement1.c")
+target_link_libraries("${PROJECT_NAME}_1" OpenMP::OpenMP_C)
+
+add_executable ("${PROJECT_NAME}_2" "src/requirement2.c")
+target_link_libraries("${PROJECT_NAME}_2" OpenMP::OpenMP_C)
