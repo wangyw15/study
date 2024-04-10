@@ -8,13 +8,13 @@
 
 __global__ void ArrayComputeCUDA(int n, const int a[], const int b[], int c[]) {
     for (int i = 0; i < n; i++) {
-        c[i] = a[i] - b[i] * (i % 2 - 1);
+        // c[i] = a[i] - b[i] * (i % 2 - 1);
+        c[i] = a[i] + b[i] * ((i + 1) % 2);
     }
 }
 
 void ArrayComputeCPU(int n, const int a[], const int b[], int c[]) {
     for (int i = 0; i < n; i++) {
-        // c[i] = a[i] - b[i] * (i % 2 - 1);
         if (i % 2 == 0) {
             c[i] = a[i] + b[i];
         }
