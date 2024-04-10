@@ -63,7 +63,7 @@ int main() {
 
     std::cout << "CPU time: "
               << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
-              << "ms" << std::endl;
+              << "us" << std::endl;
 
     // Calculate by GPU
     dim3 dimGrid(16, 32);   // grid's dimension
@@ -78,7 +78,7 @@ int main() {
 
     std::cout << "GPU time: "
               << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
-              << "ms" << std::endl;
+              << "us" << std::endl;
 
     // Check the result
     for (int i = 0; i < ARRAY_SIZE; i++) {
