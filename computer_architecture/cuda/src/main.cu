@@ -25,12 +25,19 @@ void ArrayComputeCPU(int n, const int a[], const int b[], int c[]) {
 }
 
 int main() {
-    int device = 1;
-    cudaGetDevice(&device);
-    // Check GPU
-    auto status = cudaSetDevice(device);
+    // Get GPU device
+    int device = -1;
+    auto status = cudaGetDevice(&device);
     if (status != cudaSuccess) {
-        std::cerr << "cudaSetDevice failed! Any CUDA-capable GPU installed?" << std::endl;
+        std::cerr << "cudaGetDevice failed!" << std::endl;
+        return 1;
+    }
+    std::cout << "Select GPU device: " << device << std::endl;
+
+    // Check GPU
+    status = cudaSetDevice(device);
+    if (status != cudaSuccess) {
+        std::cerr << "cudaSetDevice failed!" << std::endl;
         return 1;
     }
 
