@@ -1,0 +1,11 @@
+{
+    "image": "nvidia/cuda:12.4.1-devel-ubuntu22.04",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools"
+            ]
+        }
+    },
+    "postCreateCommand": "sed -e 's/archive.ubuntu.com/mirrors.aliyun.com/g' -e 's/security.ubuntu.com/mirrors.aliyun.com/g' -i /etc/apt/sources.list && apt update && apt install -y build-essential cmake"
+}
