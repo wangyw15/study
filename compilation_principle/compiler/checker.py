@@ -101,10 +101,10 @@ def check_item() -> bool:
         return False
 
     while True:
-        # check for end of expression
-        if _expression_index == len(_expression_tokens):
-            return True
-        if not check_multiply_operators():
+        if (
+            _expression_index == len(_expression_tokens)  # end of expression
+            or not check_multiply_operators()
+        ):
             break
         if not check_factor():
             return False
@@ -128,10 +128,10 @@ def check_expression() -> bool:
         return False
 
     while True:
-        # check for end of expression
-        if _expression_index == len(_expression_tokens):
-            return True
-        if not check_plus_operators():
+        if (
+                _expression_index == len(_expression_tokens)    # end of expression
+                or not check_plus_operators()
+        ):
             break
         if not check_item():
             return False
