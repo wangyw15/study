@@ -149,10 +149,10 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
     symbols.append("")  # for last symbol
     processed_symbols: list[str] = []
     for index, symbol in enumerate(symbols[:-1]):
-        if symbol == ":" and symbols[index + 1] == "=":
+        if symbol + symbols[index + 1] == ":=":
             processed_symbols.append(":=")
             continue
-        elif symbols[index - 1] == ":" and symbol == "=":
+        elif symbols[index - 1] + symbol == ":=":
             continue
         if symbol:
             processed_symbols.append(symbol)
