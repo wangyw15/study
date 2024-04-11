@@ -2,10 +2,10 @@ import argparse
 from pathlib import Path
 import tests
 
-from compiler import lexer
+from compiler import lexer, checker
 
-parser = argparse.ArgumentParser(description="Compilation principle experiment")
-subparsers = parser.add_subparsers(dest="subcommand")
+arg_parser = argparse.ArgumentParser(description="Compilation principle experiment")
+subparsers = arg_parser.add_subparsers(dest="subcommand")
 
 test_parser = subparsers.add_parser("test", help="Run tests of experiments")
 test_parser.add_argument(
@@ -26,10 +26,10 @@ runner_parser.add_argument("input", help="Input file path", type=str)
 
 
 def main():
-    arg = parser.parse_args()
+    arg = arg_parser.parse_args()
 
     if not arg.subcommand:
-        parser.print_help()
+        arg_parser.print_help()
         return
 
     if arg.subcommand == "test":
@@ -53,9 +53,11 @@ def main():
             for identifier, count in result.items():
                 print(f"({identifier}, {count})")
         elif arg.experiment_name == "experiment2":
-            result = lexer.get_symbols(code)
+            result = lexer.get_tokens(code)
             for i in result:
                 print(f"({i[0]}, {i[1]})")
+        elif arg.experiment_name == "experiment3":
+            print(checker.check(code))
 
 
 if __name__ == "__main__":

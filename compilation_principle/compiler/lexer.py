@@ -1,36 +1,9 @@
 import re
-import enum
+
+from compiler.types import TokenType, Token
 
 _procedure_end_pattern = r"end[;.]"
 _use_identifier_pattern = r"([^\w]|){}([^\w]|)"
-
-
-class SymbolType(enum.Enum):
-    # operators
-    PLUS = r"\+"
-    MINUS = "-"
-    TIMES = r"\*"
-    SLASH = r"\/"
-    # symbols
-    LEFT_PARENTHESIS = r"\("
-    RIGHT_PARENTHESIS = r"\)"
-    EQUAL = "="
-    PERIOD = r"\."
-    BECOMES = ":="
-    SEMICOLON = ";"
-    COMMA = ","
-    # keywords
-    CONST = "const"
-    VAR = "var"
-    BEGIN = "begin"
-    END = "end"
-    # built-in functions
-    READ = "read"
-    WRITE = "write"
-    # identifiers
-    IDENTIFIER = r"[a-z_]\w*"
-    NUMBER = r"\d+"
-    UNKNOWN = ""
 
 
 def get_defined_identifiers(code: str) -> list[str]:
@@ -74,7 +47,7 @@ def get_defined_identifiers(code: str) -> list[str]:
             else:
                 current_identifier = current_identifier.strip()
             # test if the identifier is valid
-            if re.fullmatch(SymbolType.IDENTIFIER.value, current_identifier, re.IGNORECASE):
+            if re.fullmatch(TokenType.IDENTIFIER.value, current_identifier, re.IGNORECASE):
                 identifiers.append(current_identifier)
             else:
                 raise SyntaxError("Invalid identifier: " + current_identifier)
@@ -108,17 +81,17 @@ def count_identifiers(code: str) -> dict[str, int]:
     return result
 
 
-def is_symbol_boundary(char: str, next_char: str) -> bool:
+def is_token_boundary(char: str, next_char: str) -> bool:
     boundary_chars = list("+-*/()=.:;,")
     return (
-        re.fullmatch(SymbolType.IDENTIFIER.value, char, re.IGNORECASE)
+        re.fullmatch(TokenType.IDENTIFIER.value, char, re.IGNORECASE)
         and next_char in boundary_chars
         or char in boundary_chars
-        and re.fullmatch(SymbolType.IDENTIFIER.value, next_char, re.IGNORECASE)
-        or re.fullmatch(SymbolType.NUMBER.value, char, re.IGNORECASE)
+        and re.fullmatch(TokenType.IDENTIFIER.value, next_char, re.IGNORECASE)
+        or re.fullmatch(TokenType.NUMBER.value, char, re.IGNORECASE)
         and next_char in boundary_chars
         or char in boundary_chars
-        and re.fullmatch(SymbolType.NUMBER.value, next_char, re.IGNORECASE)
+        and re.fullmatch(TokenType.NUMBER.value, next_char, re.IGNORECASE)
         or char in boundary_chars
         and next_char in boundary_chars
         or char.isspace()
@@ -126,12 +99,11 @@ def is_symbol_boundary(char: str, next_char: str) -> bool:
     )
 
 
-def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
-    result: list[tuple[SymbolType, str]] = []
-    identifiers = get_defined_identifiers(code)
+def get_tokens(code: str) -> list[Token]:
+    result: list[Token] = []
 
-    symbols: list[str] = []
-    # spilt symbols
+    tokens: list[str] = []
+    # spilt codes
     symbol_tmp = ""
     code = code + " "  # for enumerate
     for index, char in enumerate(code[:-1]):
@@ -140,36 +112,36 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
             symbol_tmp += char
 
         # detect word boundary
-        if is_symbol_boundary(char, code[index + 1]):
+        if is_token_boundary(char, code[index + 1]):
             if symbol_tmp:
-                symbols.append(symbol_tmp)
+                tokens.append(symbol_tmp)
                 symbol_tmp = ""
 
-    # combine symbols
-    symbols.append("")  # for last symbol
+    # combine multi-char tokens
+    tokens.append("")  # for last token
     processed_symbols: list[str] = []
-    for index, symbol in enumerate(symbols[:-1]):
-        if symbol + symbols[index + 1] == ":=":
+    for index, symbol in enumerate(tokens[:-1]):
+        if symbol + tokens[index + 1] == ":=":
             processed_symbols.append(":=")
             continue
-        elif symbols[index - 1] + symbol == ":=":
+        elif tokens[index - 1] + symbol == ":=":
             continue
         if symbol:
             processed_symbols.append(symbol)
-    symbols = processed_symbols
+    tokens = processed_symbols
 
-    # detect symbols
-    for symbol in symbols:
+    # detect tokens
+    for symbol in tokens:
         symbol_type = None
-        if symbol.lower() in identifiers:
-            symbol_type = SymbolType.IDENTIFIER
-        else:
-            for t in SymbolType:
-                if re.fullmatch(t.value, symbol, re.IGNORECASE):
-                    symbol_type = t
-                    break
+        for t in TokenType:
+            if re.fullmatch(t.value, symbol, re.IGNORECASE):
+                symbol_type = t
+                break
         if not symbol_type:
-            symbol_type = SymbolType.UNKNOWN
+            if re.fullmatch(TokenType.IDENTIFIER.value, symbol, re.IGNORECASE):
+                symbol_type = TokenType.IDENTIFIER
+            else:
+                symbol_type = TokenType.UNKNOWN
         if symbol_type:
             result.append((symbol_type, symbol))
 
@@ -177,8 +149,7 @@ def get_symbols(code: str) -> list[tuple[SymbolType, str]]:
 
 
 __all__ = [
-    "SymbolType",
     "get_defined_identifiers",
     "count_identifiers",
-    "get_symbols",
+    "get_tokens",
 ]
