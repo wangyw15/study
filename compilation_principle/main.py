@@ -73,7 +73,11 @@ def main():
         elif arg.experiment_name == "experiment4":
             ast_tree = ast(tokenize(code))
             print("AST tree:")
-            print(json.dumps(ast_tree, indent=2, ensure_ascii=False, cls=EnhancedJSONEncoder))
+            print(
+                json.dumps(
+                    ast_tree, indent=2, ensure_ascii=False, cls=EnhancedJSONEncoder
+                )
+            )
             print("Result:")
             print(execute(ast_tree))
 
