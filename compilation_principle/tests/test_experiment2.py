@@ -7,9 +7,10 @@ code_valid_identifiers = code_helper.get_test_code("single_line_identifiers")
 code_multi_line_var = code_helper.get_test_code("multi_line_var")
 code_multi_line_const = code_helper.get_test_code("multi_line_const")
 code_multi_line_const_var = code_helper.get_test_code("multi_line_const_var")
+code_invalid_char = code_helper.get_test_code("expression_invalid_char")
 
 
-def test_get_symbols_example():
+def test_tokenize_example():
     result = tokenize(code_example)
     expected = [
         Token(TokenType.CONST, "const"),
@@ -47,7 +48,7 @@ def test_get_symbols_example():
     assert result == expected
 
 
-def test_get_symbols_valid_identifiers():
+def test_tokenize_valid_identifiers():
     result = tokenize(code_valid_identifiers)
     expected = [
         Token(TokenType.CONST, "Const"),
@@ -95,7 +96,7 @@ def test_get_symbols_valid_identifiers():
     assert result == expected
 
 
-def test_get_symbols_multi_line_var():
+def test_tokenize_multi_line_var():
     result = tokenize(code_multi_line_var)
     expected = [
         Token(TokenType.CONST, "Const"),
@@ -144,7 +145,7 @@ def test_get_symbols_multi_line_var():
     assert result == expected
 
 
-def test_get_symbols_multi_line_const():
+def test_tokenize_multi_line_const():
     result = tokenize(code_multi_line_const)
     expected = [
         Token(TokenType.CONST, "Const"),
@@ -196,7 +197,7 @@ def test_get_symbols_multi_line_const():
     assert result == expected
 
 
-def test_get_symbols_multi_line_const_var():
+def test_tokenize_multi_line_const_var():
     result = tokenize(code_multi_line_const_var)
     expected = [
         Token(TokenType.CONST, "Const"),
@@ -260,6 +261,16 @@ def test_get_symbols_multi_line_const_var():
         Token(TokenType.SEMICOLON, ";"),
         Token(TokenType.END, "End"),
         Token(TokenType.PERIOD, "."),
+    ]
+
+    assert len(result) == len(expected)
+    assert result == expected
+
+
+def test_tokenize_invalid_char():
+    result = tokenize(code_invalid_char)
+    expected = [
+        Token(TokenType.UNKNOWN, "{"),
     ]
 
     assert len(result) == len(expected)

@@ -108,46 +108,46 @@ def tokenize(code: str) -> list[Token]:
 
     tokens: list[str] = []
     # spilt codes
-    symbol_tmp = ""
+    token_tmp = ""
     code = code + " "  # for enumerate
     for index, char in enumerate(code[:-1]):
         char: str
         if not char.isspace():
-            symbol_tmp += char
+            token_tmp += char
 
         # detect word boundary
         if is_token_boundary(char, code[index + 1]):
-            if symbol_tmp:
-                tokens.append(symbol_tmp)
-                symbol_tmp = ""
+            if token_tmp:
+                tokens.append(token_tmp)
+                token_tmp = ""
 
     # combine multi-char tokens
     tokens.append("")  # for last token
-    processed_symbols: list[str] = []
-    for index, symbol in enumerate(tokens[:-1]):
-        if symbol + tokens[index + 1] == ":=":
-            processed_symbols.append(":=")
+    processed_tokens: list[str] = []
+    for index, token in enumerate(tokens[:-1]):
+        if token + tokens[index + 1] == ":=":
+            processed_tokens.append(":=")
             continue
-        elif tokens[index - 1] + symbol == ":=":
+        elif tokens[index - 1] + token == ":=":
             continue
-        if symbol:
-            processed_symbols.append(symbol)
-    tokens = processed_symbols
+        if token:
+            processed_tokens.append(token)
+    tokens = processed_tokens
 
     # detect tokens
-    for symbol in tokens:
-        symbol_type = None
+    for token in tokens:
+        token_type = None
         for t in TokenType:
-            if re.fullmatch(t.value, symbol, re.IGNORECASE):
-                symbol_type = t
+            if re.fullmatch(t.value, token, re.IGNORECASE):
+                token_type = t
                 break
-        if not symbol_type:
-            if re.fullmatch(TokenType.IDENTIFIER.value, symbol, re.IGNORECASE):
-                symbol_type = TokenType.IDENTIFIER
+        if not token_type:
+            if re.fullmatch(TokenType.IDENTIFIER.value, token, re.IGNORECASE):
+                token_type = TokenType.IDENTIFIER
             else:
-                symbol_type = TokenType.UNKNOWN
-        if symbol_type:
-            result.append(Token(symbol_type, symbol))
+                token_type = TokenType.UNKNOWN
+        if token_type:
+            result.append(Token(token_type, token))
 
     return result
 
