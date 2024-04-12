@@ -10,6 +10,7 @@ code_duplicate_operators = code_helper.get_test_code("expression_duplicate_opera
 code_wrong_factor_leading = code_helper.get_test_code("expression_wrong_factor_leading")
 code_invalid_token = code_helper.get_test_code("expression_invalid_token")
 code_long = code_helper.get_test_code("expression_long")
+code_leading_minus = code_helper.get_test_code("expression_leading_minus")
 
 
 def test_check_example():
@@ -38,3 +39,7 @@ def test_invalid_token():
 
 def test_long():
     assert ast(tokenize(code_long))
+
+
+def test_leading_minus():
+    assert ast(tokenize(code_leading_minus))
