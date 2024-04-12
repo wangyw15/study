@@ -1,14 +1,12 @@
 import enum
-
-
-type Token = tuple[TokenType, str]
+from dataclasses import dataclass
 
 
 class TokenType(enum.Enum):
     # operators
     PLUS = r"\+"
     MINUS = "-"
-    TIMES = r"\*"
+    ASTERISK = r"\*"
     SLASH = r"\/"
     # symbols
     LEFT_PARENTHESIS = r"\("
@@ -30,3 +28,26 @@ class TokenType(enum.Enum):
     IDENTIFIER = r"[a-z_]\w*"
     NUMBER = r"\d+"
     UNKNOWN = ""
+
+
+class ExpressionType(str, enum.Enum):
+    ADD = "+"
+    MINUS = "-"
+    MULTIPLY = "*"
+    DIVIDE = ""
+    NUMBER = "number"
+    UNKNOWN = "unknown"
+
+
+@dataclass
+class Token:
+    type: TokenType
+    data: str
+
+
+@dataclass
+class ExpressionNode:
+    type: ExpressionType = ExpressionType.UNKNOWN
+    data: str = ""
+    left: "ExpressionNode" = None
+    right: "ExpressionNode" = None

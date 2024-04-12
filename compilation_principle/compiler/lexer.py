@@ -143,7 +143,7 @@ def get_tokens(code: str) -> list[Token]:
             else:
                 symbol_type = TokenType.UNKNOWN
         if symbol_type:
-            result.append((symbol_type, symbol))
+            result.append(Token(symbol_type, symbol))
 
     return result
 

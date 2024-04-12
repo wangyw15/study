@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 import tests
 
-from compiler import lexer, checker
+from compiler import lexer, parser
 
 arg_parser = argparse.ArgumentParser(description="Compilation principle experiment")
 subparsers = arg_parser.add_subparsers(dest="subcommand")
@@ -57,7 +57,7 @@ def main():
             for i in result:
                 print(f"({i[0]}, {i[1]})")
         elif arg.experiment_name == "experiment3":
-            print(checker.check(code))
+            print(checker.ast(code))
 
 
 if __name__ == "__main__":
