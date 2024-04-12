@@ -34,7 +34,7 @@ class ExpressionType(str, enum.Enum):
     ADD = "+"
     MINUS = "-"
     MULTIPLY = "*"
-    DIVIDE = ""
+    DIVIDE = "/"
     IDENTIFIER = "identifier"
     NUMBER = "number"
     UNKNOWN = "unknown"
@@ -52,3 +52,11 @@ class ExpressionNode:
     data: str = ""
     left: "ExpressionNode" = None
     right: "ExpressionNode" = None
+
+
+@dataclass
+class IntermediateTuple:
+    operator: ExpressionType
+    operand1: str
+    operand2: str
+    result: str

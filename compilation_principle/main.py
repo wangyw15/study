@@ -4,7 +4,7 @@ import tests
 
 from compiler.lexer import count_identifiers, tokenize
 from compiler.parser import ast
-from compiler.interpreter import execute
+from compiler.interpreter import execute, intermediate
 import dataclasses
 import json
 
@@ -80,6 +80,10 @@ def main():
             )
             print("Result:")
             print(execute(ast_tree))
+        elif arg.experiment_name == "experiment5":
+            intermediate_tuples = intermediate(ast(tokenize(code)))
+            for i in intermediate_tuples:
+                print(f"({i.operator.value}, {i.operand1}, {i.operand2}, {i.result})")
 
 
 if __name__ == "__main__":

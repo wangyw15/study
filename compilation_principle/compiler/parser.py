@@ -70,9 +70,7 @@ def _factor() -> ExpressionNode:
         return node
 
     # check for number
-    if re.fullmatch(
-        TokenType.NUMBER.value, _tokens[_token_index].data, re.IGNORECASE
-    ):
+    if re.fullmatch(TokenType.NUMBER.value, _tokens[_token_index].data, re.IGNORECASE):
         node = ExpressionNode(ExpressionType.NUMBER, _tokens[_token_index].data)
         _token_index += 1
         return node
@@ -162,7 +160,9 @@ def _expression() -> ExpressionNode:
         node = ExpressionNode(operator, "", node, right_node)
 
     if leading_sign != ExpressionType.UNKNOWN:
-        node = ExpressionNode(leading_sign, "", ExpressionNode(ExpressionType.NUMBER, "0"), node)
+        node = ExpressionNode(
+            leading_sign, "", ExpressionNode(ExpressionType.NUMBER, "0"), node
+        )
 
     return node
 

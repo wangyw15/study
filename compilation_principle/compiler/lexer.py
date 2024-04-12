@@ -47,7 +47,9 @@ def get_defined_identifiers(code: str) -> list[str]:
             else:
                 current_identifier = current_identifier.strip()
             # test if the identifier is valid
-            if re.fullmatch(TokenType.IDENTIFIER.value, current_identifier, re.IGNORECASE):
+            if re.fullmatch(
+                TokenType.IDENTIFIER.value, current_identifier, re.IGNORECASE
+            ):
                 identifiers.append(current_identifier)
             else:
                 raise SyntaxError("Invalid identifier: " + current_identifier)
@@ -76,7 +78,9 @@ def count_identifiers(code: str) -> dict[str, int]:
             continue
         # find identifier
         for identifier in identifiers:
-            if re.search(_use_identifier_pattern.format(identifier), lower_line, re.IGNORECASE):
+            if re.search(
+                _use_identifier_pattern.format(identifier), lower_line, re.IGNORECASE
+            ):
                 result[identifier] += 1
     return result
 
