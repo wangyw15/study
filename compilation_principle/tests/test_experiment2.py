@@ -1,5 +1,5 @@
 from . import code_helper
-from compiler.lexer import get_tokens
+from compiler.lexer import tokenize
 from compiler.types import TokenType, Token
 
 code_example = code_helper.get_test_code("experiment2_example")
@@ -10,7 +10,7 @@ code_multi_line_const_var = code_helper.get_test_code("multi_line_const_var")
 
 
 def test_get_symbols_example():
-    result = get_tokens(code_example)
+    result = tokenize(code_example)
     expected = [
         Token(TokenType.CONST, "const"),
         Token(TokenType.IDENTIFIER, "a"),
@@ -48,7 +48,7 @@ def test_get_symbols_example():
 
 
 def test_get_symbols_valid_identifiers():
-    result = get_tokens(code_valid_identifiers)
+    result = tokenize(code_valid_identifiers)
     expected = [
         Token(TokenType.CONST, "Const"),
         Token(TokenType.IDENTIFIER, "num"),
@@ -96,7 +96,7 @@ def test_get_symbols_valid_identifiers():
 
 
 def test_get_symbols_multi_line_var():
-    result = get_tokens(code_multi_line_var)
+    result = tokenize(code_multi_line_var)
     expected = [
         Token(TokenType.CONST, "Const"),
         Token(TokenType.IDENTIFIER, "num"),
@@ -145,7 +145,7 @@ def test_get_symbols_multi_line_var():
 
 
 def test_get_symbols_multi_line_const():
-    result = get_tokens(code_multi_line_const)
+    result = tokenize(code_multi_line_const)
     expected = [
         Token(TokenType.CONST, "Const"),
         Token(TokenType.IDENTIFIER, "num1"),
@@ -197,7 +197,7 @@ def test_get_symbols_multi_line_const():
 
 
 def test_get_symbols_multi_line_const_var():
-    result = get_tokens(code_multi_line_const_var)
+    result = tokenize(code_multi_line_const_var)
     expected = [
         Token(TokenType.CONST, "Const"),
         Token(TokenType.IDENTIFIER, "num1"),

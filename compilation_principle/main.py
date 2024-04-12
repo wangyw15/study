@@ -2,7 +2,19 @@ import argparse
 from pathlib import Path
 import tests
 
-from compiler import lexer, parser
+from compiler.lexer import count_identifiers, tokenize
+from compiler.parser import ast
+from compiler.interpreter import execute
+import dataclasses
+import json
+
+
+class EnhancedJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        return super().default(o)
+
 
 arg_parser = argparse.ArgumentParser(description="Compilation principle experiment")
 subparsers = arg_parser.add_subparsers(dest="subcommand")
@@ -49,15 +61,21 @@ def main():
             code = f.read()
 
         if arg.experiment_name == "experiment1":
-            result = lexer.count_identifiers(code)
+            result = count_identifiers(code)
             for identifier, count in result.items():
                 print(f"({identifier}, {count})")
         elif arg.experiment_name == "experiment2":
-            result = lexer.get_tokens(code)
+            result = tokenize(code)
             for i in result:
-                print(f"({i[0]}, {i[1]})")
+                print(f"({i.type.name}, '{i.data}')")
         elif arg.experiment_name == "experiment3":
-            print(checker.ast(code))
+            print(ast(tokenize(code)) is not None)
+        elif arg.experiment_name == "experiment4":
+            ast_tree = ast(tokenize(code))
+            print("AST tree:")
+            print(json.dumps(ast_tree, indent=2, ensure_ascii=False, cls=EnhancedJSONEncoder))
+            print("Result:")
+            print(execute(ast_tree))
 
 
 if __name__ == "__main__":

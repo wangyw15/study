@@ -99,7 +99,7 @@ def is_token_boundary(char: str, next_char: str) -> bool:
     )
 
 
-def get_tokens(code: str) -> list[Token]:
+def tokenize(code: str) -> list[Token]:
     result: list[Token] = []
 
     tokens: list[str] = []
@@ -151,5 +151,5 @@ def get_tokens(code: str) -> list[Token]:
 __all__ = [
     "get_defined_identifiers",
     "count_identifiers",
-    "get_tokens",
+    "tokenize",
 ]

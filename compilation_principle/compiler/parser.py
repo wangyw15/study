@@ -1,50 +1,60 @@
 import re
 
-from compiler.lexer import get_tokens
 from compiler.types import TokenType, Token, ExpressionType, ExpressionNode
 
-_expression_index: int = -1
-_expression_tokens: list[Token] = []
+_ast_root: ExpressionNode = ExpressionNode()
+_token_index: int = -1
+_tokens: list[Token] = []
 
 
-def _add_operator() -> bool:
+def _add_operator() -> ExpressionType:
     """
     <add_operator> ::= '+' | '-'
-    :return: True if the current token is a plus operator, False otherwise
+    :return: the type of the operator if the current token is an add operator, None otherwise
     """
-    global _expression_index
+    global _token_index
     # print("plus", end=" ")
     # print(_expression_index, end=" ")
     # print(_expression_tokens[_expression_index][1])
 
-    if _expression_tokens[_expression_index].type in [TokenType.PLUS, TokenType.MINUS]:
-        _expression_index += 1
-        return True
-    return False
+    if _tokens[_token_index].type == TokenType.PLUS:
+        _token_index += 1
+        return ExpressionType.ADD
+
+    elif _tokens[_token_index].type == TokenType.MINUS:
+        _token_index += 1
+        return ExpressionType.MINUS
+
+    return ExpressionType.UNKNOWN
 
 
-def _multiply_operator() -> bool:
+def _multiply_operator() -> ExpressionType:
     """
     <multiply_operator> ::= '*' | '/'
-    :return: True if the current token is a multiply operator, False otherwise
+    :return: the type of the operator if the current token is a multiply operator, None otherwise
     """
-    global _expression_index
+    global _token_index
     # print("multiply", end=" ")
     # print(_expression_index, end=" ")
     # print(_expression_tokens[_expression_index][1])
 
-    if _expression_tokens[_expression_index].type in [TokenType.ASTERISK, TokenType.SLASH]:
-        _expression_index += 1
-        return True
-    return False
+    if _tokens[_token_index].type == TokenType.ASTERISK:
+        _token_index += 1
+        return ExpressionType.MULTIPLY
+
+    elif _tokens[_token_index].type == TokenType.SLASH:
+        _token_index += 1
+        return ExpressionType.DIVIDE
+
+    return ExpressionType.UNKNOWN
 
 
-def _factor() -> bool:
+def _factor() -> ExpressionNode:
     """
     <factor> ::= <identifier> | <unsigned int> | '(' <expression> ')'
-    :return: True if the current token is a factor, False otherwise
+    :return: expression node if the current token is an expression, raise error otherwise
     """
-    global _expression_index
+    global _token_index
     # print("factor", end=" ")
     # print(_expression_index, end=" ")
     # print(_expression_tokens[_expression_index][1])
@@ -52,99 +62,121 @@ def _factor() -> bool:
     # check for identifier
     if re.fullmatch(
         TokenType.IDENTIFIER.value,
-        _expression_tokens[_expression_index].data,
+        _tokens[_token_index].data,
         re.IGNORECASE,
     ):
-        _expression_index += 1
-        return True
+        node = ExpressionNode(ExpressionType.IDENTIFIER, _tokens[_token_index].data)
+        _token_index += 1
+        return node
 
     # check for number
     if re.fullmatch(
-        TokenType.NUMBER.value, _expression_tokens[_expression_index].data, re.IGNORECASE
+        TokenType.NUMBER.value, _tokens[_token_index].data, re.IGNORECASE
     ):
-        _expression_index += 1
-        return True
+        node = ExpressionNode(ExpressionType.NUMBER, _tokens[_token_index].data)
+        _token_index += 1
+        return node
 
     # check for expression with parenthesis
-    if not _expression_tokens[_expression_index].type == TokenType.LEFT_PARENTHESIS:
+    if not _tokens[_token_index].type == TokenType.LEFT_PARENTHESIS:
         raise SyntaxError("invalid syntax")
-    _expression_index += 1
+    _token_index += 1
 
-    if not _expression():
-        return False
+    node = _expression()
+    if not node:
+        raise SyntaxError("invalid syntax")
 
     if (
-        _expression_index == len(_expression_tokens)  # unexpected end of expression
-        or not _expression_tokens[_expression_index].type == TokenType.RIGHT_PARENTHESIS
+        _token_index == len(_tokens)  # unexpected end of expression
+        or not _tokens[_token_index].type == TokenType.RIGHT_PARENTHESIS
     ):
         raise SyntaxError("'(' was never closed")
-    _expression_index += 1
+    _token_index += 1
 
-    return True
+    return node
 
 
-def term() -> bool:
+def _term() -> ExpressionNode:
     """
     <term> ::= <factor> { <multiply_operator> <factor> }
-    :return: True if the current token is an item, False otherwise
+    :return: expression node if the current token is an expression, raise error otherwise
     """
-    global _expression_index
+    global _token_index
     # print("item", end=" ")
     # print(_expression_index, end=" ")
     # print(_expression_tokens[_expression_index][1])
 
     # check for atomic expression
-    if not _factor():
-        return False
+    node = _factor()
+    if not node:
+        raise SyntaxError("invalid syntax")
 
     while True:
-        if (
-            _expression_index == len(_expression_tokens)  # end of expression
-            or not _multiply_operator()
-        ):
+        # end of expression
+        if _token_index == len(_tokens):
             break
-        if not _factor():
-            return False
-    return True
+
+        operator = _multiply_operator()
+        if operator == ExpressionType.UNKNOWN:
+            break
+
+        right_node = _factor()
+        if not right_node:
+            raise SyntaxError("invalid syntax")
+
+        node = ExpressionNode(operator, "", node, right_node)
+
+    return node
 
 
-def _expression() -> bool:
+def _expression() -> ExpressionNode:
     """
     <expression> ::= [ +|- ] <term> { <plus_operator> <term> }
-    :return: True if the current token is an expression, False otherwise
+    :return: expression node if the current token is an expression, raise error otherwise
     """
-    global _expression_index
+    global _token_index
     # print("expr", end=" ")
     # print(_expression_index, end=" ")
     # print(_expression_tokens[_expression_index][1])
 
-    # check for prefix operators
-    _add_operator()
+    # check for leading operators
+    leading_sign = _add_operator()
 
-    if not term():
-        return False
+    node = _term()
+    if not node:
+        raise SyntaxError("invalid syntax")
 
     while True:
-        if (
-                _expression_index == len(_expression_tokens)    # end of expression
-                or not _add_operator()
-        ):
+        # end of expression
+        if _token_index == len(_tokens):
             break
-        if not term():
-            return False
 
-    return True
+        operator = _add_operator()
+        if operator == ExpressionType.UNKNOWN:
+            break
+
+        right_node = _term()
+        if not right_node:
+            raise SyntaxError("invalid syntax")
+
+        node = ExpressionNode(operator, "", node, right_node)
+
+    if leading_sign != ExpressionType.UNKNOWN:
+        node = ExpressionNode(leading_sign, "", ExpressionNode(ExpressionType.NUMBER, "0"), node)
+
+    return node
 
 
-def ast(code: str) -> bool:
+def ast(tokens: list[Token]) -> ExpressionNode:
     """
-    Check if the given code is a valid expression
-    :param code: the code to check
-    :return: True if the code is a valid expression, False otherwise
+    Parse the given tokens and return the AST
+    :param tokens: the list of tokens to parse
+    :return: the AST root node
     """
-    global _expression_index, _expression_tokens
-    _expression_tokens = get_tokens(code)
-    _expression_index = 0
+    global _ast_root, _token_index, _tokens
+    _tokens = tokens
+    _token_index = 0
+    _ast_root = ExpressionNode()
     return _expression()
 
 

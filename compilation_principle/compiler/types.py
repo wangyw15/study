@@ -35,6 +35,7 @@ class ExpressionType(str, enum.Enum):
     MINUS = "-"
     MULTIPLY = "*"
     DIVIDE = ""
+    IDENTIFIER = "identifier"
     NUMBER = "number"
     UNKNOWN = "unknown"
 
