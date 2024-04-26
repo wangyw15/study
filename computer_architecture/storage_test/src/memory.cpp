@@ -1,7 +1,6 @@
 #include <chrono>
 #include <iostream>
 #include <future>
-#include <cstring>
 #include <vector>
 #include <algorithm>
 
