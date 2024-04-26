@@ -1,63 +1,56 @@
-#include <iostream>
 #include <chrono>
-#include <iomanip>
-#include <vector>
-#include <random>
-#include <limits>
-#include <future>
+#include <iostream>
+#include <algorithm>
 
-constexpr unsigned KB = 1 << 10;
-constexpr unsigned MB = 1 << 20;
-constexpr unsigned GB = 1 << 30;
-constexpr unsigned MAX_THREADS = 16;
+constexpr unsigned int KB = 1 << 10;
+constexpr unsigned int MB = 1 << 20;
+constexpr unsigned int GB = 1 << 30;
 
+constexpr unsigned int ARRAY_SIZE = 16*MB;
+constexpr unsigned int STEP = 64*KB;
+typedef char test_size_t;
 
-char random_number() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> dis(0, std::numeric_limits<char>::max());
-    return dis(gen);
+double calculate_speed(std::chrono::microseconds duration) {
+    return ((double)ARRAY_SIZE / (double)GB) / ((double)duration.count() / (double)1000000);
 }
 
-
-void test_bandwidth() {
-    std::vector<char> nums;
-    for (unsigned i = 0; i < GB; i++) {
-        nums.push_back(random_number());
-    }
-
-    for (unsigned thread_count = 1; thread_count <= MAX_THREADS; thread_count++) {
-        std::vector<std::future<int>> futures;
-        auto slice_len = nums.size() / thread_count;
-
-        for (size_t thread = 0; thread < thread_count; thread++) {
-            auto begin = nums.begin() + thread * slice_len;
-            auto end = (thread == thread_count - 1) ? nums.end() : begin + slice_len;
-
-            futures.push_back(std::async([begin, end] {
-                int sum = 0;
-                for (auto it = begin; it != end; it++) {
-                    sum += *it;
-                }
-                return sum;
-            }));
-        }
-
+void write_test(test_size_t *array_data) {
+    for (unsigned int i = STEP; i <= ARRAY_SIZE; i += STEP) {
         auto start = std::chrono::high_resolution_clock::now();
-        int sum;
-        for (auto& future : futures) {
-            sum += future.get();
+        std::fill(array_data, array_data + i, '6');
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        std::cout << "write, "
+                  << i << ", "
+                  << duration.count() << ", "
+                  << calculate_speed(duration)
+                  << std::endl;
+    }
+}
+
+void read_test(const test_size_t *array_data) {
+    for (unsigned int i = STEP; i <= ARRAY_SIZE; i += STEP) {
+        auto start = std::chrono::high_resolution_clock::now();
+        for (unsigned int j = 0; j < i; j++) {
+            auto volatile x = array_data[j];
         }
         auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        auto speed = nums.size() / duration;
-        std::cout << thread_count << ", " << duration << ", " << speed << std::endl;
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        std::cout << "read, "
+                  << i << ", "
+                  << duration.count() << ", "
+                  << calculate_speed(duration)
+                  << std::endl;
     }
 }
 
-
 int main() {
-    std::cout << "thread_count (n), duration (microseconds), speed (KB/microseconds)" << std::endl;
-    test_bandwidth();
+    std::cout << "type, size (byte), duration (microseconds), speed (GB/s)" << std::endl;
+    auto arr = (test_size_t*)calloc(ARRAY_SIZE, sizeof(test_size_t));
+
+    write_test(arr);
+    read_test(arr);
+
+    delete[] arr;
     return 0;
 }
