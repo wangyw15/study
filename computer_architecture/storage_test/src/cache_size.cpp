@@ -41,7 +41,7 @@ double test_latency(int physical_size) {
     // start
     auto start = std::chrono::high_resolution_clock::now();
     for (auto &i : data) {
-        i = random_number(array_size);
+        auto volatile tmp = data[i];
     }
     auto end = std::chrono::high_resolution_clock::now();
 
