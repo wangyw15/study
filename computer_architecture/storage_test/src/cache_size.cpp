@@ -7,7 +7,7 @@ constexpr unsigned int KB = 1 << 10;
 constexpr unsigned int MB = 1 << 20;
 
 constexpr unsigned int ITERATIONS = 1000;
-constexpr unsigned int STEP = 128 * KB;
+constexpr unsigned int STEP = 64 * KB;
 constexpr unsigned int MAX_DATA_SIZE = 36 * MB;
 
 typedef char test_type;
@@ -16,11 +16,11 @@ int random_number(int max = CHAR_MAX) {
 
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, CHAR_MAX);
+    std::uniform_int_distribution<> dis(0, max);
     return dis(gen);
 }
 
-double test_latency(int physical_size) {
+long long test_latency(unsigned int physical_size) {
     // initialize data
     auto array_size = physical_size / sizeof(test_type);
     char *data = new char[array_size];
@@ -29,7 +29,7 @@ double test_latency(int physical_size) {
     }
 
     // initialize access array
-    std::array<unsigned int, ITERATIONS> access;
+    std::array<unsigned int, ITERATIONS> access{};
     for (auto &i : access) {
         i = random_number(array_size);
     }
